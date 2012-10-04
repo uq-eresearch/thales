@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Uuid:</b>
+  <%= @authority.uuid %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @authority.name %>
+</p>
+
+<p>
+  <b>Shortname:</b>
+  <%= @authority.shortname %>
+</p>
+
+
+<%= link_to 'Edit', edit_authority_path(@authority) %> |
+<%= link_to 'Back', authorities_path %>

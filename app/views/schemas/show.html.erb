@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Uuid:</b>
+  <%= @schema.uuid %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @schema.name %>
+</p>
+
+<p>
+  <b>Shortname:</b>
+  <%= @schema.shortname %>
+</p>
+
+
+<%= link_to 'Edit', edit_schema_path(@schema) %> |
+<%= link_to 'Back', schemas_path %>

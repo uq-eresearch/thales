@@ -1,0 +1,27 @@
+<h1>Listing capacities</h1>
+
+<table>
+  <tr>
+    <th>Uuid</th>
+    <th>Name</th>
+    <th>Shortname</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @capacities.each do |capacity| %>
+  <tr>
+    <td><%= capacity.uuid %></td>
+    <td><%= capacity.name %></td>
+    <td><%= capacity.shortname %></td>
+    <td><%= link_to 'Show', capacity %></td>
+    <td><%= link_to 'Edit', edit_capacity_path(capacity) %></td>
+    <td><%= link_to 'Destroy', capacity, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Capacity', new_capacity_path %>

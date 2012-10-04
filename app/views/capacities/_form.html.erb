@@ -1,0 +1,29 @@
+<%= form_for(@capacity) do |f| %>
+  <% if @capacity.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@capacity.errors.count, "error") %> prohibited this capacity from being saved:</h2>
+
+      <ul>
+      <% @capacity.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :uuid %><br />
+    <%= f.text_field :uuid %>
+  </div>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :shortname %><br />
+    <%= f.text_field :shortname %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

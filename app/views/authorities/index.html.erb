@@ -1,0 +1,27 @@
+<h1>Listing authorities</h1>
+
+<table>
+  <tr>
+    <th>Uuid</th>
+    <th>Name</th>
+    <th>Shortname</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @authorities.each do |authority| %>
+  <tr>
+    <td><%= authority.uuid %></td>
+    <td><%= authority.name %></td>
+    <td><%= authority.shortname %></td>
+    <td><%= link_to 'Show', authority %></td>
+    <td><%= link_to 'Edit', edit_authority_path(authority) %></td>
+    <td><%= link_to 'Destroy', authority, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Authority', new_authority_path %>

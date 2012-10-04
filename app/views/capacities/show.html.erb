@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Uuid:</b>
+  <%= @capacity.uuid %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @capacity.name %>
+</p>
+
+<p>
+  <b>Shortname:</b>
+  <%= @capacity.shortname %>
+</p>
+
+
+<%= link_to 'Edit', edit_capacity_path(@capacity) %> |
+<%= link_to 'Back', capacities_path %>

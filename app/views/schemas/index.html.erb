@@ -1,0 +1,27 @@
+<h1>Listing schemas</h1>
+
+<table>
+  <tr>
+    <th>Uuid</th>
+    <th>Name</th>
+    <th>Shortname</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @schemas.each do |schema| %>
+  <tr>
+    <td><%= schema.uuid %></td>
+    <td><%= schema.name %></td>
+    <td><%= schema.shortname %></td>
+    <td><%= link_to 'Show', schema %></td>
+    <td><%= link_to 'Edit', edit_schema_path(schema) %></td>
+    <td><%= link_to 'Destroy', schema, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Schema', new_schema_path %>
