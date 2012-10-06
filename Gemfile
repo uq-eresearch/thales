@@ -36,3 +36,8 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'debugger'
+
+gem 'nokogiri'
+gem 'uuid'
+
+#EOF

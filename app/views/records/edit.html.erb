@@ -1,6 +1,6 @@
-<h1>Editing record</h1>
+<% content_for(:page_title) do "#{@collection.title} (editing)" end %>
+
+<h2>Editing record</h2>
+<!-- UUID: <%= @record.uuid %> -->
 
 <%= render 'form' %>
-
-<%= link_to 'Show', @record %> |
-<%= link_to 'Back', records_path %>

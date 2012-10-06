@@ -1,3 +1,183 @@
 // Place all the styles related to the Records controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+$mainWidth: 960px;
+
+$contentMargin: 20px;
+$contentWidth: 674px;
+$contentRadius: 8px;
+
+$itemMarginTop: 20px;
+$itemMarginBottom: 0px;
+
+$labelWidth: 220px;
+$labelMarginRight: 10px;
+$labelPaddingTop: 2px;
+
+$fieldWidth: $contentWidth - ($labelWidth + $labelMarginRight);
+
+$fieldextraMarginTop: 8px;
+
+$inputMargin: 0px;
+$inputBorder: 1px;
+$inputPadding: $labelPaddingTop;
+$inputWidth: $fieldWidth - 2 * ($inputMargin + $inputBorder + $inputPadding);
+
+$actionsMarginTop: 30px;
+$actionsMarginBottom: 20px;
+
+/* Search form */
+
+div#searchform input#query {
+ min-width: $fieldWidth;
+}
+
+/* Results table */
+
+table#results {
+  width: $contentWidth;
+  margin: 32px 0;
+  border: 0;
+  padding: 0;
+  border-collapse: collapse;
+
+  tr {
+    margin: 0;
+    padding: 10px 10px;
+    border: 0;
+  }
+  tr:hover {
+    background: #eeeeee;
+  }
+  th {
+    width: 100%;
+    text-align: left;
+    font-weight: normal;
+    padding: 10px;
+
+    a {
+      display: inline-block;
+      width: 100%;
+      text-decoration: none;
+    }
+    a:hover {
+      background: none;
+      color: black;
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Edit form */
+
+div#editform,
+div#show {
+
+  display: inline-block;
+
+  p {
+    margin: $fieldextraMarginTop 0 0 ($labelWidth + $labelMarginRight);
+  }
+
+  div.item {
+    margin: $itemMarginTop 0 $itemMarginBottom 0;
+
+    p.label {
+      display: inline-block;
+      width: $labelWidth;
+      margin: 0 $labelMarginRight 0 0;
+      border: 0;
+      padding: $labelPaddingTop 0 0 0;
+      text-align: right;
+      vertical-align: top;
+      font-weight: normal;
+      color: darkgray;
+    }
+    // p.label:after { content: ":"; }
+    p.field {
+      display: inline-block;
+      margin: 0; border: 0; padding: 0;
+      vertical-align: top;
+    }
+    p.labelextra {
+      display: none;
+    }
+    p.fieldextra {
+      display: block;
+      margin: $fieldextraMarginTop 0 0 ($labelWidth + $labelMarginRight);
+      border: 0; padding: 0;
+      vertical-align: top;
+    }
+      input, textarea {
+        margin: $inputMargin;
+        border: $inputBorder solid lightgray;
+        padding: $inputPadding;
+        width: $inputWidth;
+      }
+      textarea {
+        height: 64px;
+        resize: vertical;
+      }
+
+
+      /* Custom formatting for fields */
+      /* TODO: change this to use class selector */
+
+      input#collection_FoR_0,
+      input#collection_SEO_0 {
+        width: 80px;
+      }
+      input#collection_keyword_0,
+      input#collection_keyword_0,
+      input#collection_keyword_1,
+      input#collection_keyword_2,
+      input#collection_keyword_3,
+      input#collection_keyword_4,
+      input#collection_keyword_5 {
+        width: 150px;
+      }
+  }
+
+  div#actions {
+    width: $fieldWidth;
+    margin: $actionsMarginTop 0 $actionsMarginBottom ($labelWidth + $labelMarginRight);
+    padding: 0;
+  }
+  input#save {
+    float: right;
+  }
+
+}
+
+/* Create new record link on index page */
+
+a.new {
+  display: block;
+  margin: 10px;
+  padding-top: 8px 0 5px 0;
+  text-decoration: none;
+  color: white;
+  text-align: center;
+  text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0%, #6ecf36), color-stop(100%, #4e9326));
+  background-image: -moz-linear-gradient(top, #6ecf36 0%, #4e9326 100%);
+  background-image: linear-gradient(top, #6ecf36 0%, #4e9326 100%);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+}
+a.new:hover {
+ color: white;
+ background: darkgreen;
+ border-color: #49671d;
+}
+a.new:active {
+ color: orange;
+}
+

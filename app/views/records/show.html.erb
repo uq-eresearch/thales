@@ -1,10 +1,34 @@
+<% if @collection.title && ! @collection.title.blank?
+      display_title = @collection.title
+    else
+      display_title = '(untitled)'
+    end
+ %>
+
+<% content_for(:page_title) do display_title end %>
+
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Uuid:</b>
-  <%= @record.uuid %>
-</p>
+<h2><%= display_title %></h2>
+<!-- <%= @record.uuid %> -->
 
+<div id="show">
 
-<%= link_to 'Edit', edit_record_path(@record) %> |
-<%= link_to 'Back', records_path %>
+  <%= show_field(@collection.alt_titles, 'Alternative title') %>
+  <%= show_field(@collection.description, 'Description') %>
+  <%= show_field(@collection.keywords, 'Keyword') %>
+  
+  <h3>Data availability</h3>
+  <%= show_field(@collection.urls, 'Web page') %>
+  
+  <h3>Rights</h3>
+  <%= show_field(@collection.rights_access, 'Access rights') %>
+  <%= show_field(@collection.rights_statement, 'Access statement') %>
+  <%= show_field(@collection.rights_licence, 'Licence') %>
+  
+  <div id="actions">
+    <%= link_to 'Edit', edit_record_path(@record) %>
+  </div>
+
+</div>
+
