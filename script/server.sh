@@ -5,8 +5,8 @@
 # Copyright (C) 2012, The University of Queensland.
 #----------------------------------------------------------------
 
-PIDBASEDIR=tmp
-PIDFILE=${PIDBASEDIR}/pids/server.pid
+# Change to Rails project top level directory
+cd `dirname $0`/.. || exit 1
 
 if [ $# -eq 0  -o  "$1" = '-h'  -o  "$1" = '--help' ]; then
     # Show help
@@ -19,9 +19,11 @@ if [ $# -eq 0  -o  "$1" = '-h'  -o  "$1" = '--help' ]; then
 
 elif [ $# -eq 1 ]; then
 
+    PIDFILE=tmp/pids/server.pid
     PIDDIR=`dirname $PIDFILE`
-    if [ ! -d "$PIDBASEDIR" ]; then
-	echo "Error: directory not found: $PIDBASEDIR (wrong directory?)" >&2
+    if [ ! -d "app" ]; then
+	echo "Error: not a Rails project (app directory not found): `pwd`" >&2
+	echo "Error: script installed in wrong directory: `dirname $0`" >&2
 	exit 1
     fi
 
