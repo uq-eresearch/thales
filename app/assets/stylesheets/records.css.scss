@@ -27,6 +27,12 @@ $inputWidth: $fieldWidth - 2 * ($inputMargin + $inputBorder + $inputPadding);
 $actionsMarginTop: 30px;
 $actionsMarginBottom: 20px;
 
+/* General */
+
+h3 {
+  color: gray;
+}
+
 /* Search form */
 
 div#searchform input#query {
@@ -37,15 +43,15 @@ div#searchform input#query {
 
 table#results {
   width: $contentWidth;
-  margin: 32px 0;
+  margin: 16px 0;
   border: 0;
   padding: 0;
   border-collapse: collapse;
 
   tr {
-    margin: 0;
-    padding: 10px 10px;
-    border: 0;
+    margin: 0; border: 0; padding: 0;
+    border-top: thin dotted #ccc;
+    border-bottom: thin dotted #ccc;
   }
   tr:hover {
     background: #eeeeee;
@@ -54,17 +60,31 @@ table#results {
     width: 100%;
     text-align: left;
     font-weight: normal;
-    padding: 10px;
 
     a {
       display: inline-block;
       width: 100%;
+      padding: 10px;
       text-decoration: none;
     }
     a:hover {
       background: none;
       color: black;
       text-decoration: underline;
+    }
+  }
+  td {
+    a {
+      display: inline-block;
+      padding: 10px;
+      text-transform: uppercase;
+    }
+    a:hover {
+      background: #999;
+      color: white;
+    }
+    a:active {
+      color: black;
     }
   }
 }
@@ -154,31 +174,23 @@ div#show {
 
 a.new {
   display: block;
-  width: 200px;
-  margin: 10px;
-  padding-top: 8px 0 5px 0;
+  width: 150px;
+  margin: 0 auto;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 4px 0 4px 0;
   text-decoration: none;
-  color: white;
+  text-transform: uppercase;
   text-align: center;
-  text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0%, #6ecf36), color-stop(100%, #4e9326));
-  background-image: -moz-linear-gradient(top, #6ecf36 0%, #4e9326 100%);
-  background-image: linear-gradient(top, #6ecf36 0%, #4e9326 100%);
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -o-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -khtml-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
+  background: #ccc;
+  color: white;
 }
 a.new:hover {
  color: white;
- background: darkgreen;
- border-color: #49671d;
+ background: #999;
+ border-color: #333;
 }
 a.new:active {
- color: orange;
+ color: black;
 }
 

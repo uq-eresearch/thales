@@ -6,7 +6,6 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-
 <body>
 <div id="header">
  <div class="inner">
@@ -17,16 +16,20 @@
 <div id="topnav">
   <ul>
     <li><a href="/">Home</a></li>
-    <li><%= link_to 'Records', records_path %></li>
+    <li><a href="">About</a></li>
+    <li><a href="">Data collections</a></li>
+    <li><a href="">Help</a></li>
+    <li><a href="">Contact us</a></li>
   </ul>
 </div>
 
-<div id="contents">
+<div id="content-primary">
 <%= yield %>
 </div>
 
 <div id="footer">
  <div class="inner">
+
  </div>
 </div>
 
