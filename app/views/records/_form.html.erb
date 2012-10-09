@@ -22,12 +22,10 @@
 
 <div id="editform">
 
+<h3>Data content</h3>
 <%= field_text_1('collection[title]', 'Title', @collection.title, 80) %>
-
 <%= field_text_0n('collection[altTitle]', 'Alternative title', @collection.alt_titles, 80) %>
-
 <%= field_area_1('collection[description]', 'Description', @collection.description, 80) %>
-
 <%= field_text_0n('collection[extId]', 'Identifier', [], 255) %>
 
 <h3>Coverage</h3>
@@ -39,10 +37,7 @@
 
 <%= field_text_0n('collection[FoR]', 'Field of research (FoR)', [], 40) %>
 <%= field_text_0n('collection[SEO]', 'Socio-Economic Outcomes (SEO)', [], 40) %>
-
 <%= field_text_0n('collection[keyword]', 'Keyword (free text)', @collection.keywords, 40) %>
-
-<!-- Data availability -->
 
 <h3>Data availability</h3>
 

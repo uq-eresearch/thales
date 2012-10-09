@@ -6,26 +6,28 @@
  %>
 
 <% content_for(:page_title) do display_title end %>
+<% content_for(:page_heading) do display_title end %>
 
 <p id="notice"><%= notice %></p>
 
-<h2><%= display_title %></h2>
 <!-- <%= @record.uuid %> -->
 
 <div id="show">
-
+  <h3>Data content</h3>
   <%= show_field(@collection.alt_titles, 'Alternative title') %>
   <%= show_field(@collection.description, 'Description') %>
   <%= show_field(@collection.keywords, 'Keyword') %>
   
-  <h3>Data availability</h3>
+  <h3>Availability</h3>
   <%= show_field(@collection.urls, 'Web page') %>
   
   <h3>Rights</h3>
   <%= show_field(@collection.rights_access, 'Access rights') %>
   <%= show_field(@collection.rights_statement, 'Access statement') %>
   <%= show_field(@collection.rights_licence, 'Licence') %>
-  
+
+  <h3>People and projects</h3>
+
   <div id="actions">
     <%= link_to 'Edit', edit_record_path(@record) %>
   </div>

@@ -3,6 +3,7 @@
 body {
  background: #eee;
  margin: 0; border: 0; padding: 0;
+ font-family: sans-serif;
 }
 
 div#header {
@@ -10,7 +11,7 @@ div#header {
  border: 0;
  padding: 0.5ex 0em;
  background: #666;
- min-height: 72px
+ min-height: 64px
 }
 div.inner {
  margin: 0 auto;
@@ -20,6 +21,7 @@ h1 {
  margin: 0;
  padding: 1ex 0em;
  color: white;
+ font-size: x-large;
  font-weight: normal;
 }
 
@@ -27,6 +29,7 @@ div#topnav {
   display: block;
   margin: 0; border:0; padding: 0;
   background: black;
+  font-size: 9pt;
 }
 div#topnav ul {
  margin: 0 auto;
@@ -59,6 +62,10 @@ div#content-primary {
  background: white;
 }
 
+#notice {
+  color: green;
+  padding: 1ex 0;
+}
 
 div#footer {
  color: #666;
