@@ -1,5 +1,5 @@
 <% content_for(:page_title) do "Records" end %>
-<% content_for(:page_heading) do "Records" end %>
+<% content_for(:page_heading) do "Description records" end %>
 
 <!--
 <div id="searchform">
@@ -12,9 +12,6 @@
   <thead>
     <tr><th scope="col">Data collections</th></tr>
   </thead>
-  <tfoot>
-    <tr><td>3 records</td></tr>
-  </tfoot>
   <tbody>
     <% # Output each entry as a separate row of the table
 
@@ -34,6 +31,9 @@
     </tr>
     <% end %>
   </tbody>
+  <tfoot>
+    <tr><td><%= pluralize(@entries.size, 'record') %></td></tr>
+  </tfoot>
 </table>        
 
 <p><%= link_to 'New record', new_record_path, :class => 'new' %></p>
