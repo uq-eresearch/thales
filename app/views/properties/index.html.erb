@@ -1,28 +1,24 @@
-<h1>Listing properties</h1>
+<% content_for(:page_title) do "Properties" end %>
+<% content_for(:page_heading) do "Properties" end %>
 
-<table>
-  <tr>
-    <th>Uuid</th>
-    <th>Name</th>
-    <th>Shortname</th>
-    <th>Description</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<p>Properties are types for entries.</p>
+
+<p><%= pluralize(@properties.size, 'properties') %></p>
 
 <% @properties.each do |property| %>
-  <tr>
-    <td><%= property.uuid %></td>
-    <td><%= property.name %></td>
-    <td><%= property.shortname %></td>
-    <td><%= property.description %></td>
-    <td><%= link_to 'Show', property %></td>
-    <td><%= link_to 'Edit', edit_property_path(property) %></td>
-    <td><%= link_to 'Destroy', property, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
+  <div class="properties-index-entry">
+    <h2><%= property.name %> (<%= property.shortname %>)</h2>
+   
+    <p class="description"><%= property.description %></p>
+    <p class="uuid" title="ID=<%= property.id %>"><%= property.uuid %></p>
+  </div>
+
+  <%#= link_to 'Show', property %>
+  <%#= link_to 'Edit', edit_property_path(property) %>
+  <%#= link_to 'Destroy', property, method: :delete, data: { confirm: 'Are you sure?' } %>
+
 <% end %>
-</table>
+
 
 <br />
 

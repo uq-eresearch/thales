@@ -1,4 +1,4 @@
-class PropertyRecord < ActiveRecord::Base
+class Entry < ActiveRecord::Base
   belongs_to :record
   belongs_to :property
   attr_accessible :order, :value

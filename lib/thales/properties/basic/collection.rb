@@ -1,13 +1,25 @@
+#
+# Copyright (C) 2012, The University of Queensland.
 
 module Properties
   module Basic
 
     class Collection
-      include ActiveModel::Validations
-      validates_presence_of :title, :description
 
-      #include ActiveModel::Serialization
-      #attr_accessor :attributes
+      # ActiveModel
+
+      include ActiveModel::Validations
+      include ActiveModel::Conversion
+      extend ActiveModel::Naming
+
+      validates_presence_of :title, :description
+      # validates_form_of :email, :with => /^$/
+      # validates_length_of :title, :maximum => 255
+
+      include ActiveModel::Serialization
+      attr_accessor :attributes
+
+      # Accessors
 
       attr_accessor :title
       attr_accessor :alt_titles
@@ -41,10 +53,16 @@ module Properties
         result.select { |str| (! str.blank?) }
       end
 
-      def to_key
-        ['42']
-      end
+#      def to_key
+#        ['42']
+#      end
 
+      # This ActiveModel model is not persisted. Returns false.
+
+      def persisted?
+        false
+      end
+      
       def serialize
         YAML::dump(self)
       end

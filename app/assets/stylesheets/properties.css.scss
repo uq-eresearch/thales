@@ -1,3 +1,21 @@
 // Place all the styles related to the Properties controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+div.properties-index-entry {
+
+    border-bottom: 1px dotted gray;
+
+    h2 {
+    }
+
+    p.description {
+    }
+
+    p.uuid {
+	font-family: monospace; 
+	text-align: right;
+	color: gray;
+    }
+}

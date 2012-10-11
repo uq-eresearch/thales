@@ -6,6 +6,7 @@ class RecordsController < ApplicationController
   # GET /records
   # GET /records.json
   def index
+
     @records = Record.all
 
     @entries = @records.map { |rec| [ rec, collection_load(rec) ] }
@@ -60,14 +61,15 @@ class RecordsController < ApplicationController
 
     collection = Properties::Basic::Collection.new(params[:collection])
 
-    prop = PropertyRecord.new
-    prop.order = 1
-    prop.value = collection.serialize
-    prop.save()
+    entry = Entry.new
+    entry.property_id = edit_collection_property_id
+    entry.order = 1
+    entry.value = collection.serialize
+    entry.save()
 
     @record = Record.new(params[:record])
     @record.uuid = UUID.new.generate(:compact)
-    @record.property_records << prop
+    @record.entries << entry
 
     if @record.save
       redirect_to @record, notice: 'Record was successfully created.'
@@ -83,9 +85,15 @@ class RecordsController < ApplicationController
 
     @record = Record.find(params[:id])
 
-    prop = @record.property_records.first
-    prop.value = collection.serialize()
-    prop.save()
+    entries = @record.entries.where(:property_id => edit_collection_property_id)
+    if entries.size != 1
+      # Expecting only one "edit collection" property in this current implementation
+      raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
+    end
+    entry = entries.first
+
+    entry.value = collection.serialize()
+    entry.save()
 
     respond_to do |format|
       if @record.update_attributes(params[:record])
@@ -115,14 +123,31 @@ class RecordsController < ApplicationController
     Properties::Basic::Collection.new
   end
 
+  # Given a record, obtain the 'Test metadata format' property and
+  # parse it into a collection.
+
   def collection_load(record)
-    properties = record.property_records
-    if properties.size != 1
-      # Expecting only one property in this current implementation
-      raise "Internal error: multiple properties found"
+
+    entries = record.entries.where(:property_id => edit_collection_property_id)
+    if entries.size != 1
+      # Expecting only one "edit collection" property in this current implementation
+      raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
     end
 
-    Properties::Basic::Collection.deserialize(record.property_records.first.value)
+    Properties::Basic::Collection.deserialize(entries.first.value)
+  end
+
+  def edit_collection_property_id
+    # Obtain the internal ID for the 'test collection' property
+
+    edit_collection_uuid = 'd4cdb36b73a94b5295ac93232d5ce7b1'
+
+    relation = Property.where(:uuid => edit_collection_uuid)
+    if relation.size != 1
+      raise "Internal error: property #{edit_collection_uuid}: expecting 1, #{relation.size} found"
+    end
+    
+    relation.first.id # result
   end
 
 end
