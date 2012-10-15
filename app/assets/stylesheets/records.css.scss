@@ -139,8 +139,9 @@ div#show {
       padding: $labelPaddingTop 0 0 0;
       text-align: right;
       vertical-align: top;
+      font-size: small;
       font-weight: normal;
-      color: darkgray;
+      color: #666;
     }
     // p.label:after { content: ":"; }
     p.field {
@@ -189,7 +190,7 @@ div#show {
       }
   }
 
-  div#actions {
+  div#submitActions {
     width: $fieldWidth;
     margin: $actionsMarginTop 0 $actionsMarginBottom ($labelWidth + $labelMarginRight);
     padding: 0;
@@ -198,6 +199,12 @@ div#show {
     float: right;
   }
 
+  div#cancelActions,
+  div#editActions {
+    width: $fieldWidth;
+    margin: $actionsMarginTop 0 $actionsMarginBottom ($labelWidth + $labelMarginRight);
+    padding: 0;
+  }
 }
 
 /* Create new record link on index page */

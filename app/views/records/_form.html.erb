@@ -1,4 +1,7 @@
+<div id="editform">
+
 <%= form_for(@record) do |f| %>
+
   <% if @record.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@record.errors.count, "error") %> prohibited this record from being saved:</h2>
@@ -11,7 +14,6 @@
     </div>
   <% end %>
 
-
 <!--
   <div class="field">
     <%= f.label :uuid %><br />
@@ -19,8 +21,6 @@
 
   </div>
 -->
-
-<div id="editform">
 
 <h3>Data content</h3>
 <%= field_text_1('collection[title]', 'Title', @collection.title, 80) %>
@@ -58,27 +58,27 @@
 <%= field_text_0n('collection[people]', 'Project', [], 255) %>
 
 <!-- :confirm => question, -->
-  <div id="actions">
+  <div id="submitActions">
     <%= f.submit(:id => 'save') %>
-
-
-    <%=
-        form_tag('/', :method => :get) do 
-          submit_tag('Cancel', :confirm => 'Discard any entered information?')
-        end
-     %>
-
-<% if @record.new_record? %>
-  <%= link_to 'Cancel back to index', records_path %>
-<% else %>
-  <%= link_to 'Cancel back to view record', @record %>
-<% end %>
-
   </div>
 
+<% end %> <%# form_for %>
+
+<div id="cancelActions">
+<%=
+  # Cancel button
+
+  if @record.new_record?
+    message = 'Discard all entered information?'
+    path = records_path
+  else
+    message = 'Discard all changes?'
+    path = @record
+  end
+  form_tag(path, :method => :get) do 
+    submit_tag('Cancel', :confirm => message)
+  end
+%>
 </div>
 
-<% end %>
-
-<%# Cancel button %>
-
+</div>
