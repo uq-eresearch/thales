@@ -5,6 +5,10 @@
 # Copyright (C) 2012, The University of Queensland.
 #----------------------------------------------------------------
 
+if [ -z "$PORT" ]; then
+  PORT=3000
+fi
+
 # Change to Rails project top level directory
 cd `dirname $0`/.. || exit 1
 
@@ -33,7 +37,7 @@ elif [ $# -eq 1 ]; then
 		echo "Error: PID file found: server already running?" >&2
 		exit 1
 	    else
-		rails server -d
+		rails server -d --port=${PORT}
 	    fi
 	    ;;
 
@@ -52,7 +56,7 @@ elif [ $# -eq 1 ]; then
 		    echo "Waiting for server to stop"
 		    sleep 1
 		done
-		rails server -d
+		rails server -d --port=${PORT}
 
 	    else
 		echo "Warning: PID file not found: server not running?" >&2
