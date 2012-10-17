@@ -13,3 +13,7 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+
+# Ignore Ruby on Rails generated files
+Gemfile.lock
+db/schema.rb
