@@ -71,7 +71,7 @@ class RecordsController < ApplicationController
     @record.entries << entry
 
     if @record.save
-      redirect_to @record, notice: 'Record was successfully created.' + entry.value
+      redirect_to @record, notice: 'Record was successfully created.'
     else
       render action: "new"
     end
