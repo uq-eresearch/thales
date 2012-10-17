@@ -11,8 +11,7 @@ class RecordsController < ApplicationController
 
     @entries = @records.map { |rec| [ rec, collection_load(rec) ] }
   
-    @entries.sort! { |a,b| a[1].title <=> b[1].title }
-
+#   @entries.sort! { |a,b| a[1].title <=> b[1].title }
 #   @entries.sort! { |a,b| b[0].uuid <=> a[0].uuid }
 
     respond_to do |format|
@@ -72,7 +71,7 @@ class RecordsController < ApplicationController
     @record.entries << entry
 
     if @record.save
-      redirect_to @record, notice: 'Record was successfully created.'
+      redirect_to @record, notice: 'Record was successfully created.' + entry.value
     else
       render action: "new"
     end

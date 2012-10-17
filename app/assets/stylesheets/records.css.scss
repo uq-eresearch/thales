@@ -130,36 +130,44 @@ div#show {
 
   div.item {
     margin: $itemMarginTop 0 $itemMarginBottom 0;
+    padding: 0;
+    width: $contentWidth;
 
-    p.label {
-      display: inline-block;
-      width: $labelWidth;
-      margin: 0 $labelMarginRight 0 0;
-      border: 0;
-      padding: $labelPaddingTop 0 0 0;
-      text-align: right;
-      vertical-align: top;
-      font-size: small;
-      font-weight: normal;
-      color: #666;
-    }
-    // p.label:after { content: ":"; }
-    p.field {
-      display: inline-block;
-      width: $inputWidth;
-      margin: 0; border: 0; padding: 0;
-      vertical-align: top;
-    }
-    p.labelextra {
-      display: none;
-    }
-    p.fieldextra {
-      display: block;
-      width: $inputWidth;
-      margin: $fieldextraMarginTop 0 0 ($labelWidth + $labelMarginRight);
-      border: 0; padding: 0;
-      vertical-align: top;
-    }
+    dl {
+      margin: 0;
+
+      dt {
+        display: none;
+      }
+      dt:first-child {
+        display: inline-block;
+        width: $labelWidth;
+        margin: 0 $labelMarginRight 0 0;
+        border: 0;
+        padding: $labelPaddingTop 0 0 0;
+        text-align: right;
+        vertical-align: top;
+        font-size: small;
+        font-weight: normal;
+        color: #666;
+      }
+
+      /* dt.label1:after { content: ":"; } */
+      @mixin DD_COMMON {
+        display: inline-block;
+        width: $inputWidth;
+        border: 0; padding: 0;
+        vertical-align: top;
+      }
+
+      dd.first {
+        @include DD_COMMON;
+	margin: 0;
+      }
+      dd {
+        @include DD_COMMON;;
+        margin: $fieldextraMarginTop 0 0 ($labelWidth + $labelMarginRight);
+      }
       input, textarea {
         margin: $inputMargin;
         border: $inputBorder solid lightgray;
@@ -170,25 +178,36 @@ div#show {
         height: 64px;
         resize: vertical;
       }
+  
+    } /* dl */
 
+    /* Add field button */
+    
+    p.addField {
+      margin: 0;
+      text-align: right;
+    }
+    a.addField {
+      display: inline-block;
+      padding: 2px 4px;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #999;
+    }
+    a.addField:hover {
+      color: #fff;
+      background: green;
+    }
 
-      /* Custom formatting for fields */
-      /* TODO: change this to use class selector */
+  } /* div.item */
 
-      input#collection_FoR_0,
-      input#collection_SEO_0 {
-        width: 80px;
-      }
-      input#collection_keyword_0,
-      input#collection_keyword_0,
-      input#collection_keyword_1,
-      input#collection_keyword_2,
-      input#collection_keyword_3,
-      input#collection_keyword_4,
-      input#collection_keyword_5 {
-        width: 150px;
-      }
-  }
+  /* Custom formatting for certain fields */
+
+  div.item#FoR input { width: 70px; }
+  div.item#SEO input { width: 80px; }
+  div.item#keyword input { width: 150px; margin: 0; }
+
+  /* Buttons */
 
   div#submitActions {
     width: $fieldWidth;

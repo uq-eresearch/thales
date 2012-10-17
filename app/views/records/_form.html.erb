@@ -23,39 +23,39 @@
 -->
 
 <h3>Data content</h3>
-<%= field_text_1('collection[title]', 'Title', @collection.title, 80) %>
-<%= field_text_0n('collection[altTitle]', 'Alternative title', @collection.alt_titles, 80) %>
-<%= field_area_1('collection[description]', 'Description', @collection.description, 80) %>
-<%= field_text_0n('collection[extId]', 'Identifier', [], 255) %>
+<%= field_text_1('title', 'Title', @collection.title, 80) %>
+<%= field_text_0n('altTitle', 'Alternative title', @collection.alt_titles, 80) %>
+<%= field_area_1('description', 'Description', @collection.description, 80) %>
+<%= field_text_0n('extId', 'Identifier', [], 255) %>
 
 <h3>Coverage</h3>
 
-<%= field_text_0n('collection[temporal]', 'Time period covered', [], 40) %>
-<%= field_text_0n('collection[spatial]', 'Geographic Location', [], 40) %>
+<%= field_text_0n('temporal', 'Time period covered', [], 40) %>
+<%= field_text_0n('spatial', 'Geographic Location', [], 40) %>
 
 <h3>Topics</h3>
 
-<%= field_text_0n('collection[FoR]', 'Field of research (FoR)', [], 40) %>
-<%= field_text_0n('collection[SEO]', 'Socio-Economic Outcomes (SEO)', [], 40) %>
-<%= field_text_0n('collection[keyword]', 'Keyword (free text)', @collection.keywords, 40) %>
+<%= field_text_0n('FoR', 'Field of research (FoR)', [], 40) %>
+<%= field_text_0n('SEO', 'Socio-Economic Outcomes (SEO)', [], 40) %>
+<%= field_text_0n('keyword', 'Keyword (free text)', @collection.keywords, 40) %>
 
 <h3>Data availability</h3>
 
-<%= field_text_0n('collection[url]', 'Web page', @collection.urls, 255) %>
+<%= field_text_0n('url', 'Web page', @collection.urls, 255) %>
 
 <h3>Rights</h3>
 
 <p>Provide at least one of the following.</p>
 
-<%= field_area_1('collection[rights_access]', 'Access rights', @collection.rights_access, 80) %>
-<%= field_area_1('collection[rights_statement]', 'Rights statement', @collection.rights_statement, 80) %>
-<%= field_text_1('collection[rights_licence]', 'Licence', @collection.rights_licence, 80) %>
+<%= field_area_1('rights_access', 'Access rights', @collection.rights_access, 80) %>
+<%= field_area_1('rights_statement', 'Rights statement', @collection.rights_statement, 80) %>
+<%= field_text_1('rights_licence', 'Licence', @collection.rights_licence, 80) %>
 
 <h3>People and projects</h3>
 
-<%= field_text_0n('collection[people]', 'Creator', [], 255) %>
-<%= field_text_0n('collection[people]', 'Custodian or contact', [], 255) %>
-<%= field_text_0n('collection[people]', 'Project', [], 255) %>
+<%= field_text_0n('creator', 'Creator', [], 255) %>
+<%= field_text_0n('custodian', 'Custodian or contact', [], 255) %>
+<%= field_text_0n('project', 'Project', [], 255) %>
 
 <!-- :confirm => question, -->
   <div id="submitActions">
