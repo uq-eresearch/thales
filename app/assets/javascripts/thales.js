@@ -5,43 +5,39 @@
 var thales = (function() {
 
     function replicateField(name_base) {
-//	itemDiv = $(this).parent().parent()
-//node = itemDiv.find("label").each(function(i) {
-//	    $(this).append("foo"+i);
-//	});
 
-	itemDiv = $("#" + name_base)
-	dlElement = itemDiv.find('dl')
+	var dl = $("#" + name_base + ">dl:eq(0)")
 
 	// Generate identity for new field
 
-        var num = dlElement.find("dt").length.toString();
-	ident = 'collection_' + name_base + '_' + num;
+        var num = dl.find('dt').length.toString();
+	var ident = 'collection_' + name_base + '_' + num;
 
 	// Add label
 
-	label_text = dlElement.find('dt').first().find('label').text();
+	var label_text = dl.find('dt:eq(0) > label').get(0).textContent;
 
-	newText = $(document.createTextNode(label_text));
-	newLabel = $(document.createElement("label"));
+	var newText = $(document.createTextNode(label_text));
+	var newLabel = $(document.createElement("label"));
 	newLabel.attr('for', ident);
 	newLabel.append(newText);
 
-	newDT = $(document.createElement("dt"));
+	var newDT = $(document.createElement("dt"));
 	newDT.append(newLabel);
-	dlElement.append(newDT);
+	dl.append(newDT);
 
 	// Add input field
 
-	t = $(document.createTextNode("World"));
+	var t = $(document.createTextNode("World"));
 	newInput = $(document.createElement("input"));
 	newInput.attr('id', ident);
 	newInput.attr('maxlength', 42);
 	newInput.attr('name', 'collection[' + name_base + '][' + num + ']');
 	newInput.attr('type', 'text');
+	newInput.attr('value', 'Value: ' + label_text);
 	newDD = $(document.createElement("dd"));
 	newDD.append(newInput);
-	dlElement.append(newDD);
+	dl.append(newDD);
 
 	event.preventDefault();
     }
