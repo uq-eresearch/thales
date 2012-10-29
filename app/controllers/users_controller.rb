@@ -1,4 +1,11 @@
+
+require 'uuid'
+require 'thales/authentication/password'
+
 class UsersController < ApplicationController
+
+  before_filter :authenticate
+
   # GET /users
   # GET /users.json
   def index
@@ -40,7 +47,10 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+    fix_password_params(params)
     @user = User.new(params[:user])
+    @user.uuid = UUID.new.generate(:compact)
+    set_roles(@user, params)
 
     respond_to do |format|
       if @user.save
@@ -56,7 +66,9 @@ class UsersController < ApplicationController
   # PUT /users/1
   # PUT /users/1.json
   def update
+    fix_password_params(params)
     @user = User.find(params[:id])
+    set_roles(@user, params)
 
     respond_to do |format|
       if @user.update_attributes(params[:user])
@@ -80,4 +92,35 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  private
+  def fix_password_params(params)
+
+    pass = params['user']['auth_value']
+    conf = params['user']['auth_value_confirmation']
+
+    if pass.blank? && conf.blank?
+      # Both fields are blank, delete parameters so password is not changed
+      params['user'].delete('auth_value')
+      params['user'].delete('auth_value_confirmation')
+    else
+      # One-way-hash the values
+      params['user']['auth_value'] =
+        Thales::Authentication::Password.one_way_hash(pass)
+      params['user']['auth_value_confirmation'] =
+        Thales::Authentication::Password.one_way_hash(conf)
+
+      params['user']['auth_type'] = Thales::Authentication::Password::AUTH_TYPE
+    end
+  end
+
+  private
+  def set_roles(user, params)
+    if ! params['role'].nil?
+      user.roles = Role.find(params['role'])
+    else
+      user.roles.clear
+    end
+  end
+
 end

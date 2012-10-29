@@ -1,19 +1,38 @@
+<% content_for(:page_title) do "User: #{@user.givenname} #{@user.surname}" end %>
+<% content_for(:page_heading) do "User: #{@user.givenname} #{@user.surname}" end %>
+
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Uuid:</b>
-  <%= @user.uuid %>
-</p>
+<div id="user">
+<dl>
+  <dt>Surname</dt><%#
+%><dd><%= @user.surname %></dd><%#
+%><dt>Givenname:</dt><%#
+%><dd><%= @user.givenname %></dd><%#
+%><dt>Roles:</dt><%#
+%><dd>
+    <% @user.roles.map { |r| r.shortname }.sort.each do |role_name| %>
+      <span><%= role_name %></span>
+    <% end %>
+  </dd><%#
+%><dt>Authentication:</dt><%#
+%><dd>
+    <%= case@user.auth_type
+	when nil
+	'[login not permitted]'
+	when Thales::Authentication::Password::AUTH_TYPE
+	  '[password]'
+	else
+	  '[unknown]'
+	end %>
+    <%= @user.auth_name %>
+    (<%= @user.auth_value %>)
+  </dd><%#
+%><dt>UUID</dt><%#
+%><dd><%= @user.uuid %></dd>
+</dl>
 
-<p>
-  <b>Surname:</b>
-  <%= @user.surname %>
-</p>
-
-<p>
-  <b>Givenname:</b>
-  <%= @user.givenname %>
-</p>
+</div>
 
 
 <%= link_to 'Edit', edit_user_path(@user) %> |

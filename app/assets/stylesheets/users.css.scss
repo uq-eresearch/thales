@@ -1,3 +1,62 @@
 // Place all the styles related to the Users controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+$mainWidth: 960px;
+
+$contentMargin: 20px;
+$contentWidth: 674px;
+$contentRadius: 8px;
+
+$labelWidth: 220px;
+$labelMarginTop: 7px;
+$labelMarginRight: 10px;
+$labelMarginBottom: 0px;
+
+$labelPaddingTop: 2px;
+
+$valueWidth: $contentWidth - ($labelWidth + $labelMarginRight);
+
+/* Style for index */
+
+table#users {
+ width: $contentWidth;
+ border-collapse: collapse;
+
+ tr:hover {
+  background: #eee;
+ }
+}
+
+/* Style for show and edit */
+
+div#user {
+  margin: 0; border: 0;  padding: 0;
+  width: $contentWidth;
+
+  dl {
+    margin: 0;
+
+    dt {
+      display: inline-block;
+      width: $labelWidth;
+      margin: $labelMarginTop $labelMarginRight $labelMarginBottom 0;
+      border: 0;
+      padding: $labelPaddingTop 0 0 0;
+      text-align: right;
+      vertical-align: top;
+      font-size: small;
+      font-weight: normal;
+      color: #666;
+    }
+
+    dd {
+      display: inline-block;
+      width: $valueWidth;
+      margin: $labelMarginTop 0 $labelMarginBottom 0;
+      border: 0; padding: 0;
+      vertical-align: top;
+    }
+
+  } /* dl */
+}

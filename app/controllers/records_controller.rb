@@ -3,6 +3,9 @@ require 'uuid'
 require 'thales/properties/basic/collection'
 
 class RecordsController < ApplicationController
+
+  before_filter :authenticate
+
   # GET /records
   # GET /records.json
   def index

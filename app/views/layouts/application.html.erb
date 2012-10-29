@@ -20,9 +20,23 @@
   </ul>
 </div>
 
+
 <div id="content-primary">
 <%= yield %>
+<%= login_block %>
 </div>
+
+<div id="content-secondary">
+  <h1 class="accordion-title">On this site</h1>
+  <div id="accordian">
+    <ul id="navigation">
+      <li><a class="head link" href="/records">Records</a></li>
+      <li><a class="head link" href="/roles">Roles</a></li>
+      <li><a class="head link" href="/users">Users</a></li>
+    </ul>
+  </div>
+</div>
+
 
 <div id="footer">
  <div class="inner">

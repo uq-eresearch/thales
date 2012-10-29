@@ -126,11 +126,6 @@ rails generate model IdentifierUser \
   value:string \
   --quiet
 
-rails generate model RoleUser \
-  user:references \
-  role:references \
-  --quiet
-
 # Records are associated with users
 
 rails generate scaffold Capacity \

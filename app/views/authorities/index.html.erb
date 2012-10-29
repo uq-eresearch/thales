@@ -2,9 +2,9 @@
 
 <table>
   <tr>
-    <th>Uuid</th>
     <th>Name</th>
     <th>Shortname</th>
+    <th>UUID</th>
     <th></th>
     <th></th>
     <th></th>
@@ -12,9 +12,9 @@
 
 <% @authorities.each do |authority| %>
   <tr>
-    <td><%= authority.uuid %></td>
     <td><%= authority.name %></td>
     <td><%= authority.shortname %></td>
+    <td><%= authority.uuid %></td>
     <td><%= link_to 'Show', authority %></td>
     <td><%= link_to 'Edit', edit_authority_path(authority) %></td>
     <td><%= link_to 'Destroy', authority, method: :delete, data: { confirm: 'Are you sure?' } %></td>

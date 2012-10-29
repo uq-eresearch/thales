@@ -1,12 +1,7 @@
 <% content_for(:page_title) do "Records" end %>
 <% content_for(:page_heading) do "Description records" end %>
 
-<!--
-<div id="searchform">
-<%= label_tag(:query, 'Search') %>
-<%= search_field_tag('query', nil) %>
-</div>
--->
+<%= search_block %>
 
 <table id="gradient-style" summary="Results">
   <thead>
@@ -37,3 +32,4 @@
 </table>        
 
 <p><%= link_to 'New record', new_record_path, :class => 'new' %></p>
+

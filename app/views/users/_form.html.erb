@@ -11,19 +11,35 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :uuid %><br />
-    <%= f.text_field :uuid %>
-  </div>
-  <div class="field">
-    <%= f.label :surname %><br />
-    <%= f.text_field :surname %>
-  </div>
-  <div class="field">
-    <%= f.label :givenname %><br />
-    <%= f.text_field :givenname %>
-  </div>
+<div id="user">
+<dl>
+  <dt><%= f.label :givenname %></dt><%#
+%><dd><%= f.text_field :givenname %></dd><%#
+
+%><dt><%= f.label :surname %></dt><%#
+%><dd><%= f.text_field :surname %></dd><%#
+
+%><dt>Roles</dt><%#
+%><dd>
+    <% Role.order('name').each do |role| %>
+      <%= check_box_tag "role[]", role.id, @user.roles.include?(role), :id => "role_#{role.id}" %>
+      <%= label_tag("role_#{role.id}", role.name) %><br/>
+    <% end %>
+  </dd><%#
+
+%><dt><%= f.label :auth_name, 'Username' %></dt><%#
+%><dd><%= f.text_field :auth_name %><%#
+
+%><dt><%= f.label :auth_value, 'Password' %></dt><%#
+%><dd><%= f.password_field :auth_value %></dd><%#
+
+%><dt></dt><%#
+%><dd><%= f.password_field :auth_value_confirmation %></dd>
+</dl>  
+
   <div class="actions">
     <%= f.submit %>
-  </div>
+  </div>  
+</div>
+
 <% end %>

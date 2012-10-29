@@ -1,5 +1,31 @@
 /* Site CSS */
 
+$mainWidth: 960px;
+
+$contentMargin: 20px;
+$contentWidth: 674px;
+$contentRadius: 8px;
+
+$itemMarginTop: 20px;
+$itemMarginBottom: 0px;
+
+$labelWidth: 220px;
+$labelMarginRight: 10px;
+$labelPaddingTop: 2px;
+
+$fieldWidth: $contentWidth - ($labelWidth + $labelMarginRight);
+
+$fieldextraMarginTop: 8px;
+
+$inputMargin: 0px;
+$inputBorder: 1px;
+$inputPadding: $labelPaddingTop;
+$inputWidth: $fieldWidth - 2 * ($inputMargin + $inputBorder + $inputPadding);
+
+$actionsMarginTop: 30px;
+$actionsMarginBottom: 20px;
+
+
 body {
  background: #eee;
  margin: 0; border: 0; padding: 0;
@@ -20,7 +46,7 @@ div.inner {
 h1 {
  margin: 0;
  padding: 1ex 0em;
- color: white;
+ color: yellow;
  font-size: x-large;
  font-weight: normal;
 }
@@ -79,3 +105,68 @@ div#footer a:hover {
  color: black;
 }
 
+div#login-block {
+  position: fixed;
+  top: 1ex;
+  right: 1em;
+
+  p.username {
+    display: inline;
+    margin-right: 1em;
+    font-size: small;
+    color: #ccc;
+  }
+  /* p.username:before { content: "Welcome "; } */
+
+  p.login-link {
+    display: inline;
+
+    a {
+      color: white;
+      font-size: x-small;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+  }
+}
+
+/* Navigation */
+
+div#content-secondary {
+ position: absolute;
+ top: 0;
+ right: 0;
+ width: 200px;
+ margin: 90px auto;
+ border: 1px solid #eee;
+ border-radius: 8px;
+ padding: 18px;
+ background: lightblue;
+
+ h1 {
+   font-size: medium;
+ }
+  
+ ul {
+   display: block;
+   margin: 0; border: 0; padding: 0;
+   li {
+     margin: 0; border: 0; padding: 0;
+     list-style: none;
+     a {
+       display: block;
+       margin: 0; border: 0;
+       padding: 1ex 1em;
+       text-decoration: none;
+       background: lightgreen;
+     }
+     a:hover {
+	 background: black;
+     }
+   }
+ }
+}

@@ -1,0 +1,47 @@
+// Place all the styles related to the Sessions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$labelWidth: 100px;
+$labelPaddingR: 10px;
+$fieldWidth: 200px;
+
+$blockRadius: 8px;
+$blockPadding: 10px;
+$blockWidth: $labelWidth + $labelPaddingR + $fieldWidth + 10px;
+
+div#session-login {
+
+  dl {
+    display: block;
+    margin: 0;
+    width: $blockWidth;
+    padding: $blockPadding;
+    border-radius: $blockRadius $blockRadius 0 0;
+    background: #ccc;
+
+    dt {
+      display: inline-block;
+      margin: 0;
+      padding: 0 $labelPaddingR 0 0;
+      width: $labelWidth;
+      text-align: right;
+    }
+    dd {
+      display: inline-block;
+      margin: 0;
+
+      input {
+	width: $fieldWidth;
+      }
+    }
+  }
+
+  div.actions {
+    width: $blockWidth;
+    border-radius: 0 0 $blockRadius $blockRadius;
+    padding: $blockPadding;
+    text-align: right;
+    background: #ccc;
+  }
+}

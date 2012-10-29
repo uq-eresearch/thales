@@ -31,10 +31,9 @@ var thales = (function() {
 	var t = $(document.createTextNode("World"));
 	newInput = $(document.createElement("input"));
 	newInput.attr('id', ident);
-	newInput.attr('maxlength', 42);
+	newInput.attr('maxlength', 42); /* TODO */
 	newInput.attr('name', 'collection[' + name_base + '][' + num + ']');
 	newInput.attr('type', 'text');
-	newInput.attr('value', 'Value: ' + label_text);
 	newDD = $(document.createElement("dd"));
 	newDD.append(newInput);
 	dl.append(newDD);

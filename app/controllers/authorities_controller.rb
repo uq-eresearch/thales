@@ -1,3 +1,5 @@
+require 'uuid'
+
 class AuthoritiesController < ApplicationController
   # GET /authorities
   # GET /authorities.json
@@ -41,6 +43,7 @@ class AuthoritiesController < ApplicationController
   # POST /authorities.json
   def create
     @authority = Authority.new(params[:authority])
+    @authority.uuid = UUID.new.generate(:compact)
 
     respond_to do |format|
       if @authority.save

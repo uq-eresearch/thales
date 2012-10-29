@@ -1,8 +1,13 @@
+require 'uuid'
+
 class RolesController < ApplicationController
+
+  before_filter :authenticate
+
   # GET /roles
   # GET /roles.json
   def index
-    @roles = Role.all
+    @roles = Role.order(:name).all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -41,6 +46,7 @@ class RolesController < ApplicationController
   # POST /roles.json
   def create
     @role = Role.new(params[:role])
+    @role.uuid = UUID.new.generate(:compact)
 
     respond_to do |format|
       if @role.save

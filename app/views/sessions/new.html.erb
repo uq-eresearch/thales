@@ -1,0 +1,20 @@
+<% content_for(:page_title) do 'Login' end %>
+<% content_for(:page_heading) do 'Login' end %>
+
+<p id="notice"><%= notice %></p>
+
+<div id="session-login">
+
+  <%= form_tag session_path do %>
+
+  <dl>
+    <dt><%= label_tag :username %></dt><dd><%= text_field_tag :username %></dd>
+    <dt><%= label_tag :password %></dt><dd><%= password_field_tag :password %></dd>
+  </dl>
+
+  <div class="actions">
+    <%= submit_tag 'Login' %>
+  </div>
+  <% end %>
+
+</div>

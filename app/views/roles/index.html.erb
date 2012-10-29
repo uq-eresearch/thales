@@ -1,8 +1,10 @@
-<h1>Listing roles</h1>
+<% content_for(:page_title) do "Roles" end %>
+<% content_for(:page_heading) do "Roles" end %>
 
-<table>
+<p id="notice"><%= notice %></p>
+
+<table id="roles">
   <tr>
-    <th>Uuid</th>
     <th>Name</th>
     <th>Shortname</th>
     <th></th>
@@ -12,12 +14,11 @@
 
 <% @roles.each do |role| %>
   <tr>
-    <td><%= role.uuid %></td>
     <td><%= role.name %></td>
     <td><%= role.shortname %></td>
-    <td><%= link_to 'Show', role %></td>
+    <td><%= link_to 'Show', role, :title => "Show: #{role.uuid}" %></td>
     <td><%= link_to 'Edit', edit_role_path(role) %></td>
-    <td><%= link_to 'Destroy', role, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= link_to 'Delete', role, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
 </table>

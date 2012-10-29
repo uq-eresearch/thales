@@ -1,23 +1,20 @@
-<h1>Listing users</h1>
+<% content_for(:page_title) do "Users" end %>
+<% content_for(:page_heading) do "Users" end %>
 
-<table>
+<table id="users">
   <tr>
-    <th>Uuid</th>
     <th>Surname</th>
     <th>Givenname</th>
-    <th></th>
-    <th></th>
     <th></th>
   </tr>
 
 <% @users.each do |user| %>
   <tr>
-    <td><%= user.uuid %></td>
     <td><%= user.surname %></td>
-    <td><%= user.givenname %></td>
-    <td><%= link_to 'Show', user %></td>
-    <td><%= link_to 'Edit', edit_user_path(user) %></td>
-    <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td class="givenname"><%= user.givenname %></td>
+    <td><%= link_to 'Show', user, :title => "Show: #{user.uuid}" %>
+    <%= link_to 'Edit', edit_user_path(user) %>
+    <%= link_to 'Delete', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
 </table>
