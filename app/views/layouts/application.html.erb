@@ -6,7 +6,9 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
+
 <body>
+
 <div id="header">
  <div class="inner">
   <h1><%= yield(:page_heading) %></h1>
@@ -14,29 +16,24 @@
 </div>
 
 <div id="topnav">
+ <div class="inner">
   <ul>
     <li><a href="/">Home</a></li>
-    <li><a href="/records">Manage</a></li>
+    <li><a href="<%= records_path %>">Records</a></li>
+    <li><a href="/">Settings</a></li>
+    <li><a href="<%= users_path %>">Administration</a></li>
+    <li><a href="/help">Help</a></li>
   </ul>
+  <%= login_block %>
+ </div>
 </div>
 
-
-<div id="content-primary">
+<div id="main">
+<div class="inner">
 <%= yield %>
-<%= login_block %>
+<%= yield(:navigation) %>
 </div>
-
-<div id="content-secondary">
-  <h1 class="accordion-title">On this site</h1>
-  <div id="accordian">
-    <ul id="navigation">
-      <li><a class="head link" href="/records">Records</a></li>
-      <li><a class="head link" href="/roles">Roles</a></li>
-      <li><a class="head link" href="/users">Users</a></li>
-    </ul>
-  </div>
 </div>
-
 
 <div id="footer">
  <div class="inner">

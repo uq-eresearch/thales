@@ -35,12 +35,12 @@ module ApplicationHelper
   # Generates HTML for record searching
 
   def search_block
-    content_tag :div, :id => 'search' do
-      form_tag records_path('.', { :id => 'search' }) do
+    content_tag :div, :id => 'record-search' do
+      form_tag records_path, { :method => 'get', :id => 'search' } do
         [
          label_tag(:q, 'Search'),
-         search_field_tag('q', nil),
-         submit_tag('Search')
+         search_field_tag('q', nil, :placeholder => 'Search for records'),
+         submit_tag('Search', :id => 'submit')
         ].reduce :+
       end # form
     end # div

@@ -32,8 +32,28 @@
 %><dd><%= @user.uuid %></dd>
 </dl>
 
+
+  <div id="editActions">
+  <%=
+    form_tag(edit_user_path(@user), :method => :get) do 
+      submit_tag('Edit this user')
+    end
+  %>
+  </div>
+
 </div>
 
-
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>
+<% content_for(:navigation) do %>
+<ul id="navigation">
+  <li><a class="head" href="<%= records_path %>">Records</a></li>
+  <li><a class="head" href="/">Settings</a></li>
+  <li><a class="head" href="/users">Administration</a></li>
+    <ul class="section">
+      <li><a href="<%= users_path %>">Users</a></li>
+      <li><a href="<%= new_user_path %>">Create new user</a></li>
+      <li><a href="<%= roles_path %>">Roles</a></li>
+    </ul>
+  </li>
+  <li><a class="head link" href="/help">Help</a></li>
+</ul>
+<% end %>

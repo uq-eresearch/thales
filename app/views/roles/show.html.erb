@@ -1,9 +1,9 @@
+<% content_for(:page_title) do "Role: #{@role.shortname}" end %>
+<% content_for(:page_heading) do "Role: #{@role.name}" end %>
+
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Uuid:</b>
-  <%= @role.uuid %>
-</p>
+<div id="role">
 
 <p>
   <b>Name:</b>
@@ -15,6 +15,32 @@
   <%= @role.shortname %>
 </p>
 
+<p>
+  <b>UUID:</b>
+  <%= @role.uuid %>
+</p>
 
-<%= link_to 'Edit', edit_role_path(@role) %> |
-<%= link_to 'Back', roles_path %>
+  <div id="editActions">
+  <%=
+    form_tag(edit_role_path(@role), :method => :get) do 
+      submit_tag('Edit this role')
+    end
+  %>
+  </div>
+</div>
+
+
+<% content_for(:navigation) do %>
+<ul id="navigation">
+  <li><a class="head" href="<%= records_path %>">Records</a></li>
+  <li><a class="head" href="/">Settings</a></li>
+  <li><a class="head" href="<%= users_path %>">Administration</a></li>
+    <ul class="section">
+      <li><a href="<%= users_path %>">Users</a></li>
+      <li><a href="<%= roles_path %>">Roles</a></li>
+      <li><a href="<%= new_role_path %>">Create new role</a></li>
+    </ul>
+  </li>
+  <li><a class="head link" href="/help">Help</a></li>
+</ul>
+<% end %>

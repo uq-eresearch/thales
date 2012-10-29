@@ -40,5 +40,18 @@
 
 </div>
 
-<p class="back"><%= link_to 'Back', record_path('.') %></p>
-<%= search_block %>
+
+<% content_for(:navigation) do %>
+<ul id="navigation">
+  <li><a class="head" href="#">Records</a>
+    <ul class="section">
+      <li><a href="<%= records_path %>">Search</a></li>
+      <li><a href="<%= records_path %>">Browse</a></li>
+      <li><a href="<%= new_record_path %>">Create a new collection record</a></li>
+    </ul>
+  </li>
+  <li><a class="head" href="/">Settings</a></li>
+  <li><a class="head" href="<%= users_path %>">Administration</a></li>
+  <li><a class="head link" href="/help">Help</a></li>
+</ul>
+<% end %>

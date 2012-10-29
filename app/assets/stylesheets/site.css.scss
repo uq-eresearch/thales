@@ -4,7 +4,7 @@ $mainWidth: 960px;
 
 $contentMargin: 20px;
 $contentWidth: 674px;
-$contentRadius: 8px;
+$contentPadding: 18px;
 
 $itemMarginTop: 20px;
 $itemMarginBottom: 0px;
@@ -25,7 +25,6 @@ $inputWidth: $fieldWidth - 2 * ($inputMargin + $inputBorder + $inputPadding);
 $actionsMarginTop: 30px;
 $actionsMarginBottom: 20px;
 
-
 body {
  background: #eee;
  margin: 0; border: 0; padding: 0;
@@ -40,13 +39,14 @@ div#header {
  min-height: 64px
 }
 div.inner {
+ position: relative;
  margin: 0 auto;
- width: 960px;
+ width: $mainWidth;
 }
 h1 {
  margin: 0;
  padding: 1ex 0em;
- color: yellow;
+ color: white;
  font-size: x-large;
  font-weight: normal;
 }
@@ -56,14 +56,16 @@ div#topnav {
   margin: 0; border:0; padding: 0;
   background: black;
   font-size: 9pt;
-}
-div#topnav ul {
- margin: 0 auto;
- width: 960px;
-}
-div#topnav li {
-  display: inline-block;
-  margin: 0; border:0; padding: 0;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: inline-block;
+      margin: 0; border:0; padding: 0;
+    }
+  }
 }
 div#topnav a {
  display: inline-block;
@@ -74,17 +76,18 @@ div#topnav a {
  text-decoration: none;
 }
 div#topnav a:hover {
- background: #999;
- border-bottom: white;
+  color: black;
+  background: #999;
+  border-bottom: white;
+  text-decoration: underline;
 }
 
-div#content-primary {
- position: relative;
- width: 960px;
- margin: 16px auto;
+div#main div.inner {
+ margin: 18px auto;
  border: 1px solid #eee;
  border-radius: 8px;
- padding: 18px;
+ padding: $contentPadding;
+ width: $mainWidth - $contentPadding * 2;
  background: white;
 }
 
@@ -106,15 +109,16 @@ div#footer a:hover {
 }
 
 div#login-block {
-  position: fixed;
-  top: 1ex;
-  right: 1em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: black;
+  font-size: 9pt;
 
   p.username {
     display: inline;
     margin-right: 1em;
-    font-size: small;
-    color: #ccc;
+    color: #999;
   }
   /* p.username:before { content: "Welcome "; } */
 
@@ -123,50 +127,51 @@ div#login-block {
 
     a {
       color: white;
-      font-size: x-small;
       text-transform: uppercase;
       text-decoration: none;
     }
     a:hover {
+      color: black;
       text-decoration: underline;
     }
-
   }
 }
 
 /* Navigation */
 
-div#content-secondary {
+ul#navigation {
  position: absolute;
- top: 0;
- right: 0;
- width: 200px;
- margin: 90px auto;
- border: 1px solid #eee;
+ top: $contentPadding;
+ right: $contentPadding;
+ width: $mainWidth - $contentWidth - 3 * $contentPadding;
+ margin: 0;
+ border: 0;
  border-radius: 8px;
- padding: 18px;
- background: lightblue;
-
- h1 {
-   font-size: medium;
- }
-  
- ul {
-   display: block;
-   margin: 0; border: 0; padding: 0;
+ padding: 8px 0;
+ background: #ddd;
+   ul {
+     padding: 0;
+   }
    li {
      margin: 0; border: 0; padding: 0;
      list-style: none;
      a {
        display: block;
        margin: 0; border: 0;
-       padding: 1ex 1em;
+       padding: 1ex 1em 1ex 2em;
        text-decoration: none;
-       background: lightgreen;
+       background: #ddd;
+       color: #333;
+       font-size: small;
      }
      a:hover {
-	 background: black;
+       text-decoration: underline;
+       background: #666;
+       color: #fff;
+     }
+     a.head {
+       padding: 1ex 1em 1ex 1em;
+       font-weight: bold;
      }
    }
- }
 }

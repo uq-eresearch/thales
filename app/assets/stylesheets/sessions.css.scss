@@ -45,3 +45,26 @@ div#session-login {
     background: #ccc;
   }
 }
+
+/* Login block that appears on every page. */
+
+div#topnav-inner {
+  position: relative;
+}
+
+div#login-block {
+ position: absolute;
+ top: 0;
+ right: 0;
+ display: block;
+
+ p.username {
+   display: inline-block;
+   margin: 0 1em 0 0;
+   color: #999;
+ }
+ p.login-link {
+   display: inline-block;
+   margin: 0;
+ }
+}
