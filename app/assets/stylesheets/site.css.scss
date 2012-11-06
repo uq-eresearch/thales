@@ -5,6 +5,7 @@ $mainWidth: 960px;
 $contentMargin: 20px;
 $contentWidth: 674px;
 $contentPadding: 18px;
+$contentMinHeight: 210px;
 
 $itemMarginTop: 20px;
 $itemMarginBottom: 0px;
@@ -89,6 +90,7 @@ div#main div.inner {
  padding: $contentPadding;
  width: $mainWidth - $contentPadding * 2;
  background: white;
+ min-height: $contentMinHeight;
 }
 
 #notice {
