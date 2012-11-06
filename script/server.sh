@@ -6,7 +6,7 @@
 #----------------------------------------------------------------
 
 if [ -z "$PORT" ]; then
-  PORT=10000
+  PORT=3000
 fi
 
 # Change to Rails project top level directory
