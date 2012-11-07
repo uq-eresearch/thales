@@ -21,7 +21,7 @@
            display_title = '(untitled)'
 	 end %>
       <td><h1><%= link_to display_title, record, :title => record.uuid %></h1>
-	<span>This is an example</span></td>
+	<span><%= collection.description %></span></td>
       <%# <%= link_to 'Edit', edit_record_path(record) %>
     </tr>
     <% end %>

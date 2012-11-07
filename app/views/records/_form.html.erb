@@ -1,5 +1,9 @@
 <div id="editform">
 
+<% max_short_length = 40 %>
+<% max_length = 255 %>
+<% max_long_length = 255 %>
+
 <%= form_for(@record) do |f| %>
 
   <% if @record.errors.any? %>
@@ -23,21 +27,21 @@
 -->
 
 <h3>Data content</h3>
-<%= field_text_1('title', 'Title', @collection.title, 80) %>
-<%= field_text_0n('altTitle', 'Alternative title', @collection.alt_titles, 80) %>
-<%= field_area_1('description', 'Description', @collection.description, 80) %>
+<%= field_text_1('title', 'Title', @collection.title, max_length) %>
+<%= field_text_0n('altTitle', 'Alternative title', @collection.alt_titles, max_length) %>
+<%= field_area_1('description', 'Description', @collection.description, max_long_length) %>
 <%= field_text_0n('extId', 'Identifier', [], 255) %>
 
 <h3>Coverage</h3>
 
-<%= field_text_0n('temporal', 'Time period covered', [], 40) %>
-<%= field_text_0n('spatial', 'Geographic Location', [], 40) %>
+<%= field_text_0n('temporal', 'Time period covered', [], max_length) %>
+<%= field_text_0n('spatial', 'Geographic Location', [], max_length) %>
 
 <h3>Topics</h3>
 
-<%= field_text_0n('FoR', 'Field of research (FoR)', [], 40) %>
-<%= field_text_0n('SEO', 'Socio-Economic Outcomes (SEO)', [], 40) %>
-<%= field_text_0n('keyword', 'Keyword (free text)', @collection.keywords, 40) %>
+<%= field_text_0n('FoR', 'Field of research (FoR)', [], max_short_length) %>
+<%= field_text_0n('SEO', 'Socio-Economic Outcomes (SEO)', [], max_short_length) %>
+<%= field_text_0n('keyword', 'Keyword (free text)', @collection.keywords, max_short_length) %>
 
 <h3>Data availability</h3>
 
@@ -47,9 +51,9 @@
 
 <p>Provide at least one of the following.</p>
 
-<%= field_area_1('rights_access', 'Access rights', @collection.rights_access, 80) %>
-<%= field_area_1('rights_statement', 'Rights statement', @collection.rights_statement, 80) %>
-<%= field_text_1('rights_licence', 'Licence', @collection.rights_licence, 80) %>
+<%= field_area_1('rights_access', 'Access rights', @collection.rights_access, max_length) %>
+<%= field_area_1('rights_statement', 'Rights statement', @collection.rights_statement, max_length) %>
+<%= field_text_1('rights_licence', 'Licence', @collection.rights_licence, max_length) %>
 
 <h3>People and projects</h3>
 
