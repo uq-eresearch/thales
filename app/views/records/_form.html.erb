@@ -30,36 +30,36 @@
 <%= field_text_1('title', 'Title', @collection.title, max_length) %>
 <%= field_text_0n('altTitle', 'Alternative title', @collection.alt_titles, max_length) %>
 <%= field_area_1('description', 'Description', @collection.description, max_long_length) %>
-<%= field_text_0n('extId', 'Identifier', [], 255) %>
-
-<h3>Coverage</h3>
-
-<%= field_text_0n('temporal', 'Time period covered', [], max_length) %>
-<%= field_text_0n('spatial', 'Geographic Location', [], max_length) %>
+<%= field_text_0n('identifier', 'Identifier', @collection.identifiers, 255) %>
 
 <h3>Topics</h3>
 
-<%= field_text_0n('FoR', 'Field of research (FoR)', [], max_short_length) %>
-<%= field_text_0n('SEO', 'Socio-Economic Outcomes (SEO)', [], max_short_length) %>
+<%= field_text_0n('FoR', 'Field of research (FoR)', @collection.for_codes, max_short_length) %>
+<%= field_text_0n('SEO', 'Socio-Economic Outcomes (SEO)', @collection.seo_codes, max_short_length) %>
 <%= field_text_0n('keyword', 'Keyword (free text)', @collection.keywords, max_short_length) %>
 
-<h3>Data availability</h3>
+<h3>Coverage</h3>
 
-<%= field_text_0n('url', 'Web page', @collection.urls, 255) %>
+<%= field_text_0n('temporal', 'Time period covered', @collection.temporal_coverages, max_length) %>
+<%= field_text_0n('spatial', 'Geographic location covered', @collection.spatial_coverages, max_length) %>
 
 <h3>Rights</h3>
 
 <p>Provide at least one of the following.</p>
 
 <%= field_area_1('rights_access', 'Access rights', @collection.rights_access, max_length) %>
-<%= field_area_1('rights_statement', 'Rights statement', @collection.rights_statement, max_length) %>
 <%= field_text_1('rights_licence', 'Licence', @collection.rights_licence, max_length) %>
+<%= field_area_1('rights_statement', 'IP rights statement', @collection.rights_statement, max_length) %>
+
+<h3>Data availability</h3>
+
+<%= field_text_0n('url', 'Web page', @collection.urls, 255) %>
 
 <h3>People and projects</h3>
 
-<%= field_text_0n('creator', 'Creator', [], 255) %>
-<%= field_text_0n('custodian', 'Custodian or contact', [], 255) %>
-<%= field_text_0n('project', 'Project', [], 255) %>
+<%= field_text_0n('creator', 'Creator', @collection.creators, 255) %>
+<%= field_text_0n('custodian', 'Custodian or contact', @collection.custodians, 255) %>
+<%= field_text_0n('project', 'Project', @collection.projects, 255) %>
 
 <!-- :confirm => question, -->
   <div id="submitActions">

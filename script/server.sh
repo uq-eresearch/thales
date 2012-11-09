@@ -83,7 +83,7 @@ fi
 case "$ACTION" in
     start)
 	if [ -f $PIDFILE ]; then
-	    echo "Error: PID file found: server already running?" >&2
+	    echo "Error: PID file found: server already running?: $PIDFILE" >&2
 	    exit 1
 	else
 	    rails server -d --port=${PORT}

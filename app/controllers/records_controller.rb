@@ -35,7 +35,7 @@ class RecordsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @record }
+      format.json { render json: @collection }
     end
   end
 
