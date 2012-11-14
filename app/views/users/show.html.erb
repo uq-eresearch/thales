@@ -21,12 +21,10 @@
 	when nil
 	'[login not permitted]'
 	when Thales::Authentication::Password::AUTH_TYPE
-	  '[password]'
+	  "#{@user.auth_name} (password)"
 	else
 	  '[unknown]'
 	end %>
-    <%= @user.auth_name %>
-    (<%= @user.auth_value %>)
   </dd><%#
 %><dt>UUID</dt><%#
 %><dd><%= @user.uuid %></dd>

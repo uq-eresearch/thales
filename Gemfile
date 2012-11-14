@@ -39,6 +39,7 @@ gem 'jquery-rails'
 
 gem 'nokogiri'
 gem 'uuid'
+gem 'pbkdf2'
 gem 'oai', :git => 'https://github.com/tjdett/ruby-oai.git', :branch => 'next'
 
 #EOF

@@ -2,7 +2,8 @@
 #
 # Copyright (C) 2012, The University of Queensland.
 
-require 'digest/sha1'
+require 'pbkdf2'
+require 'securerandom'
 
 module Thales
   module Authentication
@@ -25,19 +26,58 @@ module Thales
           nil # fail
         elsif user.auth_value.nil?
           user # success (no password)
-        elsif user.auth_value != one_way_hash(password)
-          nil # fail
         else
-          user # success
+          (i, s, k) = decode(user.auth_value)
+          if match?(i, s, k, password)
+            user # success
+          else
+            nil # fail
+          end
         end
       end
 
       # Transforms a plaintext password into the form that is stored
       # in the user model.
 
-      def self.one_way_hash(plaintext)
-        Digest::SHA1.hexdigest(plaintext)
-        # TODO: this needs enhancing for better security
+      SALT_LENGTH=8 # 64 bits
+      DEFAULT_ITERATIONS=10000
+      PREFIX = 'pbkdf2'
+
+      def self.salt_generate()
+        SecureRandom.random_bytes(SALT_LENGTH)
+      end
+
+      def self.password_to_key(iterations, salt, password)
+        PBKDF2.new(:password => password,
+                   :salt => salt,
+                   :iterations => iterations,
+                   :hash_function => 'SHA256').bin_string
+      end
+
+      def self.match?(iterations, salt, key, password)
+        return (password_to_key(iterations, salt, password) == key)
+      end
+
+
+      def self.encode(iterations, salt, password)
+        if salt.nil?
+          salt = salt_generate
+        end
+        k = password_to_key(iterations, salt, password)
+        "#{PREFIX}/#{iterations}/#{salt.unpack('H*')[0]}/#{k.unpack('H*')[0]}"
+      end
+
+      def self.decode(value)
+        (id, i, s, k) = value.split(/\//)
+
+        iterations = i.to_i
+
+        raise "internal error: not #{PREFIX}" if id != PREFIX
+        raise "internal error: iterations bad format" if iterations == 0
+
+        salt = [s].pack('H*')
+        key = [k].pack('H*')
+        [iterations, salt, key]
       end
 
     end

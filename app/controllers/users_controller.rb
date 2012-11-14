@@ -105,12 +105,15 @@ class UsersController < ApplicationController
       params['user'].delete('auth_value_confirmation')
     else
       # One-way-hash the values
-      params['user']['auth_value'] =
-        Thales::Authentication::Password.one_way_hash(pass)
-      params['user']['auth_value_confirmation'] =
-        Thales::Authentication::Password.one_way_hash(conf)
-
       params['user']['auth_type'] = Thales::Authentication::Password::AUTH_TYPE
+
+      iterations = Thales::Authentication::Password::DEFAULT_ITERATIONS
+      salt = Thales::Authentication::Password.salt_generate()
+
+      params['user']['auth_value'] =
+        Thales::Authentication::Password.encode(iterations, salt, pass)
+      params['user']['auth_value_confirmation'] =
+        Thales::Authentication::Password.encode(iterations, salt, conf)
     end
   end
 
