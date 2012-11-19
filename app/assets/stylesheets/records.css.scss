@@ -8,7 +8,7 @@ $contentMargin: 20px;
 $contentWidth: 674px;
 $contentRadius: 8px;
 
-$itemMarginTop: 20px;
+$itemMarginTop: 5px;
 $itemMarginBottom: 0px;
 
 $labelWidth: 220px;
@@ -129,6 +129,7 @@ div#show {
   display: inline-block;
 
   h3 {
+    margin: 10px 0 2px 0;
     color: lightgray;
     font-size: medium;
     font-weight: bold;
@@ -183,6 +184,9 @@ div#show {
         border: $inputBorder solid lightgray;
         padding: $inputPadding;
         width: $inputWidth;
+      }
+      input#upload_datafile {
+	  border: 0;
       }
       textarea {
         height: 64px;

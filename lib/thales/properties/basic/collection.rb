@@ -39,6 +39,7 @@ module Properties
       attr_accessor :rights_licence
       attr_accessor :rights_statement
 
+      attr_accessor :emails
       attr_accessor :urls
 
       attr_accessor :creators
@@ -61,6 +62,7 @@ module Properties
           @rights_access = get_singular_value(attr['rights_access'])
           @rights_licence = get_singular_value(attr['rights_licence'])
           @rights_statement = get_singular_value(attr['rights_statement'])
+          @emails = get_array_values(attr['email'])
           @urls = get_array_values(attr['url'])
           @creators = get_array_values(attr['creator'])
           @custodians = get_array_values(attr['custodian'])
@@ -73,6 +75,7 @@ module Properties
           @for_codes = []
           @seo_codes = []
           @keywords = []
+          @emails = []
           @urls = []
           @creators = []
           @custodians = []
@@ -123,6 +126,7 @@ module Properties
             if ! @rights_licence.nil?; xml.rights_licence @rights_licence end
             if ! @rights_statement.nil?; xml.rights_statement @rights_statement end
 
+            @emails.each { |x| xml.email x }
             @urls.each { |x| xml.url x }
 
             @creators.each { |x| xml.creator x }
@@ -197,6 +201,9 @@ module Properties
           obj.rights_statement = x.inner_text
         end
 
+        doc.xpath('/b:record/b:email', NS).each do |x|
+          obj.emails << x.inner_text
+        end
         doc.xpath('/b:record/b:url', NS).each do |x|
           obj.urls << x.inner_text
         end
