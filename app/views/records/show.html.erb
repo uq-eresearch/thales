@@ -1,10 +1,7 @@
-<% if @collection.title && ! @collection.title.blank?
-      display_title = @collection.title
-    else
-      display_title = '(untitled)'
-    end
+<% 
+   title = @data.title[0]
+   display_title = (title.nil? || title.blank?) ? '(untitled)' : title
  %>
-
 <% content_for(:page_title) do display_title end %>
 <% content_for(:page_heading) do display_title end %>
 
@@ -13,34 +10,8 @@
 <!-- <%= @record.uuid %> -->
 
 <div id="show">
-  <h3>Data content</h3>
-  <%= show_field(@collection.title, 'Title') %>
-  <%= show_field(@collection.alt_titles, 'Alternative title') %>
-  <%= show_field(@collection.description, 'Description') %>
-  <%= show_field(@collection.identifiers, 'Identifiers') %>
 
-  <h3>Topics</h3>
-  <%= show_field(@collection.keywords, 'Keyword') %>
-  <%= show_field(@collection.for_codes, 'Field of Research (FoR)') %>
-  <%= show_field(@collection.seo_codes, 'Socio-Economic Outcomes (SEO)') %>
-  
-  <h3>Information</h3>
-  <%= show_field(@collection.emails, 'Contact email') %>
-  <%= show_field(@collection.urls, 'Web page') %>
-
-  <h3>Coverage</h3>
-  <%= show_field(@collection.temporal_coverages, 'Time period covered') %>
-  <%= show_field(@collection.spatial_coverages, 'Geographic location covered') %>
-
-  <h3>Rights</h3>
-  <%= show_field(@collection.rights_access, 'Access rights') %>
-  <%= show_field(@collection.rights_statement, 'IP rights statement') %>
-  <%= show_field(@collection.rights_licence, 'Licence') %>
-
-  <h3>People and projects</h3>
-  <%= show_field(@collection.creators, 'Creator') %>
-  <%= show_field(@collection.custodians, 'Custodian or contact') %>
-  <%= show_field(@collection.projects, 'Project') %>
+  <%= show_all(@data, true) %>
 
   <div id="editActions">
   <%=
@@ -52,6 +23,7 @@
   %>
   </div>
 
+  <p id="updatedTime" title="<%= @record.updated_at.iso8601 %>">Last updated: <%= @record.updated_at.to_s(:rfc822) %></p>
 </div>
 
 

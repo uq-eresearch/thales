@@ -1,6 +1,8 @@
-
+#!/bin/env ruby
 #
-# Copyright (C) 2012, The University of Queensland.
+# Module to support username/password authentication.
+#
+# Copyright (C) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 require 'pbkdf2'
 require 'securerandom'
@@ -83,3 +85,5 @@ module Thales
     end
   end
 end
+
+#EOF

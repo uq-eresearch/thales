@@ -1,6 +1,6 @@
 
 require 'uuid'
-require 'thales/properties/basic/collection'
+require 'thales/datamodel/e_research'
 
 class RecordsController < ApplicationController
 
@@ -12,7 +12,7 @@ class RecordsController < ApplicationController
 
     @records = Record.all
 
-    @entries = @records.map { |rec| [ rec, collection_load(rec) ] }
+    @entries = @records.map { |rec| [ rec, foundation_load(rec) ] }
   
 #   @entries.sort! { |a,b| a[1].title <=> b[1].title }
 #   @entries.sort! { |a,b| b[0].uuid <=> a[0].uuid }
@@ -28,10 +28,7 @@ class RecordsController < ApplicationController
   def show
 
     @record = Record.find(params[:id])
-    @collection = collection_load(@record)
-
-    @collection.valid?
-    @msg = @collection.to_json
+    @data = foundation_load(@record)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -43,7 +40,7 @@ class RecordsController < ApplicationController
   # GET /records/new.json
   def new
     @record = Record.new
-    @collection = collection_new
+    @data = foundation_load
 
     respond_to do |format|
       format.html # new.html.erb
@@ -54,14 +51,14 @@ class RecordsController < ApplicationController
   # GET /records/1/edit
   def edit
     @record = Record.find(params[:id])
-    @collection = collection_load(@record)
+    @data = foundation_load(@record)
   end
 
   # POST /records
   # POST /records.json
   def create
 
-    collection = Properties::Basic::Collection.new(params[:collection])
+    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
 
     entry = Entry.new
     entry.property_id = edit_collection_property_id
@@ -83,11 +80,12 @@ class RecordsController < ApplicationController
   # PUT /records/1
   # PUT /records/1.json
   def update
-    collection = Properties::Basic::Collection.new(params[:collection])
+    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
 
     @record = Record.find(params[:id])
 
-    entries = @record.entries.where(:property_id => edit_collection_property_id)
+    entries = @record.entries.where(:property_id =>
+                                    edit_collection_property_id)
     if entries.size != 1
       # Expecting only one "edit collection" property in this current implementation
       raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
@@ -121,22 +119,24 @@ class RecordsController < ApplicationController
   end
 
 
-  def collection_new
-    Properties::Basic::Collection.new
-  end
-
   # Given a record, obtain the 'Test metadata format' property and
   # parse it into a collection.
 
-  def collection_load(record)
+  def foundation_load(record = nil)
 
-    entries = record.entries.where(:property_id => edit_collection_property_id)
-    if entries.size != 1
-      # Expecting only one "edit collection" property in this current implementation
-      raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
+    collection = Thales::Datamodel::EResearch::Collection.new
+
+    if ! record.nil?
+      entries = record.entries.where(:property_id => edit_collection_property_id)
+      if entries.size != 1
+        # Expecting only one "edit collection" property in this current implementation
+        raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
+      end
+
+      collection.deserialize(entries.first.value)
     end
 
-    Properties::Basic::Collection.deserialize(entries.first.value)
+    return collection
   end
 
   def edit_collection_property_id

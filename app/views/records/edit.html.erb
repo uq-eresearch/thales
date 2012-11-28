@@ -1,6 +1,9 @@
-<% content_for(:page_title) do "#{@collection.title} (editing)" end %>
-
-<% content_for(:page_heading) do "Editing record" end %>
+<% 
+   t = @data.title[0]
+   display_title = (t.nil? || t.blank?) ? 'Editing record' : "#{t} (editing)"
+ %>
+<% content_for(:page_title) do display_title end %>
+<% content_for(:page_heading) do 'Editing record' end %>
 
 <!-- UUID: <%= @record.uuid %> -->
 

@@ -244,6 +244,15 @@ div#show {
   }
 }
 
+p#updatedTime {
+ font-size: small;
+ color: #ccc;
+}
+
+span.link {
+ font-style: italic;
+}
+
 /* Create new record link on index page */
 
 a.new {

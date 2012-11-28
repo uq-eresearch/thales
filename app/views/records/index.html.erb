@@ -12,16 +12,18 @@
 
        @entries.each do |col|
          record = col[0]
-         collection = col[1]
+         data = col[1]
        %>
     <tr>
-      <% if collection.title && ! collection.title.blank?
-           display_title = collection.title
-	 else
+      <% 
+         title = data.title[0]
+	 if title.nil? || title.blank?
            display_title = '(untitled)'
+	 else
+           display_title = title
 	 end %>
       <td><h1><%= link_to display_title, record, :title => record.uuid %></h1>
-	<span><%= collection.description %></span></td>
+	<span><%= data.description[0] %></span></td>
       <%# <%= link_to 'Edit', edit_record_path(record) %>
     </tr>
     <% end %>
