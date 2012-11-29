@@ -7,6 +7,9 @@
 require 'pbkdf2'
 require 'securerandom'
 
+# $LOAD_PATH.unshift File.dirname(__FILE__) + '/../../..'
+# require 'app/models/user'
+
 module Thales
   module Authentication
 
@@ -41,7 +44,7 @@ module Thales
       # Transforms a plaintext password into the form that is stored
       # in the user model.
 
-      SALT_LENGTH=8 # 64 bits
+      SALT_LENGTH=32 # 256 bits
       DEFAULT_ITERATIONS=10000
       PREFIX = 'pbkdf2'
 

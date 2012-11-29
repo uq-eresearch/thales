@@ -68,14 +68,13 @@ module Thales
             @@profile.all do |global_id|
               symbol = @@profile.symbol_table[global_id]
               if symbol
-                
                 param = attr[symbol.to_s]
 
-                if ! param.nil?
+                if param
 
                   if ! param.respond_to? :each
                     # Single value
-                    if ! param.blank?
+                    if (param && param =~ /\S/)
                       init_one(global_id, param)
                     end
 
@@ -84,7 +83,7 @@ module Thales
                     param.keys.sort_by(&:to_i).map {
                       |key| param[key] # replace sorted keys with the values
                     }.select {
-                      |str| ! str.blank? # only keep the non-blank values
+                      |str| (str && str =~ /\S/) # keep non-blank
                     }.each do |p|
                       init_one(global_id, p) # populate
                     end
@@ -148,6 +147,21 @@ module Thales
           end
         end
 
+        def size
+          @properties.size
+        end
+
+        def ==(other)
+          if self.size != other.size
+            return false # not same set of properties
+          end
+          other.property_all do |gtype, other_values|
+            if @properties[gtype] != other_values
+              return false # property values are not equal
+            end
+          end
+          return true
+        end
 
         def serialize
 
@@ -166,7 +180,7 @@ module Thales
                     xml.link(value.hint,
                              :type => global_type, :uri => value.uri)
                   else
-                    raise "Internal error: #{value.class.to_s}"
+                    raise "Internal error: unsupported property value: class is #{value.class.to_s}"
                   end
                 end
               end

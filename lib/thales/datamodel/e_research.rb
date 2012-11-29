@@ -45,11 +45,11 @@ module Thales
           maxlength: 32,
           type: "#{PROPERTY_BASE_URI}/Keyword"
           
-          text_property :tag_for, 'Field of Research (FoR)',
+          text_property :tag_FoR, 'Field of Research (FoR)',
           maxlength: 8,
           type: "#{PROPERTY_BASE_URI}/tag_for"
           
-          text_property :tag_seo, 'Socio-Economic Outcomes (SEO)',
+          text_property :tag_SEO, 'Socio-Economic Outcomes (SEO)',
           maxlength: 8,
           type: "#{PROPERTY_BASE_URI}/tag_SEO"
         end
@@ -96,21 +96,21 @@ module Thales
         end
 
         group "Relationships" do
-          link_property :createdby, 'Creator of data',
+          link_property :createdBy, 'Creator of data',
           maxlength: DEFAULT_MAXLENGTH,
-          type: "#{PROPERTY_BASE_URI}/collection/createdby"
+          type: "#{PROPERTY_BASE_URI}/collection/createdBy"
           
-          link_property :managedby, 'Manager of data',
+          link_property :managedBy, 'Manager of data',
           maxlength: DEFAULT_MAXLENGTH,
-          type: "#{PROPERTY_BASE_URI}/collection/managedby"
+          type: "#{PROPERTY_BASE_URI}/collection/managedBy"
           
-          link_property :accessedby, 'Service to access data',
+          link_property :accessedBy, 'Service to access data',
           maxlength: DEFAULT_MAXLENGTH,
-          type: "#{PROPERTY_BASE_URI}/collection/accessedvia"
+          type: "#{PROPERTY_BASE_URI}/collection/accessedVia"
           
-          link_property :referencedby, 'Data referenced in publication',
+          link_property :referencedBy, 'Data referenced in publication',
           maxlength: DEFAULT_MAXLENGTH,
-          type: "#{PROPERTY_BASE_URI}/collection/referencedby"
+          type: "#{PROPERTY_BASE_URI}/collection/referencedBy"
         end
 
       end

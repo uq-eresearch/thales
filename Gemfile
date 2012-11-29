@@ -37,6 +37,7 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'debugger'
 
+gem 'rspec-rails'
 gem 'nokogiri'
 gem 'uuid'
 gem 'pbkdf2'
