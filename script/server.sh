@@ -13,6 +13,7 @@ DEFAULT_PORT=3000
 HELP=
 VERBOSE=
 PORT=$DEFAULT_PORT
+FORCE=
 
 ACTION=
 
@@ -24,17 +25,18 @@ PROG=`basename $0`
 getopt -T > /dev/null
 if [ $? -eq 4 ]; then
   # GNU enhanced getopt is available
-  eval set -- `getopt --long help,verbose,port: --options hvp: -- "$@"`
+  eval set -- `getopt --long help,verbose,port:,force --options fhvp: -- "$@"`
 else
     # Original getopt is available
-  eval set -- `getopt hvp: "$@"`
+  eval set -- `getopt fhvp: "$@"`
 fi
 
 while [ $# -gt 0 ]; do
   case "$1" in
+    -f | --force)       FORCE=yes;;
+    -p | --port)        PORT="$2"; shift;;
     -h | --help)        HELP=yes;;
     -v | --verbose)     VERBOSE=yes;;
-    -p | --port)        PORT="$2"; shift;;
     --)                 shift; break;;
   esac
   shift
@@ -45,6 +47,8 @@ if [ $HELP ]; then
   echo "Options:"
   echo "  -p | --port num"
   echo "        port to run server on (default: $DEFAULT_PORT)"
+  echo "  -f | --force"
+  echo "        force start the server even if the PID file exists"
   echo "  -h | --help"
   echo "        show this message"
   echo "  -v | --verbose"
@@ -83,16 +87,22 @@ fi
 case "$ACTION" in
     start)
 	if [ -f $PIDFILE ]; then
-	    echo "Error: PID file found: server already running?: $PIDFILE" >&2
-	    exit 1
-	else
-	    rails server -d --port=${PORT}
+	    ps -p `cat "$PIDFILE"` > /dev/null
+	    if [ $? -eq 0 ]; then
+  	      echo "Error: cannot start: server is already running." >&2
+	      exit 1
+	    fi
+	    if [ ! "$FORCE" ]; then
+  	      echo "Error: zombie PID file found: $PIDFILE (use --force to overwrite)" >&2
+	      exit 1
+	    fi
 	fi
+	rails server -d --port=${PORT}
 	;;
 
     stop)
 	if [ -f $PIDFILE ]; then
-	    kill -INT `cat tmp/pids/server.pid`
+	    kill -INT `cat "$PIDFILE"`
 	else
 	    echo "Warning: PID file not found: server not running?" >&2
 	fi
@@ -100,7 +110,7 @@ case "$ACTION" in
 
     restart)
 	if [ -f $PIDFILE ]; then
-	    kill -INT `cat tmp/pids/server.pid`
+	    kill -INT `cat "$PIDFILE"`
 	    sleep 1
 	    while [ -f $PIDFILE ]; do
 		echo "Waiting for server to stop"
@@ -115,7 +125,12 @@ case "$ACTION" in
 
     status)
 	if [ -f $PIDFILE ]; then
-	    echo "Rails server running (PID=`cat $PIDFILE`)"
+	    ps -p `cat "$PIDFILE"` > /dev/null
+	    if [ $? -eq 0 ]; then
+		echo "Rails server running (PID=`cat $PIDFILE`)"
+	    else
+		echo "Rails server not running (zombie PID file exists)"
+	    fi
 	else
 	    echo "Rails server not running"
 	fi
