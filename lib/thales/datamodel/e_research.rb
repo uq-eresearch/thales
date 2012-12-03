@@ -16,7 +16,7 @@ module Thales
     class EResearch
 
       DEFAULT_MAXLENGTH = 255
-      PROPERTY_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/property'
+      PROPERTY_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/property'
 
       class Common < Thales::Datamodel::Cornerstone::Record
 
@@ -37,7 +37,7 @@ module Thales
 
           text_property :identifier, 'Identifier',
           maxlength: DEFAULT_MAXLENGTH,
-          type: '#{PROPERTY_BASE_URI}/identifier'
+          type: "#{PROPERTY_BASE_URI}/identifier"
         end
 
         group "Topics" do

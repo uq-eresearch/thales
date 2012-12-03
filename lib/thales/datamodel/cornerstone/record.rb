@@ -164,49 +164,58 @@ module Thales
         end
 
         def serialize
-
-          builder = Nokogiri::XML::Builder.new do |xml|
-            xml.record('xmlns' => CONTAINER_NS) {
-
-              @properties.keys.sort.each do |global_type|
-                @properties[global_type].each do |value|
-
-                  # TODO: should use the profile to determine text or link
-
-                  if value.is_a? PropertyText
-                    xml.prop(value,
-                             :type => global_type)
-                  elsif value.is_a? PropertyLink
-                    xml.link(value.hint,
-                             :type => global_type, :uri => value.uri)
-                  else
-                    raise "Internal error: unsupported property value: class is #{value.class.to_s}"
-                  end
-                end
-              end
-            }
-          end
-
-          return builder.to_xml
+          Nokogiri::XML::Builder.new { |xml| serialize_xml(xml) }.to_xml
         end
 
-        def deserialize(str)
+        def serialize_xml(xml)
 
-          doc = Nokogiri::XML(str)
+          xml.record('xmlns' => CONTAINER_NS) {
 
-          doc.xpath('/c:record', NS).each do |root|
-            # Parse text properties
-            root.xpath('c:prop', NS).each do |element|
-              property_append(element.attribute('type').content,
-                              PropertyText.new(element.inner_text))
+            @properties.keys.sort.each do |global_type|
+              @properties[global_type].each do |value|
+
+                # TODO: should use the profile to determine text or link
+
+                if value.is_a? PropertyText
+                  xml.prop(value,
+                           :type => global_type)
+                elsif value.is_a? PropertyLink
+                  xml.link(value.hint,
+                           :type => global_type, :uri => value.uri)
+                else
+                  raise "Internal error: unsupported property value: class is #{value.class.to_s}"
+                end
+              end
             end
+          }
+        end
 
-            # Parse links
-            root.xpath('c:link', NS).each do |element|
-              property_append(element.attribute('type').content,
-                              PropertyLink.new(element.attribute('uri').content,
-                                               element.inner_text))
-            end
+        def deserialize(str_or_node)
+
+          if str_or_node.respond_to? :xpath
+            node = str_or_node
+          else
+            doc = Nokogiri::XML(str_or_node)
+            node = doc.root
+          end
+
+          node_ns = node.namespace
+          if (node.name != 'record' || node_ns.nil? || node_ns.href != CONTAINER_NS)
+            n = node_ns.nil? ? '' : "{#{node_ns.href}}"
+            raise "unexpected element: #{n}#{node.name}"
+          end
+
+          # Parse text properties
+          node.xpath('c:prop', NS).each do |element|
+            property_append(element.attribute('type').content,
+                            PropertyText.new(element.inner_text))
+          end
+
+          # Parse links
+          node.xpath('c:link', NS).each do |element|
+            property_append(element.attribute('type').content,
+                            PropertyLink.new(element.attribute('uri').content,
+                                             element.inner_text))
           end
 
           return self

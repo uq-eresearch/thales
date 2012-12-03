@@ -1,6 +1,7 @@
 
 require 'uuid'
-require 'thales/datamodel/e_research'
+require 'record'
+#require 'thales/datamodel/e_research'
 
 class RecordsController < ApplicationController
 
@@ -126,7 +127,7 @@ class RecordsController < ApplicationController
 
     collection = Thales::Datamodel::EResearch::Collection.new
 
-    if ! record.nil?
+    if record
       entries = record.entries.where(:property_id => edit_collection_property_id)
       if entries.size != 1
         # Expecting only one "edit collection" property in this current implementation
