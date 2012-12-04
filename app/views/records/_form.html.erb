@@ -18,7 +18,24 @@
     </div>
   <% end %>
 
-  <%= form_all(@data) %>
+  <%= form_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+
+  <%= form_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+
+  <%= form_group(@data, "Other",
+      :contact_email, :web_page) %>
+
+  <%= form_group(@data, "Coverage",
+      :temporal, :spatial) %>
+
+  <%= form_group(@data, "Rights",
+      :rights_access, :rights_statement, :rights_licence) %>
+
+  <%= form_group(@data, "Related records",
+      :createdBy, :managedBy, :accessedBy, :referencedBy) %>
+
 
 <!--
 creators

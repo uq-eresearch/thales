@@ -20,89 +20,65 @@ module Thales
         CONTAINER_NS = 'http://ns.research.data.uq.edu.au/2012/cornerstone'
         NS = { 'c' => CONTAINER_NS }
 
-        @@profile = Profile.new
+#        def self.text_property(symbol, label, options)
+#          define_method(symbol) {
+#            property_get(global_id)
+#          }
+#        end
+#
+#        def self.link_property(symbol, label, options)
+#          global_id = options[:type]
+#
+#          define_method(symbol) {
+#            property_get(global_id)
+#          }
+#        end
 
-        def self.profile
-          return @@profile
-        end
+#        def self.group(gname)
+#          @@profile.start_group(gname)
+#          yield
+#        end
 
-        def self.text_property(symbol, label, options)
-          opt = options.clone
-          opt[:is_link] = false
-          opt[:label] = label
-
-          global_id = options[:type]
-
-          @@profile[global_id] = opt
-          @@profile.symbol_table[global_id] = symbol
-
-          define_method(symbol) {
-            property_get(global_id)
-          }
-        end
-
-        def self.link_property(symbol, label, options)
-          opt = options.clone
-          opt[:is_link] = true
-          opt[:label] = label
-
-          global_id = options[:type]
-
-          @@profile[global_id] = opt
-          @@profile.symbol_table[global_id] = symbol
-
-          define_method(symbol) {
-            property_get(global_id)
-          }
-        end
-
-        def self.group(gname)
-          @@profile.start_group(gname)
-          yield
-        end
-
-        def initialize(attr = nil)
+        def initialize
           @properties = {}
+        end
 
+        def parse_form_parameters(profile, attr)
           if ! attr.nil?
-            @@profile.all do |global_id|
-              symbol = @@profile.symbol_table[global_id]
-              if symbol
-                param = attr[symbol.to_s]
+            profile.each do |symbol, info|
+              param = attr[symbol.to_s]
 
-                if param
-
-                  if ! param.respond_to? :each
-                    # Single value
-                    if (param && param =~ /\S/)
-                      init_one(global_id, param)
-                    end
-
-                  else
-                    # param contains { '1'=>,'10'=>,'11'=>,'2'=>,'3'=> ... }
-                    param.keys.sort_by(&:to_i).map {
-                      |key| param[key] # replace sorted keys with the values
-                    }.select {
-                      |str| (str && str =~ /\S/) # keep non-blank
-                    }.each do |p|
-                      init_one(global_id, p) # populate
-                    end
+              if param
+                if ! param.respond_to? :each
+                  # Single value
+                  if (param && param =~ /\S/)
+                    init_one(info, param)
                   end
-                end # if ! param.nil?
 
-              end # symbol defined
+                else
+                  # param contains { '1'=>,'10'=>,'11'=>,'2'=>,'3'=> ... }
+                  param.keys.sort_by(&:to_i).map {
+                    |key| param[key] # replace sorted keys with the values
+                  }.select {
+                    |str| (str && str =~ /\S/) # keep non-blank
+                  }.each do |p|
+                    init_one(info, p) # populate
+                  end
+                end
+              end # if ! param.nil?
+
             end
           end
         end
 
         private
-        def init_one(global_id, str)
+        def init_one(info, str)
           s = str.lstrip
           s.rstrip!
           s.gsub!(/\s+/, ' ')
 
-          if ! self.class.profile[global_id][:is_link]
-            property_append(global_id, PropertyText.new(s))
+          if ! info[:is_link]
+            property_append(info[:gid], PropertyText.new(s))
           else
             i = s.index(' ')
             if i.nil?
@@ -114,7 +90,7 @@ module Thales
               uri = s.slice(0, i)
               hint = s.slice(i + 1, s.size - i - 1)
             end
-            property_append(global_id, PropertyLink.new(uri, hint))
+            property_append(info[:gid], PropertyLink.new(uri, hint))
           end
         end
 

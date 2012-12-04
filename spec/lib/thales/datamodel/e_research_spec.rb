@@ -65,8 +65,7 @@ describe Thales::Datamodel::EResearch::Collection do
         "createdBy"=>"http://example.com Example Hint",
       }
 
-
-      r = Thales::Datamodel::Cornerstone::Record.new(attr)
+      r = Thales::Datamodel::EResearch::Collection.new(attr)
       r.should == expected_record
     end
 

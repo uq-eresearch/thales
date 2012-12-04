@@ -113,7 +113,7 @@ describe Thales::Datamodel::Cornerstone::Record do
         },
         "commit"=>"Create Record"}
 
-      r = Thales::Datamodel::Cornerstone::Record.new(attr)
+      r = Thales::Datamodel::EResearch::Collection.new(attr)
       r.size.should == 0
     end
   end
@@ -122,8 +122,7 @@ describe Thales::Datamodel::Cornerstone::Record do
 
     it 'reconstructs record from value produced by #serialize' do
       str = record.serialize
-      clone = Thales::Datamodel::Cornerstone::Record.new(str)
-      clone.deserialize(str)
+      clone = Thales::Datamodel::Cornerstone::Record.new.deserialize(str)
       clone.should == record
     end
   end

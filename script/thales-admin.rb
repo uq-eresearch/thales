@@ -34,20 +34,6 @@ NS = {
 
 #----------------------------------------------------------------
 
-def edit_collection_property_id
-  # Obtain the internal ID for the 'test collection' property
-
-  edit_collection_uuid = 'd4cdb36b73a94b5295ac93232d5ce7b1'
-
-  relation = Property.where(:uuid => edit_collection_uuid)
-  if relation.size != 1
-    raise "Internal error: property #{edit_collection_uuid}: expecting 1, #{relation.size} found"
-  end
-    
-  relation.first.id # result
-end
-
-
 def connect(adapter_name)
   fname = File.join(File.dirname(__FILE__), '..', 'config', 'database.yml')
   db_config = YAML::load(File.open(fname))
@@ -181,19 +167,10 @@ def export(options)
 
         # Load the record's collection data
         collection = Thales::Datamodel::EResearch::Collection.new
-
-        entries = record.entries.where(:property_id =>
-                                       edit_collection_property_id)
-        if entries.size != 1
-          # Expecting only one "edit collection" property
-          raise "Internal error: incorrect number of 'edit collection'"
-        end
-        collection.deserialize(entries.first.value)
+        collection.deserialize(record.ser_data)
 
         xml.record ({:uuid => record.uuid}) {
-          xml.entry {
-            collection.serialize_xml(xml)
-          }
+          collection.serialize_xml(xml)
         }
       end # Record.all.each
 

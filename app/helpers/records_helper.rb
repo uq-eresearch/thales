@@ -2,66 +2,74 @@ require 'thales/datamodel/e_research'
 
 module RecordsHelper
 
+  def show_all(data)
+    result = content_tag(:h3) { 'All properties' }
+
+    g_profile = {}
+    data.class.profile.each do |symbol, prop_info|
+      g_profile[prop_info[:gid]] = prop_info
+    end
+
+    data.property_all do |gid, values|
+      result += show_property(values, g_profile[gid])
+    end
+
+    return raw result
+  end
+
   # Generates HTML for displaying a field and its value(s)
   # on the show record page.
   #
   # The values can either be a string or an array. If it is nil, nothing
   # is generated.
 
-  def show_all(data, include_non_profile = false)
-    profile = data.class.profile
+  def show_group(data, heading, *symbols)
     result = ''
 
-    # Show properties known to the profile
+    symbols.each do |symbol|
+      values = data.send(symbol)
 
-    profile.all_groups do |heading, global_ids|
-
-      if (! global_ids.index { |gid| data.property_populated?(gid) }.nil?)
-        # Group has contents, so append the title and contents
-        result += content_tag(:h3) { heading }
-        global_ids.each do |gid|
-          f = show_field(data, gid)
-          if ! f.nil?
-            result += f
-          end
+      if ! values.empty?
+        if heading
+          result += content_tag(:h3) { heading }
+          heading = nil
         end
+        result += show_property(values, data.class.profile[symbol])
       end
 
     end
 
-    if include_non_profile
-      # Show properties not known to the profile
-
-      outputted_header = false
-      data.property_all do |global_id, values|
-        if ! profile.symbol_table.has_key?(global_id)
-          if ! outputted_header
-            result += content_tag(:h3) { 'Properties not in profile' }
-            outputted_header = true
-          end
-          result += show_field(data, global_id)
-        end
-      end
-    end
+#    if include_non_profile
+#      # Show properties not known to the profile
+#
+#      outputted_header = false
+#      data.property_all do |global_id, values|
+#        if ! profile.symbol_table.has_key?(global_id)
+#          if ! outputted_header
+#            result += content_tag(:h3) { 'Properties not in profile' }
+#            outputted_header = true
+#          end
+#          result += show_field(data, global_id)
+#        end
+#      end
+#    end
 
     return raw result
   end
 
-  def show_field(data, gid)
+  def show_property(values, prop_info = nil)
 
-    if ! data.property_populated?(gid)
-      return nil
-    end
+# TODO: what did this do?    if ! data.property_populated?(gid)
+#      return nil
+#    end
 
-    label = nil
-    profile_entry = data.class.profile[gid]
-    if profile_entry
-      text = profile_entry[:label]
-      if text && ! text.blank?
-        label = content_tag(:span) { text }
-      end
-    end
-    if label.nil?
+    text = prop_info ? prop_info[:label] : nil
+    if text && ! text.blank?
+      # Non-blank label exists, use it
+      label = content_tag(:span) { text }
+    else
+      # Derive a label from the gid
+      gid = prop_info ? prop_info[:gid] : '?'
       pos = gid.rindex('/')
       if ! pos.nil? && pos != gid.size - 1
         str = "Unknown property (...#{ gid.slice(pos, gid.size - pos) })"
@@ -76,7 +84,7 @@ module RecordsHelper
         c = ''
         first = true
 
-        data.property_get(gid).each do |val|
+        values.each do |val|
 
           c += content_tag(:dt) { label }
 
@@ -110,24 +118,19 @@ module RecordsHelper
     end # :div
   end
 
-  def form_all(data)
-    profile = data.class.profile
+  def form_group(data, heading, *symbols)
+    result = content_tag(:h3) { heading }
 
-    result = ''
-
-    profile.all_groups do |title, global_ids|
-      result += content_tag(:h3) { title }
-      global_ids.each do |gid|
-        result += field_prop(data, 
-                             data.class.profile[gid],
-                             profile.symbol_table[gid])
-      end
+    symbols.each do |symbol|
+      result += field_prop(symbol, data.class.profile[symbol],
+                           data.send(symbol))
     end
+
     return raw result
   end
 
-  def field_prop(data, info, symbol)
-    values = data.send(symbol)
+  def field_prop(symbol, info, values)
+
     name_base = symbol.to_s
 
     name = 'collection' + '[' + name_base + ']'

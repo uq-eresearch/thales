@@ -5,6 +5,8 @@ require 'record'
 
 class RecordsController < ApplicationController
 
+  SER_TYPE_COLLECTION = 1
+  
   before_filter :authenticate
 
   # GET /records
@@ -13,7 +15,10 @@ class RecordsController < ApplicationController
 
     @records = Record.all
 
-    @entries = @records.map { |rec| [ rec, foundation_load(rec) ] }
+    @entries = @records.map do |rec|
+      c = Thales::Datamodel::EResearch::Collection.new.deserialize(rec.ser_data)
+      [ rec, c ]
+    end
   
 #   @entries.sort! { |a,b| a[1].title <=> b[1].title }
 #   @entries.sort! { |a,b| b[0].uuid <=> a[0].uuid }
@@ -29,7 +34,7 @@ class RecordsController < ApplicationController
   def show
 
     @record = Record.find(params[:id])
-    @data = foundation_load(@record)
+    @data = Thales::Datamodel::EResearch::Collection.new.deserialize(@record.ser_data)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -41,7 +46,8 @@ class RecordsController < ApplicationController
   # GET /records/new.json
   def new
     @record = Record.new
-    @data = foundation_load
+    @data = Thales::Datamodel::EResearch::Collection.new
+#    @data = Thales::Datamodel::EResearch::Party.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -52,24 +58,19 @@ class RecordsController < ApplicationController
   # GET /records/1/edit
   def edit
     @record = Record.find(params[:id])
-    @data = foundation_load(@record)
+    @data = Thales::Datamodel::EResearch::Collection.new.deserialize(@record.ser_data)
   end
 
   # POST /records
   # POST /records.json
   def create
 
-    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
-
-    entry = Entry.new
-    entry.property_id = edit_collection_property_id
-    entry.order = 1
-    entry.value = collection.serialize
-    entry.save()
-
     @record = Record.new(params[:record])
     @record.uuid = UUID.new.generate(:compact)
-    @record.entries << entry
+    @record.ser_type = SER_TYPE_COLLECTION
+
+    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
+    @record.ser_data = collection.serialize
 
     if @record.save
       redirect_to @record, notice: 'Record was successfully created.'
@@ -81,20 +82,11 @@ class RecordsController < ApplicationController
   # PUT /records/1
   # PUT /records/1.json
   def update
-    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
-
     @record = Record.find(params[:id])
+    # @record.ser_type = SER_TYPE_COLLECTION
 
-    entries = @record.entries.where(:property_id =>
-                                    edit_collection_property_id)
-    if entries.size != 1
-      # Expecting only one "edit collection" property in this current implementation
-      raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
-    end
-    entry = entries.first
-
-    entry.value = collection.serialize()
-    entry.save()
+    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
+    @record.ser_data = collection.serialize
 
     respond_to do |format|
       if @record.update_attributes(params[:record])
@@ -117,40 +109,6 @@ class RecordsController < ApplicationController
       format.html { redirect_to records_url }
       format.json { head :no_content }
     end
-  end
-
-
-  # Given a record, obtain the 'Test metadata format' property and
-  # parse it into a collection.
-
-  def foundation_load(record = nil)
-
-    collection = Thales::Datamodel::EResearch::Collection.new
-
-    if record
-      entries = record.entries.where(:property_id => edit_collection_property_id)
-      if entries.size != 1
-        # Expecting only one "edit collection" property in this current implementation
-        raise "Internal error: incorrect number of 'edit collection' entries in record: #{entries.size} found, expecting 1"
-      end
-
-      collection.deserialize(entries.first.value)
-    end
-
-    return collection
-  end
-
-  def edit_collection_property_id
-    # Obtain the internal ID for the 'test collection' property
-
-    edit_collection_uuid = 'd4cdb36b73a94b5295ac93232d5ce7b1'
-
-    relation = Property.where(:uuid => edit_collection_uuid)
-    if relation.size != 1
-      raise "Internal error: property #{edit_collection_uuid}: expecting 1, #{relation.size} found"
-    end
-    
-    relation.first.id # result
   end
 
 end
