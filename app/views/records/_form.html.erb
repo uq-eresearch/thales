@@ -18,33 +18,65 @@
     </div>
   <% end %>
 
+  <%= f.hidden_field(:ser_type) %>
+
+  <% if @data.instance_of? Thales::Datamodel::EResearch::Collection %>
+  <p>COLLECTION</p>
   <%= form_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
-
   <%= form_group(@data, "Tags",
       :tag_keyword, :tag_FoR, :tag_SEO) %>
-
   <%= form_group(@data, "Other",
       :contact_email, :web_page) %>
-
   <%= form_group(@data, "Coverage",
       :temporal, :spatial) %>
-
   <%= form_group(@data, "Rights",
       :rights_access, :rights_statement, :rights_licence) %>
-
   <%= form_group(@data, "Related records",
       :createdBy, :managedBy, :accessedBy, :referencedBy) %>
 
+  <% elsif @data.instance_of? Thales::Datamodel::EResearch::Party %>
+  <p>PARTY</p>
+  <%= form_group(@data, "Name",
+      :name_prefix, :name_given, :name_family) %>
+  <%= form_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+  <%= form_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+  <%= form_group(@data, "Other",
+      :contact_email, :web_page) %>
+  <%= form_group(@data, "Related records",
+      :creatorFor, :managerFor, :operatorFor, :participantIn, :authorOf) %>
 
-<!--
-creators
-custodian or contact
-projects
--->
+  <% elsif @data.instance_of? Thales::Datamodel::EResearch::Activity %>
+  <p>ACTIVITY</p>
+  <%= form_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+  <%= form_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+  <%= form_group(@data, "Other",
+      :contact_email, :web_page) %>
+  <%= form_group(@data, "Coverage",
+      :temporal) %>
+  <%= form_group(@data, "Related records",
+      :hasParticipant, :producerFor) %>
 
+  <% elsif @data.instance_of? Thales::Datamodel::EResearch::Service %>
+  <p>SERVICE</p>
+  <%= form_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+  <%= form_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+  <%= form_group(@data, "Other",
+      :contact_email, :web_page) %>
+  <%= form_group(@data, "Related records",
+      :operatedBy, :providesAccessTo) %>
 
-<!-- Demo of potential upload capability -->
+  <% else %>
+  <p>Internal error: unknown record type for form.</p>
+  <% end %>
+
+<!-- Demo of potential upload capability
 <h3>Data</h3>
 <div class="item" id="upload">
   <dl>
@@ -52,6 +84,7 @@ projects
     <dd class="first"><%= file_field 'upload', 'datafile' %></dd>
   </dl>
 </div>
+-->
 
 <!-- :confirm => question, -->
   <div id="submitActions">

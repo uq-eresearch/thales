@@ -1,4 +1,4 @@
-require 'thales/datamodel/e_research'
+require 'thales/datamodel'
 
 module RecordsHelper
 
@@ -133,7 +133,7 @@ module RecordsHelper
 
     name_base = symbol.to_s
 
-    name = 'collection' + '[' + name_base + ']'
+    name = 'data' + '[' + name_base + ']'
 
     maxlength = info[:maxlength]
 
@@ -219,7 +219,7 @@ module RecordsHelper
 
   def field_text_1(name_base, label_text, default_value = nil, maxlength = nil)
 
-    name = 'collection' + '[' + name_base + ']'
+    name = 'data' + '[' + name_base + ']'
 
     content_tag(:div, { :class => 'item' }) do
       content_tag(:dl) do
@@ -289,7 +289,7 @@ module RecordsHelper
   private
   def field_text_0n_internal(count, name_base, label_text,
                              value, maxlength)
-    name = 'collection' + '[' + name_base + ']' + '[' + count.to_s + ']'
+    name = 'data' + '[' + name_base + ']' + '[' + count.to_s + ']'
 
     html = content_tag(:dt) do
       label_tag(name, label_text)
@@ -308,7 +308,7 @@ module RecordsHelper
 
   def field_area_1(name_base, label_text, default_value = nil, maxlength = nil)
 
-    name = 'collection' + '[' + name_base + ']'
+    name = 'data' + '[' + name_base + ']'
 
     content_tag(:div, { :class => 'item' }) do
       content_tag(:dl, { :class => 'item' }) do

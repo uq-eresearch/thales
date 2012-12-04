@@ -5,24 +5,51 @@ require 'record'
 
 class RecordsController < ApplicationController
 
-  SER_TYPE_COLLECTION = 1
-  
   before_filter :authenticate
 
   # GET /records
   # GET /records.json
   def index
 
-    @records = Record.all
+    @query = params[:q]
+    if @query
+      @query.lstrip!
+      @query.rstrip!
+      @query.downcase!
+      if @query == ''
+        @query = nil
+      end
+    end
 
-    @entries = @records.map do |rec|
-      c = Thales::Datamodel::EResearch::Collection.new.deserialize(rec.ser_data)
-      [ rec, c ]
+    if @query
+      # Search requested
+
+      # TODO: replace this very inefficient placeholder
+      @records = Record.all.keep_if do |record|
+        match = false
+        r_class = Thales::Datamodel::CLASS_FOR[record.ser_type]
+        data = r_class.new.deserialize(record.ser_data)
+        data.title.each do |value|
+          value.downcase!
+          if value.include?(@query)
+            match = true
+            break
+          end
+        end
+        match
+      end
+
+    else
+      # All
+      @records = Record.all
+    end
+
+
+    @entries = @records.map do |record|
+      r_class = Thales::Datamodel::CLASS_FOR[record.ser_type]
+      [ record, r_class.new.deserialize(record.ser_data) ]
     end
   
-#   @entries.sort! { |a,b| a[1].title <=> b[1].title }
-#   @entries.sort! { |a,b| b[0].uuid <=> a[0].uuid }
-
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @records }
@@ -34,20 +61,34 @@ class RecordsController < ApplicationController
   def show
 
     @record = Record.find(params[:id])
-    @data = Thales::Datamodel::EResearch::Collection.new.deserialize(@record.ser_data)
+
+    r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
+    @data = r_class.new.deserialize(@record.ser_data)
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @collection }
+      format.json { render json: @data }
     end
   end
+
+  NEW_TYPE = {
+    'collection' => Thales::Datamodel::E_RESEARCH_COLLECTION,
+    'party' => Thales::Datamodel::E_RESEARCH_PARTY,
+    'activity' => Thales::Datamodel::E_RESEARCH_ACTIVITY,
+    'service' => Thales::Datamodel::E_RESEARCH_SERVICE,
+  }
 
   # GET /records/new
   # GET /records/new.json
   def new
     @record = Record.new
-    @data = Thales::Datamodel::EResearch::Collection.new
-#    @data = Thales::Datamodel::EResearch::Party.new
+
+    @record.ser_type = NEW_TYPE[params[:type]]
+    s_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
+    if s_class.nil?
+      s_class = Thales::Datamodel::EResearch::Collection # default
+    end
+    @data = s_class.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -58,7 +99,9 @@ class RecordsController < ApplicationController
   # GET /records/1/edit
   def edit
     @record = Record.find(params[:id])
-    @data = Thales::Datamodel::EResearch::Collection.new.deserialize(@record.ser_data)
+
+    r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
+    @data = r_class.new.deserialize(@record.ser_data)
   end
 
   # POST /records
@@ -67,10 +110,10 @@ class RecordsController < ApplicationController
 
     @record = Record.new(params[:record])
     @record.uuid = UUID.new.generate(:compact)
-    @record.ser_type = SER_TYPE_COLLECTION
 
-    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
-    @record.ser_data = collection.serialize
+    r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
+    data = r_class.new(params[:data])
+    @record.ser_data = data.serialize
 
     if @record.save
       redirect_to @record, notice: 'Record was successfully created.'
@@ -83,10 +126,9 @@ class RecordsController < ApplicationController
   # PUT /records/1.json
   def update
     @record = Record.find(params[:id])
-    # @record.ser_type = SER_TYPE_COLLECTION
 
-    collection = Thales::Datamodel::EResearch::Collection.new(params[:collection])
-    @record.ser_data = collection.serialize
+    r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
+    @record.ser_data = r_class.new(params[:data]).serialize
 
     respond_to do |format|
       if @record.update_attributes(params[:record])

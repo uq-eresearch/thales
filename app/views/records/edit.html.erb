@@ -1,9 +1,10 @@
 <% 
+   display_heading = "Editing #{Thales::Datamodel::LABEL_FOR[@record.ser_type]} record"
    t = @data.title[0]
-   display_title = (t.nil? || t.blank?) ? 'Editing record' : "#{t} (editing)"
+   display_title = (t.nil? || t.blank?) ? display_heading : "#{t} (editing)"
  %>
 <% content_for(:page_title) do display_title end %>
-<% content_for(:page_heading) do 'Editing record' end %>
+<% content_for(:page_heading) do display_heading end %>
 
 <!-- UUID: <%= @record.uuid %> -->
 

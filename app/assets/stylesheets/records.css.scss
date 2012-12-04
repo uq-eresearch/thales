@@ -91,6 +91,7 @@ table#gradient-style {
     background: #eeeeee;
   }
   td {
+    position: relative;
     width: 100%;
     text-align: left;
     font-weight: normal;
@@ -115,6 +116,15 @@ table#gradient-style {
     span {
       display: block;
       color: #999;
+      font-size: small;
+      padding: 0 0 10px 1px;
+    }
+    span.type {
+      display: block;
+      position: absolute;
+      top: 0.5ex;
+      right: 0;
+      color: #ccc;
       font-size: small;
       padding: 0 0 10px 1px;
     }

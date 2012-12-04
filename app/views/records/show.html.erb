@@ -12,7 +12,8 @@
 <div id="show">
 
   <% case @record.ser_type
-     when Thales::Datamodel::EResearch::SER_TYPE_COLLECTION %>
+     when Thales::Datamodel::E_RESEARCH_COLLECTION %>
+  <p>COLLECTION</p>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",
@@ -26,8 +27,45 @@
   <%= show_group(@data, "Related records",
       :createdBy, :managedBy, :accessedBy, :referencedBy) %>
 
+  <% when Thales::Datamodel::E_RESEARCH_PARTY %>
+  <p>PARTY</p>
+  <%= show_group(@data, "Name",
+      :name_prefix, :name_given, :name_family) %>
+  <%= show_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+  <%= show_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+  <%= show_group(@data, "Other",
+      :contact_email, :web_page) %>
+  <%= show_group(@data, "Related records",
+      :creatorFor, :managerFor, :operatorFor, :participantIn, :authorOf) %>
+
+  <% when Thales::Datamodel::E_RESEARCH_ACTIVITY %>
+  <p>ACTIVITY</p>
+  <%= show_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+  <%= show_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+  <%= show_group(@data, "Other",
+      :contact_email, :web_page) %>
+  <%= show_group(@data, "Coverage",
+      :temporal) %>
+  <%= show_group(@data, "Related records",
+      :hasParticipant, :producerFor) %>
+
+  <% when Thales::Datamodel::E_RESEARCH_SERVICE %>
+  <p>SERVICE</p>
+  <%= show_group(@data, "General information",
+      :title, :title_alt, :description, :identifier) %>
+  <%= show_group(@data, "Tags",
+      :tag_keyword, :tag_FoR, :tag_SEO) %>
+  <%= show_group(@data, "Other",
+      :contact_email, :web_page) %>
+  <%= show_group(@data, "Related records",
+      :operatedBy, :providesAccessTo) %>
+
   <% else %>
-  <p>Internal error: Unknown record type.</p>
+  <p>Internal error: show view: unknown record type</p>
   <% end %>
 
   <%# show_all(@data) %>

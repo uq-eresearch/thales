@@ -5,12 +5,18 @@
 
 <table id="gradient-style" summary="Results">
   <thead>
-    <tr><th scope="col">Data collections</th></tr>
+    <tr><th scope="col">
+	<%= @query ? "Search results: #{@query}" : 'All Records' %>
+    </th></tr>
   </thead>
   <tbody>
     <% # Output each entry as a separate row of the table
+       # Sort by type and then title
 
-       @entries.each do |col|
+       @entries.sort! do |a, b|
+         r = a[0].ser_type <=> b[0].ser_type 
+         r.zero? ? a[1].title <=> b[1].title : r
+       end.each do |col|
          record = col[0]
          data = col[1]
        %>
@@ -23,7 +29,23 @@
            display_title = title
 	 end %>
       <td><h1><%= link_to display_title, record, :title => record.uuid %></h1>
-	<span><%= data.description[0] %></span></td>
+	<span><%= data.description[0] %></span>
+	<span class="type">
+	  <%= case record.ser_type
+	      when Thales::Datamodel::E_RESEARCH_COLLECTION
+	      'collection'
+	      when Thales::Datamodel::E_RESEARCH_PARTY
+	      'party'
+	      when Thales::Datamodel::E_RESEARCH_ACTIVITY
+	      'activity'
+	      when Thales::Datamodel::E_RESEARCH_SERVICE
+	      'service'
+	      else
+	      'Unknown'
+	      end
+	      %>
+	</span>
+      </td>
       <%# <%= link_to 'Edit', edit_record_path(record) %>
     </tr>
     <% end %>
@@ -43,7 +65,10 @@
     <ul class="section">
       <li><a href="<%= records_path %>">Search</a></li>
       <li><a href="<%= records_path %>">Browse</a></li>
-      <li><a href="<%= new_record_path %>">Create a new collection record</a></li>
+      <li><a href="<%= new_record_path type: 'collection'  %>">Create a new collection record</a></li>
+      <li><a href="<%= new_record_path type: 'party' %>">Create a new party record</a></li>
+      <li><a href="<%= new_record_path type: 'activity' %>">Create a new activity record</a></li>
+      <li><a href="<%= new_record_path type: 'service' %>">Create a new service record</a></li>
     </ul>
   </li>
   <li><a class="head" href="/">Settings</a></li>
