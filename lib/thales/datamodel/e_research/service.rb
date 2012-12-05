@@ -11,6 +11,8 @@ module Thales
 
       class Service < Thales::Datamodel::Cornerstone::Record
 
+        TYPE = "#{TYPE_BASE_URI}/service"
+
         @@profile = {
 
           # Relationships

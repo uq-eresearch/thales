@@ -12,12 +12,13 @@ require 'optparse'
 require 'nokogiri'
 require 'active_record'
 require 'pg'
+require 'uuid'
 
 require 'models/property'
 require 'models/record'
 require 'models/entry'
 
-require 'thales/datamodel/e_research'
+require 'thales/datamodel'
 
 #----------------------------------------------------------------
 
@@ -31,6 +32,9 @@ NS = {
   'db' => THALES_SYSTEM_NS,
   'c' => Thales::Datamodel::Cornerstone::Record::CONTAINER_NS,
 }
+
+ACTION_CREATED = 1
+ACTION_UPDATED = 2
 
 #----------------------------------------------------------------
 
@@ -51,33 +55,47 @@ def connect(adapter_name)
 
 end
 
-def check_uuids_dont_exist(records)
-
-  clashing = records.select { |r| Record.where(:uuid => r[:uuid]).size != 0 }
-
-  if ! clashing.empty?
-    $stderr.puts "Error: #{clashing.size} UUIDs already exist"
-    clashing.each { |u| $stderr.puts "  #{u}" }
-    exit 1
+def duplicate_uuids(items)
+  items.select do |item|
+    item[:uuid] ? Record.where(:uuid => item[:uuid]).size != 0 : false
   end
 end
 
-def create_records(records)
+def create_update_records(items)
 
-  records.each do |r|
+  items.each do |item|
 
-    entry = Entry.new
-    entry.property_id = edit_collection_property_id
-    entry.order = 1
-    entry.value = r[:data].serialize
-    entry.save()
+    existing = item[:uuid] ? Record.where(:uuid => item[:uuid]) : nil
 
-    obj = Record.new
-    obj.uuid = r[:uuid]
-    obj.entries << entry
+    if existing.nil? || existing.size == 0
+      # Create a new record
 
-    if ! obj.save
-      $stderr.puts "Error: could not save new record in database"
+      r = Record.new
+      r.uuid = item[:uuid] ? item[:uuid] : UUID.new.generate(:compact)
+      r.ser_type = item[:ser_type]
+      r.ser_data = item[:data].serialize 
+
+      if ! r.save
+        $stderr.puts "Error: could not save new record in database"
+        exit 1
+      end
+
+      item[:status] = ACTION_CREATED
+
+    elsif existing.size == 1
+      # Replace existing record that has the same UUID
+      r = existing.first
+      r.ser_type = item[:ser_type]
+      r.ser_data = item[:data].serialize 
+      if ! r.save
+        $stderr.puts "Error: could not update record: #{item[:uuid]}"
+        exit 1
+      end
+
+      item[:status] = ACTION_UPDATED
+
+    else
+      $stderr.puts "Error: database has multiple records with same UUID: #{item[:uuid]}"
       exit 1
     end
 
@@ -86,7 +104,7 @@ end
 
 def import(options)
 
-  records = []
+  items = []
 
   options[:import].each do |fname|
     puts "Importing: #{fname}"
@@ -111,19 +129,21 @@ def import(options)
 
         root.xpath('db:record', NS).each do |db_record|
 
-          entries = db_record.xpath('db:entry', NS)
-          if entries.size != 1
-            raise "#{fname}: incorrect number of entries in record"
-          end
+          uuid_element = db_record.xpath('db:uuid', NS).first
+          type_uri = db_record.xpath('db:type', NS).first.inner_text
+          ser_type = Thales::Datamodel::IDENTITY_FOR[type_uri]
+          r_class = Thales::Datamodel::CLASS_FOR[ser_type]
 
-          entries.each do |db_entry|
-            db_entry.xpath('c:record', NS).each do |c_record|
-              r = Thales::Datamodel::Cornerstone::Record.new
-              r.deserialize(c_record)
-#              puts "---"
-#              puts r.serialize
-              records << { :uuid => db_record[:uuid], :data => r }
+          db_record.xpath('c:data', NS).each do |c_data|
+            r = r_class.new.deserialize(c_data)
+            item = {
+              :ser_type => ser_type,
+              :data => r,
+            }
+            if uuid_element
+              item[:uuid] = uuid_element.inner_text
             end
+            items << item
           end
 
         end
@@ -131,8 +151,23 @@ def import(options)
       end
 
       connect(options[:adapter])
-      check_uuids_dont_exist(records)
-      create_records(records)
+
+      dup = duplicate_uuids(items)
+      if ! dup.empty? && ! options[:force]
+        $stderr.puts "Error: #{dup.size} UUIDs already exist (use --force to overwrite)"
+        dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
+        exit 1
+      end
+      
+      create_update_records(items)
+
+      if options[:verbose]
+        n = items.count { |i| i[:status] == ACTION_CREATED }
+        puts "Created #{n} records"
+        n = items.count { |i| i[:status] == ACTION_UPDATED }
+        puts "Updated #{n} records"
+        puts "Total #{items.size} records"
+      end
 
     rescue Errno::ENOENT => e
       raise "import file: #{e}"
@@ -140,21 +175,6 @@ def import(options)
 
   end
 
-
-#            # Parse text properties
-#            root.xpath('c:prop', NS).each do |element|
-#              property_append(element.attribute('type').content,
-#                              PropertyText.new(element.inner_text))
-#            end
-#
-#            # Parse links
-#            root.xpath('c:link', NS).each do |element|
-#              property_append(element.attribute('type').content,
-#                              PropertyLink.new(element.attribute('uri').content,
-#                                               element.inner_text))
-#            end
-#          end
-#
 end
 
 def export(options)
@@ -166,11 +186,13 @@ def export(options)
       Record.all.each do |record|
 
         # Load the record's collection data
-        collection = Thales::Datamodel::EResearch::Collection.new
-        collection.deserialize(record.ser_data)
+        r_class = Thales::Datamodel::CLASS_FOR[record.ser_type]
+        data = r_class.new.deserialize(record.ser_data)
 
-        xml.record ({:uuid => record.uuid}) {
-          collection.serialize_xml(xml)
+        xml.record {
+          xml.uuid(record.uuid)
+          xml.type(r_class::TYPE)
+          data.serialize_xml(xml)
         }
       end # Record.all.each
 
@@ -213,6 +235,10 @@ def process_arguments
       options[:import] << x
     end
 
+    opt.on("-f", "--force", "force import of records with same UUID") do
+      options[:force] = true
+    end
+
     opt.on("-a", "--adapter name",
            "database adapter (default=\"#{DEFAULT_DB_ADAPTER}\")") do |x|
       options[:adapter] = x
@@ -232,6 +258,11 @@ def process_arguments
 
   if ! ARGV.size.zero?
     puts "Usage error: extra arguments supplied (--help for help)"
+    exit 2
+  end
+
+  if options[:force] && options[:export]
+    $stderr.puts "Usage error: --force cannot be used with --export"
     exit 2
   end
 

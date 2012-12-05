@@ -145,7 +145,7 @@ module Thales
 
         def serialize_xml(xml)
 
-          xml.record('xmlns' => CONTAINER_NS) {
+          xml.data('xmlns' => CONTAINER_NS) {
 
             @properties.keys.sort.each do |global_type|
               @properties[global_type].each do |value|
@@ -175,9 +175,10 @@ module Thales
             node = doc.root
           end
 
-          node_ns = node.namespace
-          if (node.name != 'record' || node_ns.nil? || node_ns.href != CONTAINER_NS)
-            n = node_ns.nil? ? '' : "{#{node_ns.href}}"
+          ns = node.namespace
+          if ((node.name != 'record' && node.name != 'data') || # TODO: remove record
+              ns.nil? || ns.href != CONTAINER_NS)
+            n = ns.nil? ? '' : "{#{ns.href}}"
             raise "unexpected element: #{n}#{node.name}"
           end
 

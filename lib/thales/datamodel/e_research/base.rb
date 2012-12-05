@@ -16,6 +16,7 @@ module Thales
     class EResearch
 
       DEFAULT_MAXLENGTH = 255
+      TYPE_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/type'
       PROPERTY_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/property'
 
       BASE_PROFILE = {

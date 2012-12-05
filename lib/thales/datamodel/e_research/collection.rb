@@ -17,6 +17,8 @@ module Thales
 
       class Collection < Thales::Datamodel::Cornerstone::Record
 
+        TYPE = "#{TYPE_BASE_URI}/collection"
+
         @@profile = {
           # Coverage
 

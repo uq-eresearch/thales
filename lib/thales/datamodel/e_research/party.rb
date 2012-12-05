@@ -11,6 +11,8 @@ module Thales
 
       class Party < Thales::Datamodel::Cornerstone::Record
 
+        TYPE = "#{TYPE_BASE_URI}/party"
+
         @@profile = {
 
           :name_prefix => {

@@ -11,6 +11,8 @@ module Thales
 
       class Activity < Thales::Datamodel::Cornerstone::Record
 
+        TYPE = "#{TYPE_BASE_URI}/activity"
+
         @@profile = {
           # Coverage
 

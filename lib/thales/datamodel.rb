@@ -26,6 +26,13 @@ module Thales
       E_RESEARCH_ACTIVITY => 'activity',
       E_RESEARCH_SERVICE => 'service',
     }
+
+    IDENTITY_FOR = {
+      Thales::Datamodel::EResearch::Collection::TYPE => E_RESEARCH_COLLECTION,
+      Thales::Datamodel::EResearch::Party::TYPE => E_RESEARCH_PARTY,
+      Thales::Datamodel::EResearch::Activity::TYPE => E_RESEARCH_ACTIVITY,
+      Thales::Datamodel::EResearch::Service::TYPE => E_RESEARCH_SERVICE,
+    }
   end
 end
 
