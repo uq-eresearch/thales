@@ -1,15 +1,33 @@
 #!/bin/env ruby
 #
-# Copyright (C) 2012, The University of Queensland. (ITEE eResearch Lab)
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 basedir = File.expand_path(File.dirname(__FILE__))
 require "#{basedir}/base"
 
 module Thales
   module Datamodel
-    class EResearch
+    module EResearch
 
-      class Activity < Thales::Datamodel::Cornerstone::Record
+      # Represents an eResearch activity record. The data model for a
+      # eResearch activity record is different from the datamodel of a
+      # RIF-CS activity record, even though it is quite similar.
+      #
+      # == Convenience methods
+      #
+      # Since this is a subclass of the generic
+      # Thales::Datamodel::Cornerstone::Record, its methods can be
+      # used to access the properties.
+      #
+      # Convenience methods are available to access particular
+      # values. The convenience methods are those defined in the
+      # Thales::Datamodel::EResearch::Base class plus these:
+      #
+      # * temporal
+      # * producerFor
+      # * hasParticipant
+
+      class Activity < Base
 
         TYPE = "#{TYPE_BASE_URI}/activity"
 
@@ -24,21 +42,21 @@ module Thales
 
           # Relationships
 
-          producerFor: {
+          producerFor: { # collection
             label: 'Data produced',
             maxlength: DEFAULT_MAXLENGTH,
-            gid: "#{PROPERTY_BASE_URI}/collection/producerFor",
+            gid: "#{PROPERTY_BASE_URI}/activity/producerFor",
             is_link: true,
           },
           
-          hasParticipant: {
+          hasParticipant: { # party
             label: 'Participant',
             maxlength: DEFAULT_MAXLENGTH,
-            gid: "#{PROPERTY_BASE_URI}/collection/hasParticipant",
+            gid: "#{PROPERTY_BASE_URI}/activity/hasParticipant",
             is_link: true,
           },
           
-        }.merge!(Thales::Datamodel::EResearch::BASE_PROFILE)
+        }.merge!(Thales::Datamodel::EResearch::Base::COMMON_PROFILE_ITEMS)
 
         def self.profile
           return @@profile
@@ -54,6 +72,22 @@ module Thales
         def initialize(attr = nil)
           super()
           parse_form_parameters(@@profile, attr)
+        end
+
+        def to_rifcs(builder, date_modified = nil)
+
+          activity_attrs = {}
+          activity_attrs[:type] = 'project'
+          if date_modified
+            activity_attrs[:dateModified] = date_modified.iso8601
+          end
+
+          builder.activity(activity_attrs) {
+            base_to_rifcs(builder)
+            temporal_to_rifcs(builder)
+            related_object(producerFor, :hasOutput, builder) # collection
+            related_object(hasParticipant, :hasParticipant, builder) # party
+          }
         end
 
       end # class Activity

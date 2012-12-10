@@ -14,6 +14,7 @@
   <% case @record.ser_type
      when Thales::Datamodel::E_RESEARCH_COLLECTION %>
   <p>COLLECTION</p>
+  <%= show_group(@data, "Admin", :subtype) %>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",
@@ -25,10 +26,11 @@
   <%= show_group(@data, "Rights",
       :rights_access, :rights_statement, :rights_licence) %>
   <%= show_group(@data, "Related records",
-      :createdBy, :managedBy, :accessedBy, :referencedBy) %>
+      :createdBy, :managedBy, :accessedVia, :referencedBy) %>
 
   <% when Thales::Datamodel::E_RESEARCH_PARTY %>
   <p>PARTY</p>
+  <%= show_group(@data, "Admin", :subtype) %>
   <%= show_group(@data, "Name",
       :name_prefix, :name_given, :name_family) %>
   <%= show_group(@data, "General information",
@@ -42,6 +44,7 @@
 
   <% when Thales::Datamodel::E_RESEARCH_ACTIVITY %>
   <p>ACTIVITY</p>
+  <%= show_group(@data, "Admin", :subtype) %>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",
@@ -55,6 +58,7 @@
 
   <% when Thales::Datamodel::E_RESEARCH_SERVICE %>
   <p>SERVICE</p>
+  <%= show_group(@data, "Admin", :subtype) %>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",
@@ -68,7 +72,7 @@
   <p>Internal error: show view: unknown record type</p>
   <% end %>
 
-  <%# show_all(@data) %>
+  <%= show_all(@data) %>
 
   <div id="editActions">
   <%=
@@ -80,21 +84,10 @@
   %>
   </div>
 
+  <%= link_to "RIF-CS version", record_path(@record, :rifcs) %>
+
   <p id="updatedTime" title="<%= @record.updated_at.iso8601 %>">Last updated: <%= @record.updated_at.to_s(:rfc822) %></p>
 </div>
 
 
-<% content_for(:navigation) do %>
-<ul id="navigation">
-  <li><a class="head" href="#">Records</a>
-    <ul class="section">
-      <li><a href="<%= records_path %>">Search</a></li>
-      <li><a href="<%= records_path %>">Browse</a></li>
-      <li><a href="<%= new_record_path %>">Create a new collection record</a></li>
-    </ul>
-  </li>
-  <li><a class="head" href="/">Settings</a></li>
-  <li><a class="head" href="<%= users_path %>">Administration</a></li>
-  <li><a class="head link" href="/help">Help</a></li>
-</ul>
-<% end %>
+<% content_for(:navigation) { side_nav_bar(:records) } %>

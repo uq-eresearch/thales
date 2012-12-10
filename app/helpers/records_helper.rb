@@ -1,6 +1,21 @@
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
+
 require 'thales/datamodel'
 
+# Ruby on Rails helper.
+
 module RecordsHelper
+
+  # Generates HTML to show all properties. This is useful for
+  # debugging.
+  #
+  # ==== Parameters
+  #
+  # +data+:: an instance of a Thales::Datamodel::Cornerstone::Record
+  #
+  # ==== Returns
+  #
+  # HTML
 
   def show_all(data)
     result = content_tag(:h3) { 'All properties' }
@@ -11,7 +26,7 @@ module RecordsHelper
     end
 
     data.property_all do |gid, values|
-      result += show_property(values, g_profile[gid])
+      result += show_property(values, g_profile[gid], gid)
     end
 
     return raw result
@@ -22,6 +37,22 @@ module RecordsHelper
   #
   # The values can either be a string or an array. If it is nil, nothing
   # is generated.
+  #
+  # ==== Parameters
+  #
+  # +data+:: an instance of a Thales::Datamodel::Cornerstone::Record
+  # +heading+:: text to display in +h3+ tag
+  # +symbols+:: zero or more symbols
+  #
+  # ==== Returns
+  #
+  # HTML to show the +heading+ followed by values from +data+
+  # corresponding to the supplied +symbols+. Only +symbols+ which have
+  # values are included.
+  #
+  # If none of the +symbols+ have values, the empty string is
+  # returned. That is, the +heading+ is only shown if there are
+  # values.
 
   def show_group(data, heading, *symbols)
     result = ''
@@ -57,7 +88,19 @@ module RecordsHelper
     return raw result
   end
 
-  def show_property(values, prop_info = nil)
+  # Generates HTML to show all the values of a single property.
+  #
+  # ==== Parameters
+  #
+  # +values+:: array of values
+  # +prop_info+:: optional profile item defining the property.
+  # +gid+:: global identifier for the property.
+  #
+  # ==== Returns
+  #
+  # HTML
+
+  def show_property(values, prop_info = nil, gid = nil)
 
 # TODO: what did this do?    if ! data.property_populated?(gid)
 #      return nil
@@ -69,12 +112,12 @@ module RecordsHelper
       label = content_tag(:span) { text }
     else
       # Derive a label from the gid
-      gid = prop_info ? prop_info[:gid] : '?'
+      gid = prop_info ? prop_info[:gid] : (gid ? gid : '?')
       pos = gid.rindex('/')
       if ! pos.nil? && pos != gid.size - 1
-        str = "Unknown property (...#{ gid.slice(pos, gid.size - pos) })"
+        str = "? (#{ gid.slice(pos + 1, gid.size - pos - 1) })"
       else
-        str = "Unknown property"
+        str = "?"
       end
       label = content_tag(:span, :title => gid.to_s) { str }
     end
@@ -235,19 +278,32 @@ module RecordsHelper
   end
 
   # Generate HTML form fields for editing optional and repeatable values.
-
+  #
+  # ==== Parameters
+  #
+  # +name_base+::
+  # +label_text+::
+  # +values+:: optionan
+  # +maxlength+:: optional
+  #
+  # ==== Returns
+  #
+  # HTML that follows this structure:
+  #
+  #   <div class="item" id="name_base">
+  #     <dl>
+  #       <dt><label>...</label></dt>
+  #       <dd class="first"><input/></dd>
+  #       <dt><label>...</label></dt>
+  #       <dd><input/></dd>
+  #       ...
+  #     </dl>
+  #     <p><a class="addField">+</a></p>
+  #   </div>
+  #
+  # HTML
+  
   def field_text_0n(name_base, label_text, values = nil, maxlength = nil)
-
-    # <div class="item" id="name_base">
-    #   <dl>
-    #     <dt><label>...</label></dt>
-    #     <dd class="first"><input/></dd>
-    #     <dt><label>...</label></dt>
-    #     <dd><input/></dd>
-    #     ...
-    #   </dl>
-    #   <p><a class="addField">+</a></p>
-    # </div>
 
     content_tag(:div, { :class => 'item', :id => name_base }) do
 
@@ -326,3 +382,5 @@ module RecordsHelper
   end
 
 end
+
+#EOF

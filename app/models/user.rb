@@ -1,3 +1,7 @@
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
+
+# Ruby on Rails model.
+
 class User < ActiveRecord::Base
   attr_accessible :givenname, :surname, :uuid
   attr_accessible :auth_type, :auth_name, :auth_value

@@ -3,7 +3,7 @@
 # A record is made up of zero or more properties. There are two
 # kinds of properties: text properties and link properties.
 #
-# Copyright (C) 2012, The University of Queensland. (ITEE eResearch Lab)
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 require 'nokogiri'
 
@@ -15,29 +15,22 @@ require "#{basedir}/profile"
 module Thales
   module Datamodel
     module Cornerstone
+
+      # Represents a generic record.
+      #
+      # This generic data model defines a record as an unordered set
+      # of properties.  Each property consists of a global identifier
+      # and an ordered sequence of one or more values. Only two types
+      # of values are allowed: text and link.  Text values are simply
+      # strings. Link values consist of a single mandatory URI and an
+      # optional display string.
+
       class Record
 
+        # XML namespace for representing instances of the
+        # _Cornerstone_ data model.
+
         CONTAINER_NS = 'http://ns.research.data.uq.edu.au/2012/cornerstone'
-        NS = { 'c' => CONTAINER_NS }
-
-#        def self.text_property(symbol, label, options)
-#          define_method(symbol) {
-#            property_get(global_id)
-#          }
-#        end
-#
-#        def self.link_property(symbol, label, options)
-#          global_id = options[:type]
-#
-#          define_method(symbol) {
-#            property_get(global_id)
-#          }
-#        end
-
-#        def self.group(gname)
-#          @@profile.start_group(gname)
-#          yield
-#        end
 
         def initialize
           @properties = {}
@@ -94,6 +87,15 @@ module Thales
           end
         end
 
+        # Appends a value to a property. If the property did not have
+        # any values, the new value is set as the first value of the
+        # property.
+        #
+        # ==== Parameters
+        #
+        # +global_id+:: global identifier of the property
+        # +value+:: the value to append
+        
         public
         def property_append(global_id, value)
           if @properties[global_id].nil?
@@ -102,10 +104,28 @@ module Thales
           @properties[global_id] << value
         end
 
+        # Tests if a property has values.
+        #
+        # ==== Parameters
+        #
+        # +global_id+:: global identifier of the property
+        #
+        # ==== Returns
+        #
+        # True if the identified property has one or more values. False otherwise.
+        
         def property_populated?(global_id)
           p = @properties[global_id]
           return ((! p.nil?) && (! p.empty?))
         end
+
+        # Retrieves the values of a property.
+        #
+        # ==== Returns
+        #
+        # An Array containing all the values of the property with the
+        # given global identifier.  If the property is not set
+        # (i.e. does not have any values) an empty Array is returned.
 
         def property_get(global_id)
           if @properties[global_id].nil?
@@ -113,6 +133,11 @@ module Thales
           end
           return @properties[global_id]
         end
+
+        # Calls _block_ once for each property.
+        #
+        # The _block_ is called with the global identifier for the
+        # property and an array of its values.
 
         def property_all
           @properties.keys.sort.each do |global_type|
@@ -123,9 +148,20 @@ module Thales
           end
         end
 
+        # Returns the number or properties in the instance of the data model.
+        # Note: properties without any values are not counted.
+        
         def size
-          @properties.size
+          count = 0
+          @properties.each do |gid, values|
+            if ! values.empty?
+              count += 1
+            end
+          end
+          return count
         end
+
+        # Compare two instances of the _Cornerstone_ data model.
 
         def ==(other)
           if self.size != other.size
@@ -166,7 +202,23 @@ module Thales
           }
         end
 
+        # Populate a record from XML. Normally this method is called
+        # on a newly created record, which won't have any pre-existing
+        # properties set.
+        #
+        # ==== Parameters
+        #
+        # +str_or+node:: string containing XML or a Nokogiri node
+        #
+        # ==== Returns
+        #
+        # The record object with properties set from the XML. The
+        # properties are appended to any existing properties already
+        # set on the record.
+
         def deserialize(str_or_node)
+
+          ns_defs = { 'c' => CONTAINER_NS }
 
           if str_or_node.respond_to? :xpath
             node = str_or_node
@@ -183,13 +235,13 @@ module Thales
           end
 
           # Parse text properties
-          node.xpath('c:prop', NS).each do |element|
+          node.xpath('c:prop', ns_defs).each do |element|
             property_append(element.attribute('type').content,
                             PropertyText.new(element.inner_text))
           end
 
           # Parse links
-          node.xpath('c:link', NS).each do |element|
+          node.xpath('c:link', ns_defs).each do |element|
             property_append(element.attribute('type').content,
                             PropertyLink.new(element.attribute('uri').content,
                                              element.inner_text))

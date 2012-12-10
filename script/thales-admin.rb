@@ -107,7 +107,9 @@ def import(options)
   items = []
 
   options[:import].each do |fname|
-    puts "Importing: #{fname}"
+    if options[:verbose]
+      puts "Importing: #{fname}"
+    end
 
     begin
       File.open(fname, 'r') do |f|
@@ -129,7 +131,7 @@ def import(options)
 
         root.xpath('db:record', NS).each do |db_record|
 
-          uuid_element = db_record.xpath('db:uuid', NS).first
+          uuid_element = db_record.xpath('db:id', NS).first
           type_uri = db_record.xpath('db:type', NS).first.inner_text
           ser_type = Thales::Datamodel::IDENTITY_FOR[type_uri]
           r_class = Thales::Datamodel::CLASS_FOR[ser_type]
@@ -162,11 +164,10 @@ def import(options)
       create_update_records(items)
 
       if options[:verbose]
-        n = items.count { |i| i[:status] == ACTION_CREATED }
-        puts "Created #{n} records"
-        n = items.count { |i| i[:status] == ACTION_UPDATED }
-        puts "Updated #{n} records"
-        puts "Total #{items.size} records"
+        num_created = items.count { |i| i[:status] == ACTION_CREATED }
+        num_updated = items.count { |i| i[:status] == ACTION_UPDATED }
+        updated_str = options[:force] ? ", #{num_updated} updated" : ''
+        puts "  #{items.size} records (#{num_created} created#{updated_str})"
       end
 
     rescue Errno::ENOENT => e
@@ -190,7 +191,7 @@ def export(options)
         data = r_class.new.deserialize(record.ser_data)
 
         xml.record {
-          xml.uuid(record.uuid)
+          xml.id(record.uuid)
           xml.type(r_class::TYPE)
           data.serialize_xml(xml)
         }
@@ -204,6 +205,20 @@ def export(options)
     File.open(fname, 'w') { |f| f.puts builder.to_xml }
   else
     $stderr.puts builder.to_xml
+  end
+end
+
+def delete(options)
+  connect(options[:adapter])
+
+  count = 0
+  Record.all.each do |record|
+    record.destroy
+    count += 1
+  end
+
+  if options[:verbose]
+    puts "#{count} records deleted"
   end
 end
 
@@ -237,6 +252,10 @@ def process_arguments
 
     opt.on("-f", "--force", "force import of records with same UUID") do
       options[:force] = true
+    end
+
+    opt.on("-D", "--delete", "delete all records") do
+      options[:delete] = true
     end
 
     opt.on("-a", "--adapter name",
@@ -280,6 +299,8 @@ def main
       export(options)
     elsif options[:import]
       import(options)
+    elsif options[:delete]
+      delete(options)
     else
       puts "#{PROG}: no action specified (--help for help)"
       exit 2

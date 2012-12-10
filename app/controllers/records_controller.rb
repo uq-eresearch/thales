@@ -58,6 +58,7 @@ class RecordsController < ApplicationController
 
   # GET /records/1
   # GET /records/1.json
+
   def show
 
     @record = Record.find(params[:id])
@@ -68,6 +69,8 @@ class RecordsController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @data }
+      format.xml { send_data @data.serialize }
+      format.rifcs { send_data @data.to_rifcs }
     end
   end
 

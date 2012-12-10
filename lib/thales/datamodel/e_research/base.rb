@@ -1,25 +1,60 @@
 #!/bin/env ruby
 #
-# The eResearch module defines schemas for Cornerstone records for
-# representing concepts from ISO 2146:2010 (Information and
-# documentation - Registry services for libraries and related
-# organizations). Namely, collections, parties, activities and
-# services.
-#
-# Copyright (C) 2012, The University of Queensland. (ITEE eResearch Lab)
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
-#basedir = File.expand_path(File.dirname(__FILE__))
-#require "#{basedir}/cornerstone"
+basedir = File.expand_path(File.dirname(__FILE__))
+require "#{basedir}/../cornerstone"
 
 module Thales
   module Datamodel
-    class EResearch
+    module EResearch
 
-      DEFAULT_MAXLENGTH = 255
-      TYPE_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/type'
-      PROPERTY_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/property'
+      # All Collection, Party, Activity and Service record have the following
+      # common convenience methods:
+      #
+      # * subtype
+      # * identifier
+      # * title
+      # * title_alt
+      # * description
+      # * tag_keyword
+      # * tag_FoR
+      # * tag_SEO
+      # * contact_email
+      # * web_page
 
-      BASE_PROFILE = {
+      class Base < Thales::Datamodel::Cornerstone::Record
+
+        # Default maximum length for property values
+
+        DEFAULT_MAXLENGTH = 255
+
+        # Base URI for the +TYPE+ constants defined in the subclasses.
+
+        TYPE_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/type'
+
+        # Base URI for the property global identifiers.
+
+        PROPERTY_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/property'
+
+        # Profile definitions that are merged into the Collection,
+        # Party, Activity and Service profiles.
+
+        COMMON_PROFILE_ITEMS = {
+          
+          :subtype => {
+            label: 'Subtype',
+            singular: true,
+            maxlength: DEFAULT_MAXLENGTH,
+            gid: "#{PROPERTY_BASE_URI}/subtype"
+          },
+
+          :identifier => {
+            label: 'Identifier',
+            maxlength: DEFAULT_MAXLENGTH,
+            gid: "#{PROPERTY_BASE_URI}/identifier"
+          },
+
           :title => {
             label: 'Title',
             singular: true,
@@ -37,24 +72,19 @@ module Thales
             maxlength: 2000, # TODO
             gid: "#{PROPERTY_BASE_URI}/description"
           },
-          :identifier => {
-            label: 'Identifier',
-            maxlength: DEFAULT_MAXLENGTH,
-            gid: "#{PROPERTY_BASE_URI}/identifier"
-          },
 
           # Tags
 
           :tag_keyword => {
             label: 'Keyword',
             maxlength: 32,
-            gid: "#{PROPERTY_BASE_URI}/Keyword",
+            gid: "#{PROPERTY_BASE_URI}/tag_keyword",
           },
 
           :tag_FoR => {
             label: 'Field of Research (FoR)',
             maxlength: 8,
-            gid: "#{PROPERTY_BASE_URI}/tag_for",
+            gid: "#{PROPERTY_BASE_URI}/tag_FoR",
           },
 
           :tag_SEO => {
@@ -68,7 +98,7 @@ module Thales
           :contact_email => {
             label: 'Contact email',
             maxlength: DEFAULT_MAXLENGTH,
-            gid: "#{PROPERTY_BASE_URI}/email",
+            gid: "#{PROPERTY_BASE_URI}/contact_email",
           },
 
           :web_page => {
@@ -78,21 +108,119 @@ module Thales
           },
         }
 
-#        def self.profile
-#          return @@profile
-#        end
-#
-#        @@profile.each do |symbol, options|
-#          global_id = options[:gid]
-#          define_method(symbol) {
-#            property_get(global_id)
-#          }
-#        end
-#
-#        def initialize(attr = nil)
-#          super()
-#          parse_form_parameters(@@profile, attr)
-#        end
+        # Represents the base properties as RIF-CS.
+        #
+        # This method is used by the subclasses in their +to_rifcs+
+        # methods.
+        #
+        # ==== Parameters
+        #
+        # +builder+:: Nokogiri XML builder
+
+        protected
+        def base_to_rifcs(builder)
+
+          identifier.each { |x| builder.identifier(x, type: 'uri') }
+
+          title.each { |x|
+            builder.name {
+              builder.namePart(x, type: 'primary')
+            }
+          }
+          title_alt.each { |x|
+            builder.name {
+              builder.namePart(x, type: 'alternate')
+            }
+          }
+          description.each { |x| builder.description(x, type: 'full') }
+
+          tag_keyword.each { |x| builder.subject(x, type: 'local') }
+          tag_FoR.each { |x| builder.subject(x, type: 'anzsrc-for') }
+          tag_SEO.each { |x| builder.subject(x, type: 'anzsrc-seo') }
+
+          contact_email.each { |x|
+            builder.location {
+              builder.address {
+                builder.electronic(type: 'email') {
+                  builder.value(x)
+                }
+              }
+            }
+          }
+          web_page.each { |x|
+            builder.location {
+              builder.address {
+                builder.electronic(type: 'url') {
+                  builder.value(x)
+                }
+              }
+            }
+          }
+        end
+
+        # Represents the temporal properties as RIF-CS.
+        #
+        # This method is used by the Collection and Activity
+        # subclasses in their +to_rifcs+ methods, since those
+        # two subclasses have +temporal+ properties.
+        #
+        # ==== Parameters
+        #
+        # +builder+:: Nokogiri XML builder
+
+        def temporal_to_rifcs(builder)
+          temporal.each do |x|
+
+            builder.coverage {
+              builder.temporal {
+                
+                if (x =~ /^(\d{4})$/ ||
+                    x =~ /^(\d{4}-\d{2})$/ ||
+                    x =~ /^(\d{4}-\d{2}-\d{2})$/)
+                  # Single date (TODO: is having two date elements correct?)
+                  builder.date($~[1], type: 'dateFrom', dateFormat: 'W3CDTF')
+                  builder.date($~[1], type: 'dateTo', dateFormat: 'W3CDTF')
+
+                elsif (x =~ /^(\d{4})\/(\d{4})$/ ||
+                       x =~ /^(\d{4}-\d{2})\/(\d{4}-\d{2})$/ ||
+                       x =~ /^(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/)
+                  # Date range
+                  builder.date($~[1], type: 'dateFrom', dateFormat: 'W3CDTF')
+                  builder.date($~[2], type: 'dateTo', dateFormat: 'W3CDTF')
+
+                else
+                  # Unrecognised temporal value, treat as text
+                  builder.text_(x)
+                end
+              } # </temporal>
+            } # </coverage>
+          end
+
+        end
+
+        # Generates RIF-CS relatedObject element from an array of
+        # Thales::Datamodel::Cornerstone::PropertyLink objects.
+        #
+        # This method is used by the subclasses in their +to_rifcs+
+        # methods.
+        #
+        # ==== Parameters
+        #
+        # +values+:: array of PropertyLink objects
+        # +type+:: string value to use for the RIF-CS <tt>relatedObject/relation/@type</tt> attribute
+        # +builder+:: Nokogiri XML builder
+
+        protected
+        def related_object(values, type, builder)
+          values.each do |value|
+            builder.relatedObject {
+              builder.key(value.uri)
+              builder.relation(type: type)
+            }
+          end
+        end
+
+      end
 
     end # class EReserach
   end

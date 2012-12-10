@@ -17,6 +17,8 @@ Thales::Application.routes.draw do
   match '/login' => "sessions#new", :as => "login"
   match '/logout' => "sessions#destroy", :as => "logout"
 
+  match '/oaipmh' => 'oaipmh#index'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

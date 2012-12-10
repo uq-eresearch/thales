@@ -1,6 +1,6 @@
 // Thales JavaScript
 //
-// Copyright (C) 2012, The University of Queensland.
+// Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 var thales = (function() {
 
