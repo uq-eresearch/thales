@@ -114,7 +114,7 @@ module Thales
         def to_rifcs(builder, date_modified = nil)
 
           party_attrs = {}
-          party_attrs[:type] = 'person'
+          party_attrs[:type] = rifcs_subtype()
           if date_modified
             party_attrs[:dateModified] = date_modified.iso8601
           end

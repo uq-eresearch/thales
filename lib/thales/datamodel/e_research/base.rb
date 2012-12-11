@@ -29,11 +29,15 @@ module Thales
 
         DEFAULT_MAXLENGTH = 255
 
-        # Base URI for the +TYPE+ constants defined in the subclasses.
+        # Base URI for the +TYPE+ constants
 
         TYPE_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/type'
 
-        # Base URI for the property global identifiers.
+        # Base URI for the subtypes
+
+        SUBTYPE_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/subtype'
+
+        # Base URI for the property global identifiers
 
         PROPERTY_BASE_URI = 'http://ns.research.data.uq.edu.au/2012/eResearch/property'
 
@@ -158,6 +162,31 @@ module Thales
               }
             }
           }
+        end
+
+        # Mapping from internal subtype URI values to RIF-CS type values.
+        # Default is set.
+
+        RIFCS_SUBTYPE = {
+          "#{SUBTYPE_BASE_URI}/collection/collection" => 'collection',
+          "#{SUBTYPE_BASE_URI}/collection/dataset" => 'dataset',
+
+          "#{SUBTYPE_BASE_URI}/party/person" => 'person',
+          "#{SUBTYPE_BASE_URI}/party/group" => 'group',
+          "#{SUBTYPE_BASE_URI}/party/position" => 'administrativePosition',
+
+          "#{SUBTYPE_BASE_URI}/activity/project" => 'project',
+          "#{SUBTYPE_BASE_URI}/activity/program" => 'program',
+
+          "#{SUBTYPE_BASE_URI}/service/report" => 'report',
+        }
+        RIFCS_SUBTYPE.default = 'UNKNOWN_SUBTYPE'
+
+        # Maps internal subtypes into values for the RIF-CS "type"
+        # attribute on the collection/party/activity/service element.
+
+        def rifcs_subtype
+          subtype ? RIFCS_SUBTYPE[subtype[0]] : RIFCS_SUBTYPE.default
         end
 
         # Represents the temporal properties as RIF-CS.

@@ -69,7 +69,7 @@ module Thales
         def to_rifcs(builder, date_modified = nil)
 
           service_attrs = {}
-          service_attrs[:type] = 'report'
+          service_attrs[:type] = rifcs_subtype()
           if date_modified
             service_attrs[:dateModified] = date_modified.iso8601
           end
