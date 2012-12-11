@@ -30,7 +30,9 @@ module Thales
       # Thales::Datamodel::EResearch::Base class plus these:
       #
       # * temporal
-      # * spatial
+      # * spatial_geoname
+      # * spatial_point
+      # * spatial_polygon
       # * rights_access
       # * rights_statement
       # * rights_licence
@@ -56,10 +58,21 @@ module Thales
             gid: "#{PROPERTY_BASE_URI}/temporal",
           },
 
-          spatial: {
-            label: 'Spatial coverage',
+          spatial_geoname: {
+            label: 'Spatial (geoname)',
             maxlength: DEFAULT_MAXLENGTH,
-            gid: "#{PROPERTY_BASE_URI}/spatial",
+            gid: "#{PROPERTY_BASE_URI}/spatial_geoname",
+            is_link: true,
+          },
+          spatial_point: {
+            label: 'Spatial (point)',
+            maxlength: DEFAULT_MAXLENGTH,
+            gid: "#{PROPERTY_BASE_URI}/spatial_point",
+          },
+          spatial_polygon: {
+            label: 'Spatial (polygon)',
+            maxlength: DEFAULT_MAXLENGTH,
+            gid: "#{PROPERTY_BASE_URI}/spatial_polygon",
           },
 
           # Rights
