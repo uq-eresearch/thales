@@ -13,8 +13,7 @@
 
   <% case @record.ser_type
      when Thales::Datamodel::E_RESEARCH_COLLECTION %>
-  <p>COLLECTION</p>
-  <%= show_group(@data, "Admin", :subtype) %>
+  <%= show_subtype(@data) %>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",
@@ -29,8 +28,7 @@
       :createdBy, :managedBy, :accessedVia, :referencedBy) %>
 
   <% when Thales::Datamodel::E_RESEARCH_PARTY %>
-  <p>PARTY</p>
-  <%= show_group(@data, "Admin", :subtype) %>
+  <%= show_subtype(@data) %>
   <%= show_group(@data, "Name",
       :name_prefix, :name_given, :name_family) %>
   <%= show_group(@data, "General information",
@@ -43,8 +41,7 @@
       :creatorFor, :managerFor, :operatorFor, :participantIn, :authorOf) %>
 
   <% when Thales::Datamodel::E_RESEARCH_ACTIVITY %>
-  <p>ACTIVITY</p>
-  <%= show_group(@data, "Admin", :subtype) %>
+  <%= show_subtype(@data) %>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",
@@ -57,8 +54,7 @@
       :hasParticipant, :producerFor) %>
 
   <% when Thales::Datamodel::E_RESEARCH_SERVICE %>
-  <p>SERVICE</p>
-  <%= show_group(@data, "Admin", :subtype) %>
+  <%= show_subtype(@data) %>
   <%= show_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= show_group(@data, "Tags",

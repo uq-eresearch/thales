@@ -70,21 +70,6 @@ module RecordsHelper
 
     end
 
-#    if include_non_profile
-#      # Show properties not known to the profile
-#
-#      outputted_header = false
-#      data.property_all do |global_id, values|
-#        if ! profile.symbol_table.has_key?(global_id)
-#          if ! outputted_header
-#            result += content_tag(:h3) { 'Properties not in profile' }
-#            outputted_header = true
-#          end
-#          result += show_field(data, global_id)
-#        end
-#      end
-#    end
-
     return raw result
   end
 
@@ -160,6 +145,40 @@ module RecordsHelper
       end # :dl
     end # :div
   end
+
+  # Generates HTML for displaying the subtype of a record.
+  #
+  # ==== Parameters
+  #
+  # +data+:: an instance of a Thales::Datamodel::Cornerstone::Record
+  #
+  # ==== Returns
+  #
+  # HTML
+
+  def show_subtype(data)
+    result = ''
+    sts = data.subtype
+    if sts
+      sts.each do |st|
+        result += show_property([ st[/[^\/]*\/[^\/]*$/] ], { label: 'Type/subtype' })
+      end
+    end
+    return raw result
+  end
+
+  # Generates HTML for editing the values of a field.
+  #
+  # ==== Parameters
+  #
+  # +data+:: an instance of a Thales::Datamodel::Cornerstone::Record
+  # +heading+:: text to display in +h3+ tag
+  # +symbols+:: zero or more symbols
+  #
+  # ==== Returns
+  #
+  # HTML showing the +heading+ followed by edit fields from +data+
+  # corresponding to the supplied +symbols+.
 
   def form_group(data, heading, *symbols)
     result = content_tag(:h3) { heading }
