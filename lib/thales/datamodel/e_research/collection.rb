@@ -235,10 +235,21 @@ module Thales
 
         private
         def spatial_to_rifcs(builder)
-          spatial.each do |x|
-
+          spatial_geoname.each do |x|
             builder.location {
-              builder.spatial(x, type: '')
+              builder.spatial("name=#{x.hint}", type: 'dcmiPoint') # TODO: include coordinates
+            }
+          end
+          spatial_point.each do |x|
+            if x =~ /^\s*([+-]?\d+(\.\d+)?)\,([+-]?\d+(\.\d+)?)\s*$/
+              builder.location {
+                builder.spatial("east=#{$1}; north=#{$3}", type: 'dcmiPoint')
+              }
+            end
+          end
+          spatial_polygon.each do |x|
+            builder.location {
+              builder.spatial(x, type: 'kmlPolyCoords')
             }
           end
         end
