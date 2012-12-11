@@ -85,12 +85,14 @@ module Thales
             label: 'Field of Research (FoR)',
             maxlength: 8,
             gid: "#{PROPERTY_BASE_URI}/tag_FoR",
+            is_link: true,
           },
 
           :tag_SEO => {
             label: 'Socio-Economic Outcomes (SEO)',
             maxlength: 8,
             gid: "#{PROPERTY_BASE_URI}/tag_SEO",
+            is_link: true,
           },
 
           # Other
