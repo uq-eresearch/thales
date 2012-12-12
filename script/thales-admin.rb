@@ -12,7 +12,7 @@ require 'optparse'
 require 'nokogiri'
 require 'active_record'
 require 'pg'
-require 'uuid'
+require 'securerandom'
 
 require 'models/property'
 require 'models/record'
@@ -71,7 +71,7 @@ def create_update_records(items)
       # Create a new record
 
       r = Record.new
-      r.uuid = item[:uuid] ? item[:uuid] : UUID.new.generate(:compact)
+      r.uuid = item[:uuid] ? item[:uuid] : "urn:uuid:#{SecureRandom.uuid}"
       r.ser_type = item[:ser_type]
       r.ser_data = item[:data].serialize 
 

@@ -1,5 +1,5 @@
 
-require 'uuid'
+require 'securerandom'
 require 'record'
 #require 'thales/datamodel/e_research'
 
@@ -112,7 +112,7 @@ class RecordsController < ApplicationController
   def create
 
     @record = Record.new(params[:record])
-    @record.uuid = UUID.new.generate(:compact)
+    @record.uuid = "urn:uuid:#{SecureRandom.uuid}"
 
     r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
     data = r_class.new(params[:data])
