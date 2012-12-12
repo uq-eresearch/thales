@@ -122,17 +122,11 @@ module Thales
           builder.party(party_attrs) {
             base_to_rifcs(builder)
 
-            builder.name {
-              name_prefix.each { |x| builder.namePart(x, type: 'title') }
-              name_given.each { |x| builder.namePart(x, type: 'given') }
-              name_family.each { |x| builder.namePart(x, type: 'family') }
-            }
-
-            related_object(creatorFor, :isOwnerOf, builder) # collection
+            related_object(creatorFor, :isCollectorOf, builder) # collection
             related_object(managerFor, :isManagerOf, builder) # collection
             related_object(participantIn, :isParticipantIn, builder) # activity
-#            related_object(operatorFor, :foo, builder) # service
-#            related_object(authorOf, :foo, builder) # publication
+            related_object(operatorFor, :hasAssociationWith, builder) # service # TODO: need a better relationship
+            related_info(authorOf, builder) # publication
           }
         end
 

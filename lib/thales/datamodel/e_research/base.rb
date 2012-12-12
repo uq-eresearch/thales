@@ -128,21 +128,34 @@ module Thales
 
           identifier.each { |x| builder.identifier(x, type: 'uri') }
 
-          title.each { |x|
-            builder.name {
-              builder.namePart(x, type: 'primary')
+          if (subtype &&
+              subtype[0] &&
+              subtype[0] == "#{SUBTYPE_BASE_URI}/party/person")
+            # People have name components
+            builder.name(type: 'primary') {
+              name_prefix.each { |x| builder.namePart(x, type: 'title') }
+              name_given.each { |x| builder.namePart(x, type: 'given') }
+              name_family.each { |x| builder.namePart(x, type: 'family') }
             }
-          }
-          title_alt.each { |x|
-            builder.name {
-              builder.namePart(x, type: 'alternate')
+          else
+            # All others have titles and alternative titles
+            title.each { |x|
+              builder.name(type: 'primary') {
+                builder.namePart(x)
+              }
             }
-          }
-          description.each { |x| builder.description(x, type: 'full') }
+            title_alt.each { |x|
+              builder.name(type: 'alternate') {
+                builder.namePart(x)
+              }
+            }
+          end
+
+          description.each { |x| builder.description(x, type: 'brief') }
 
           tag_keyword.each { |x| builder.subject(x, type: 'local') }
-          tag_FoR.each { |x| builder.subject(x, type: 'anzsrc-for') }
-          tag_SEO.each { |x| builder.subject(x, type: 'anzsrc-seo') }
+          tag_FoR_to_rifcs(builder)
+          tag_SEO_to_rifcs(builder)
 
           contact_email.each { |x|
             builder.location {
@@ -162,6 +175,34 @@ module Thales
               }
             }
           }
+        end
+
+        FOR_URI_PREFIX = 'http://purl.org/asc/1297.0/2008/for/'
+
+        def tag_FoR_to_rifcs(builder)
+          tag_FoR.each do |x|
+            uri = x.uri
+            if uri.start_with?(FOR_URI_PREFIX)
+              rest = uri[FOR_URI_PREFIX.length..-1]
+              if rest =~ /^(\d+)$/
+                builder.subject($~[1], type: 'anzsrc-for')
+              end
+            end
+          end
+        end
+
+        SEO_URI_PREFIX = 'http://purl.org/asc/1297.0/2008/seo/'
+
+        def tag_SEO_to_rifcs(builder)
+          tag_SEO.each do |x|
+            uri = x.uri
+            if uri.start_with?(SEO_URI_PREFIX)
+              rest = uri[SEO_URI_PREFIX.length..-1]
+              if rest =~ /^(\d+)$/
+                builder.subject($~[1], type: 'anzsrc-seo')
+              end
+            end
+          end
         end
 
         # Mapping from internal subtype URI values to RIF-CS type values.
@@ -247,6 +288,28 @@ module Thales
             builder.relatedObject {
               builder.key(value.uri)
               builder.relation(type: type)
+            }
+          end
+        end
+
+        # Generates RIF-CS relatedInfo element from an array of
+        # Thales::Datamodel::Cornerstone::PropertyLink objects.
+        #
+        # This method is used by the subclasses in their +to_rifcs+
+        # methods.
+        #
+        # ==== Parameters
+        #
+        # +values+:: array of PropertyLink objects
+        # +type+:: string value to use for the RIF-CS <tt>relatedInfo/relation/@type</tt> attribute
+        # +builder+:: Nokogiri XML builder
+
+        protected
+        def related_info(values, builder)
+          values.each do |value|
+            builder.relatedInfo {
+              builder.identifier(value.uri, type: 'uri')
+              builder.title(value.hint)
             }
           end
         end

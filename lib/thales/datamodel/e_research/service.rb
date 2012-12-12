@@ -77,7 +77,15 @@ module Thales
           builder.service(service_attrs) {
             base_to_rifcs(builder)
             related_object(operatedBy, :isManagedBy, builder) # party
-            related_object(providesAccessTo, :makesAvailable, builder) # collection
+
+            if (subtype &&
+                subtype[0] &&
+                subtype[0] == "#{SUBTYPE_BASE_URI}/service/report")
+              rel = :presents
+            else
+              rel = :makesAvailable
+            end
+            related_object(providesAccessTo, rel, builder) # collection
           }
         end
 

@@ -209,21 +209,21 @@ module Thales
                 end
                 if ! rights_licence.empty? 
                   # type: rightsUri:
-                  builder.licence(rights_licence[0], type: 'accessRights')
+                  builder.licence(rights_licence[0])
                 end
                 if ! rights_access.empty? 
                   # type: rightsUri:
-                  builder.accessRights(rights_access[0], type: 'accessRights')
+                  builder.accessRights(rights_access[0])
                 end
               }
             end
 
-            related_object(createdBy, :isOwnedBy, builder) # party
+            related_object(createdBy, :hasCollector, builder) # party
             related_object(managedBy, :isManagedBy, builder) # party
             related_object(producedBy, :isOutputOf, builder) # activity
             related_object(accessedVia, :supports, builder) # service
-            #related_object(referencedBy, :foo, builder) # publication
-            related_object(isRelatedTo, :isRelatedTo, builder) # collection
+            related_object(isRelatedTo, :hasAssociationWith, builder) # collection
+            related_info(referencedBy, builder) # publication
           }
         end
 
