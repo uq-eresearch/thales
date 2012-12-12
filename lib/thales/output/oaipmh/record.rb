@@ -81,9 +81,9 @@ module Thales
 
           Nokogiri::XML::Builder.new { |xml|
             xml.registryObjects(xmlns: RIFCS_NS) {
-              xml.registryObject(group: "Thales") {
+              xml.registryObject(group: "Thales Group") {
                 xml.key(uuid)
-                xml.originatingSource("foobar")
+                xml.originatingSource("Thales Originating Source")
                 @data.to_rifcs(xml, updated_at)
               }
             }
