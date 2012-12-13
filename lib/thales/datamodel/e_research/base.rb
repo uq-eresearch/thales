@@ -4,7 +4,6 @@
 
 basedir = File.expand_path(File.dirname(__FILE__))
 require "#{basedir}/../cornerstone"
-require "#{basedir}/../../output/oaipmh/find.rb"
 
 module Thales
   module Datamodel
@@ -337,14 +336,16 @@ module Thales
         def related_object(values, type, builder)
           values.each do |value|
 
-            target = Thales::Output::OAIPMH::Find::find_by_identifier(value.uri)
+            targets = Record.find_by_identifier(value.uri)
 
-            if target
-              # Object exists in this feed: represent as a relatedObject
-              builder.relatedObject {
-                builder.key(target.uuid)
-                builder.relation(type: type)
-              }
+            if targets
+              # Object(s) exists in this feed: represent as a relatedObject(s)
+              targets.each do |target|
+                builder.relatedObject {
+                  builder.key(target.uuid)
+                  builder.relation(type: type)
+                }
+              end
             else
               # Object does not exist in this feed: represent as relatedInfo
               builder.relatedInfo {

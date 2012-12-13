@@ -1,5 +1,8 @@
 # Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
+basedir = File.expand_path(File.dirname(__FILE__))
+require "#{basedir}/../models/record"
+
 require 'thales/datamodel'
 
 # Ruby on Rails helper.
@@ -117,25 +120,10 @@ module RecordsHelper
           c += content_tag(:dt) { label }
 
           c += content_tag(:dd, first ? { :class => 'first' } : nil) {
-            if ! val.respond_to? :uri
-              # Text property
-              val
+            if val.respond_to?(:uri)
+              show_property_link(val)
             else
-              # Link property
-              uri = val.uri
-              display_text = val.hint
-              if display_text.nil? || display_text.blank?
-                display_text = uri
-              end
-              if uri.starts_with?('https://', 'http://', 'mailto:')
-                # Display link as a hyperlink
-                content_tag(:a, :href => uri,
-                            :class => 'link') { display_text }
-              else
-                # Display link as non-hyperlinked text
-                content_tag(:span, :title => val.uri,
-                            :class => 'link') { display_text }
-              end
+              val
             end
           }
 
@@ -144,6 +132,36 @@ module RecordsHelper
         raw c
       end # :dl
     end # :div
+  end
+
+  private
+  def show_property_link(val)
+    # Link property
+
+    uri = val.uri
+    display_text = val.hint
+    if display_text.nil? || display_text.blank?
+      display_text = uri
+    end
+
+    matches = Record.find_by_identifier(val.uri)
+    if matches && ! matches.empty?
+      m = ''
+      matches.each do |r|
+        m += link_to(display_text, r, class: 'link-internal', title: 'Internal record')
+      end
+      raw m
+    else
+      if uri.starts_with?('https://', 'http://', 'mailto:')
+        # Display link as a hyperlink
+        content_tag(:a, :href => uri,
+                    class: 'link-external', title: 'External identifier') { display_text }
+      else
+        # Display link as non-hyperlinked text
+        content_tag(:span, :title => val.uri,
+                    :class => 'link-identifier') { display_text }
+      end
+    end
   end
 
   # Generates HTML for displaying the subtype of a record.
@@ -165,6 +183,54 @@ module RecordsHelper
       end
     end
     return raw result
+  end
+
+  # Generates HTML for editing the subtype.
+
+  def form_subtype(data)
+    name = :data_subtype
+
+    if @data.instance_of? Thales::Datamodel::EResearch::Collection
+      label = 'Collection subtype'
+      options = [
+                 ['Collection', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/collection/collection"],
+                 ['Dataset', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/collection/dataset"],
+                ]
+    elsif @data.instance_of? Thales::Datamodel::EResearch::Party
+      label = 'Party subtype'
+      options = [
+                 ['Person', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/party/person"],
+                 ['Group', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/party/group"],
+                 ['Administrative position', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/party/position"],
+                ]
+    elsif @data.instance_of? Thales::Datamodel::EResearch::Activity
+      label = 'Activity subtype'
+      options = [
+                 ['Project', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/activity/project"],
+                 ['Program', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/activity/program"],
+                ]
+    elsif @data.instance_of? Thales::Datamodel::EResearch::Service
+      label = 'Service subtype'
+      options = [
+                 ['Report', "#{Thales::Datamodel::EResearch::Base::SUBTYPE_BASE_URI}/service/report"],
+                ]
+    else
+      raise 'internal error: not implemented yet'
+    end
+    
+    content_tag(:div, { :class => 'item' }) do
+      content_tag(:dl) do
+        c = content_tag(:dt) do
+          label_tag(name, label)
+        end
+        c += content_tag(:dd, { :class => 'first' }) do
+          select_tag(:data_subtype,
+                     options_for_select(options, data.subtype[0]),
+                     name: 'data[subtype]')
+        end # :dd
+      end # :dl
+    end # :div
+
   end
 
   # Generates HTML for editing the values of a field.

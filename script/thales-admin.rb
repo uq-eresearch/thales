@@ -12,7 +12,6 @@ require 'optparse'
 require 'nokogiri'
 require 'active_record'
 require 'pg'
-require 'securerandom'
 
 require 'models/property'
 require 'models/record'
@@ -71,9 +70,8 @@ def create_update_records(items)
       # Create a new record
 
       r = Record.new
-      r.uuid = item[:uuid] ? item[:uuid] : "urn:uuid:#{SecureRandom.uuid}"
-      r.ser_type = item[:ser_type]
-      r.ser_data = item[:data].serialize 
+      r.uuid_set(item[:uuid])
+      r.data_set(item[:ser_type], item[:data])
 
       if ! r.save
         $stderr.puts "Error: could not save new record in database"
@@ -85,8 +83,7 @@ def create_update_records(items)
     elsif existing.size == 1
       # Replace existing record that has the same UUID
       r = existing.first
-      r.ser_type = item[:ser_type]
-      r.ser_data = item[:data].serialize 
+      r.data_set(item[:ser_type], item[:data])
       if ! r.save
         $stderr.puts "Error: could not update record: #{item[:uuid]}"
         exit 1

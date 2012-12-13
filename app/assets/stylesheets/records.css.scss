@@ -188,6 +188,19 @@ div#show {
       dd {
         @include DD_COMMON;;
         margin: $fieldextraMarginTop 0 0 ($labelWidth + $labelMarginRight);
+
+	a.link-internal {
+	  font-style: italic;
+	}
+
+	a.link-external {
+	  font-style: italic;
+	  background: yellow;
+	}
+
+	span.link-identifier {
+	  font-style: italic;
+	}
       }
       input, textarea {
         margin: $inputMargin;

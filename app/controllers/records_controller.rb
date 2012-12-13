@@ -1,5 +1,4 @@
 
-require 'securerandom'
 require 'record'
 
 # Ruby on Rails controller
@@ -116,11 +115,10 @@ class RecordsController < ApplicationController
   def create
 
     @record = Record.new(params[:record])
-    @record.uuid = "urn:uuid:#{SecureRandom.uuid}"
+    @record.uuid_set()
 
     r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
-    data = r_class.new(params[:data])
-    @record.ser_data = data.serialize
+    @record.data_set(@record.ser_type, r_class.new(params[:data]))
 
     if @record.save
       redirect_to @record, notice: 'Record was successfully created.'
@@ -135,7 +133,7 @@ class RecordsController < ApplicationController
     @record = Record.find(params[:id])
 
     r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
-    @record.ser_data = r_class.new(params[:data]).serialize
+    @record.data_set(@record.ser_type, r_class.new(params[:data]))
 
     respond_to do |format|
       if @record.update_attributes(params[:record])

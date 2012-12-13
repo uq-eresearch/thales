@@ -21,8 +21,8 @@
   <%= f.hidden_field(:ser_type) %>
 
   <% if @data.instance_of? Thales::Datamodel::EResearch::Collection %>
-  <p>COLLECTION</p>
-  <%= form_group(@data, "Admin", :subtype) %>
+
+  <%= form_subtype(@data) %>
   <%= form_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= form_group(@data, "Tags",
@@ -37,8 +37,8 @@
       :createdBy, :managedBy, :accessedVia, :referencedBy) %>
 
   <% elsif @data.instance_of? Thales::Datamodel::EResearch::Party %>
-  <p>PARTY</p>
-  <%= form_group(@data, "Admin", :subtype) %>
+
+  <%= form_subtype(@data) %>
   <%= form_group(@data, "Name",
       :name_prefix, :name_given, :name_family) %>
   <%= form_group(@data, "General information",
@@ -51,8 +51,8 @@
       :creatorFor, :managerFor, :operatorFor, :participantIn, :authorOf) %>
 
   <% elsif @data.instance_of? Thales::Datamodel::EResearch::Activity %>
-  <p>ACTIVITY</p>
-  <%= form_group(@data, "Admin", :subtype) %>
+
+  <%= form_subtype(@data) %>
   <%= form_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= form_group(@data, "Tags",
@@ -65,8 +65,8 @@
       :hasParticipant, :producerFor) %>
 
   <% elsif @data.instance_of? Thales::Datamodel::EResearch::Service %>
-  <p>SERVICE</p>
-  <%= form_group(@data, "Admin", :subtype) %>
+
+  <%= form_subtype(@data) %>
   <%= form_group(@data, "General information",
       :title, :title_alt, :description, :identifier) %>
   <%= form_group(@data, "Tags",
