@@ -71,7 +71,10 @@ class RecordsController < ApplicationController
       format.html # show.html.erb
       format.json { render json: @data }
       format.xml { send_data @data.serialize }
-      format.rifcs { send_data @data.to_rifcs }
+      format.rifcs do
+        b = Nokogiri::XML::Builder.new { |xml| @data.to_rifcs(xml) }
+        send_data b.to_xml
+      end
     end
   end
 
