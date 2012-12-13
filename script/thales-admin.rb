@@ -280,8 +280,18 @@ def process_arguments
     exit 2
   end
 
-  if options[:force] && options[:export]
-    $stderr.puts "Usage error: --force cannot be used with --export"
+  if ! (options[:export] || options[:delete] || options[:import])
+    puts "#{PROG}: no action specified (--help for help)"
+    exit 2
+  end
+
+  if options[:force] && ! options[:import]
+    $stderr.puts "Usage error: --force only works with --import"
+    exit 2
+  end
+
+  if options[:output] && ! options[:export]
+    $stderr.puts "Usage error: --output only works with --export"
     exit 2
   end
 
@@ -297,13 +307,14 @@ def main
 
     if options[:export]
       export(options)
-    elsif options[:import]
-      import(options)
-    elsif options[:delete]
+    end
+
+    if options[:delete]
       delete(options)
-    else
-      puts "#{PROG}: no action specified (--help for help)"
-      exit 2
+    end
+
+    if options[:import]
+      import(options)
     end
 
   rescue RuntimeError => s
