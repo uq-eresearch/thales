@@ -64,7 +64,7 @@
   <p>Internal error: show view: unknown record type</p>
   <% end %>
 
-  <%= show_all(@data) %>
+  <%#= show_all(@data) # for debugging %>
 
   <div id="editActions">
   <%=
@@ -76,7 +76,7 @@
   %>
   </div>
 
-  <%= link_to "RIF-CS version", record_path(@record, :rifcs) %>
+  <%#= link_to "RIF-CS version", record_path(@record, :rifcs) %>
 
   <p id="updatedTime" title="<%= @record.updated_at.iso8601 %>">Last updated: <%= @record.updated_at.to_s(:rfc822) %></p>
 </div>
