@@ -21,14 +21,7 @@
          data = col[1]
        %>
     <tr>
-      <% 
-         title = data.title[0]
-	 if title.nil? || title.blank?
-           display_title = '(untitled)'
-	 else
-           display_title = title
-	 end %>
-      <td><h1><%= link_to display_title, record, :title => record.uuid %></h1>
+      <td><h1><%= link_to data.display_title, record, :title => record.uuid %></h1>
 	<span><%= data.description[0] %></span>
 	<span class="type">
 	  <%= case record.ser_type

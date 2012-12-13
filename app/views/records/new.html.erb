@@ -1,6 +1,5 @@
-<% content_for(:page_title) do "New record" end %>
-
-<% content_for(:page_heading) do "New record" end %>
+<% content_for(:page_title) do "New #{Thales::Datamodel::LABEL_FOR[@record.ser_type]} record" end %>
+<% content_for(:page_heading) do "New #{Thales::Datamodel::LABEL_FOR[@record.ser_type]} record" end %>
 
 <%= render 'form' %>
 

@@ -115,6 +115,56 @@ module Thales
           },
         }
 
+        # Returns a string that can be used as a title for the record.
+        #
+        # ==== Returns
+        #
+        # This will be derived from the given and family names for a person,
+        # or be the primary title for everything else.
+
+        def display_title
+
+          if (subtype &&
+              subtype[0] &&
+              subtype[0] == "#{SUBTYPE_BASE_URI}/party/person")
+            # People have names
+            str = nil
+
+            g = name_given
+            if g && ! g.empty?
+              str = g[0]
+            end
+
+            f = name_family
+            if f && ! f.empty?
+              if str
+                str += " #{f[0]}"
+              else
+                str = f[0]
+              end
+            end
+
+            if str
+              return str
+            end
+
+          else
+            # All others have titles
+
+            t = title
+            if t
+              t = title[0]
+              if t
+                if t && ! t.blank?
+                  return t
+                end
+              end
+            end
+          end
+
+          return '(untitled)'
+        end
+
         # Represents the base properties as RIF-CS.
         #
         # This method is used by the subclasses in their +to_rifcs+

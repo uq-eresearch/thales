@@ -1,9 +1,5 @@
-<% 
-   title = @data.title[0]
-   display_title = (title.nil? || title.blank?) ? '(untitled)' : title
- %>
-<% content_for(:page_title) do display_title end %>
-<% content_for(:page_heading) do display_title end %>
+<% content_for(:page_title) do @data.display_title end %>
+<% content_for(:page_heading) do @data.display_title end %>
 
 <p id="notice"><%= notice %></p>
 
