@@ -1,7 +1,8 @@
 
 require 'securerandom'
 require 'record'
-#require 'thales/datamodel/e_research'
+
+# Ruby on Rails controller
 
 class RecordsController < ApplicationController
 

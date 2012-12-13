@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :roles
 
-  validates :surname, :presence => true
+  validates :givenname, :presence => true
   validates :auth_name, :presence => true, :uniqueness => true
   validates_confirmation_of :auth_value, :message => 'Passwords do not match'
 end

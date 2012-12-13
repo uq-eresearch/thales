@@ -1,4 +1,5 @@
-require 'uuid'
+
+# Ruby on Rails controller
 
 class RolesController < ApplicationController
 
@@ -46,7 +47,7 @@ class RolesController < ApplicationController
   # POST /roles.json
   def create
     @role = Role.new(params[:role])
-    @role.uuid = UUID.new.generate(:compact)
+    @role.uuid = "urn:uuid:#{SecureRandom.uuid}"
 
     respond_to do |format|
       if @role.save

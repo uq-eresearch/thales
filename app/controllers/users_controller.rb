@@ -1,5 +1,6 @@
 
-require 'uuid'
+require 'securerandom'
+
 require 'thales/authentication/password'
 
 class UsersController < ApplicationController
@@ -49,7 +50,7 @@ class UsersController < ApplicationController
   def create
     fix_password_params(params)
     @user = User.new(params[:user])
-    @user.uuid = UUID.new.generate(:compact)
+    @user.uuid = "urn:uuid:#{SecureRandom.uuid}"
     set_roles(@user, params)
 
     respond_to do |format|

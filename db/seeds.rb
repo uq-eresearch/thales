@@ -13,23 +13,23 @@ require 'thales/authentication/password'
 role_sysadmin =
   Role.create(:name => 'System administrator',
               :shortname => 'sysadmin',
-              :uuid => '0069d42697534fa1bdd07c39f5a54899')
+              :uuid => 'urn:uuid:0069d426-9753-4fa1-bdd0-7c39f5a54899')
 
 Role.create(:name => 'System curator',
             :shortname => 'curator',
-            :uuid => '778790da00fb4d328b990c4081a20f41')
+            :uuid => 'urn:uuid:778790da-00fb-4d32-8b99-0c4081a20f41')
 
 Role.create(:name => 'General user',
             :shortname => 'user',
-            :uuid => 'f6e227566ebb46bc8746cea5a17903d4')
+            :uuid => 'urn:uuid:f6e22756-6ebb-46bc-8746-cea5a17903d4')
 
 user_root =
-  User.create(:givenname => '',
-              :surname => 'root',
-              :uuid => '0e2d69c3e8404b7a9100548f97247ab5',
+  User.create(:givenname => 'root',
+              :surname => '',
+              :uuid => 'urn:uuid:0e2d69c3-e840-4b7a-9100-548f97247ab5',
               :auth_type => Thales::Authentication::Password::AUTH_TYPE,
               :auth_name => 'root',
-              :auth_value => nil)
+              :auth_value => nil) # nil means can login without password
 
 user_root.roles << role_sysadmin
 user_root.save
