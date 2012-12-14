@@ -146,12 +146,24 @@ module RecordsHelper
 
     matches = Record.find_by_identifier(val.uri)
     if matches && ! matches.empty?
+      # The system has record(s) with this identifier, so link to them.
+      # In normal practice there would be only record, but it is possible
+      # for more than one record to contain the same identifier.
       m = ''
-      matches.each do |r|
-        m += link_to(display_text, r, class: 'link-internal', title: 'Internal record')
+      matches.each do |record|
+        r_class = Thales::Datamodel::CLASS_FOR[record.ser_type]
+        data = r_class.new.deserialize(record.ser_data)
+
+        m += '<br/>' if m != ''
+        m += link_to(data.display_title, record,
+                     class: 'link-internal',
+                     title: "Internal record: #{display_text}")
       end
       raw m
+
     else
+      # No record exist in the system with this identifier, so display it
+      # as an external hyperlink or as text.
       if uri.starts_with?('https://', 'http://', 'mailto:')
         # Display link as a hyperlink
         content_tag(:a, :href => uri,

@@ -2,6 +2,9 @@
 
 require 'securerandom'
 
+basedir = File.expand_path(File.dirname(__FILE__))
+require "#{basedir}/ident"
+
 # Ruby on Rails model.
 
 class Record < ActiveRecord::Base
@@ -9,6 +12,8 @@ class Record < ActiveRecord::Base
 
   attr_accessible :ser_type
   attr_accessible :ser_data
+
+  has_many :idents, :dependent => :destroy
 
   # Sets the uuid.
   #
@@ -30,25 +35,46 @@ class Record < ActiveRecord::Base
   def data_set(type, data)
     self.ser_type = type
     self.ser_data = data.serialize
+
+    old_set = {}
+    self.idents.each do |ident|
+      old_set[ident.identifier] = ident
+    end
+
+    new_set = {}
+    data.identifier.each do |identifier|
+      new_set[identifier.to_s] = true
+    end
+
+    new_set.each_key do |identifier|
+      if ! old_set.has_key?(identifier)
+        i = Ident.new
+        i.identifier = identifier.to_s
+        self.idents << i
+      end
+    end
+
+    old_set.each_pair do |identifier, ident|
+      if ! new_set.has_key?(identifier)
+        self.idents.delete(ident)
+      end
+    end
+    
   end
 
   # Finds records by identifiers inside their data
+  #
+  # ==== Parameters
+  #
+  # +identifier+:: identifier to match
+  #
+  # ==== Returns
+  #
+  # An array of zero or more records which contain the
+  # identifier as one of its identifiers.
 
   def self.find_by_identifier(identifier)
-
-    matches = Record.all.keep_if do |record|
-      match = false
-      r_class = Thales::Datamodel::CLASS_FOR[record.ser_type]
-      data = r_class.new.deserialize(record.ser_data)
-      data.identifier.each do |value|
-        if value == identifier
-          match = true
-          break
-        end
-      end
-      match
-    end
-    return matches
-    #return nil
+    matches = Ident.where(identifier: identifier)
+    return matches.uniq.map { |i| i.record }
   end
 end
