@@ -195,7 +195,7 @@ module Thales
               }
             }
             title_alt.each { |x|
-              builder.name(type: 'alternate') {
+              builder.name(type: 'alternative') {
                 builder.namePart(x)
               }
             }
