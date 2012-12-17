@@ -1,9 +1,8 @@
 <% content_for(:page_title) do "Edit role" end %>
 <% content_for(:page_heading) do "Edit role" end %>
 
-<p id="notice"><%= notice %></p>
+<% if notice %>
+  <p id="notice"><%= notice %></p>
+<% end %>
 
 <%= render 'form' %>
-
-<%= link_to 'Show', @role %> |
-<%= link_to 'Back', roles_path %>

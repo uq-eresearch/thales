@@ -1,4 +1,11 @@
+require 'thales/authentication/password'
+
+# Ruby on Rails controller
+
 class SettingsController < ApplicationController
+
+  before_filter :authenticate
+
   # GET /settings
   # GET /settings.json
   def index
@@ -7,28 +14,6 @@ class SettingsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @settings }
-    end
-  end
-
-  # GET /settings/1
-  # GET /settings/1.json
-  def show
-    @setting = Setting.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @setting }
-    end
-  end
-
-  # GET /settings/new
-  # GET /settings/new.json
-  def new
-    @setting = Setting.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @setting }
     end
   end
 

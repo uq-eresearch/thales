@@ -1,3 +1,4 @@
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 require 'record'
 

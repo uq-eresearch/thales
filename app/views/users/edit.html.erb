@@ -1,7 +1,4 @@
 <% content_for(:page_title) do "User: #{@user.givenname} #{@user.surname} (edit)" end %>
-<% content_for(:page_heading) do "User: #{@user.givenname} #{@user.surname} (edit)" end %>
+<% content_for(:page_heading) do "Editing user" end %>
 
 <%= render 'form' %>
-
-<%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>

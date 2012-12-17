@@ -1,7 +1,9 @@
 <% content_for(:page_title) do @data.display_title end %>
 <% content_for(:page_heading) do @data.display_title end %>
 
-<p id="notice"><%= notice %></p>
+<% if notice %>
+  <p id="notice"><%= notice %></p>
+<% end %>
 
 <!-- <%= @record.uuid %> -->
 

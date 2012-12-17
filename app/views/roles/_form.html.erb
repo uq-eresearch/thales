@@ -1,4 +1,4 @@
-<%= form_for(@role) do |f| %>
+
   <% if @role.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@role.errors.count, "error") %> prohibited this role from being saved:</h2>
@@ -11,15 +11,35 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+  <div id="editForm">
+
+<%= form_for(@role) do |f| %>
+
+    <div class="item">
+      <dl>
+	<dt><span><%= f.label :name %></span></dt>
+	<dd class="first"><%= f.text_field :name %></dd>
+      </dl>
+    </div>
+
+    <div class="item">
+      <dl>
+	<dt><span><%= f.label :shortname %></span></dt>
+	<dd class="first"><%= f.text_field :shortname %></dd>
+      </dl>
+    </div>
+
+    <div id="submitActions">
+      <%= f.submit(id: 'save') %>
+    </div>
+  <% end %>
+
+  <div id="cancelActions">
+    <%=
+       # Cancel button
+       form_tag(roles_path, :method => :get) do 
+         submit_tag('Cancel', :confirm => 'Discard all changes?')
+       end
+    %>
   </div>
-  <div class="field">
-    <%= f.label :shortname %><br />
-    <%= f.text_field :shortname %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
+</div>

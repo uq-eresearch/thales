@@ -1,3 +1,5 @@
+<div id="editform">
+
 <%= form_for(@user) do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
@@ -37,9 +39,28 @@
 %><dd><%= f.password_field :auth_value_confirmation %></dd>
 </dl>  
 
-  <div class="actions">
+  <div class="submitActions">
     <%= f.submit %>
   </div>  
 </div>
 
-<% end %>
+<% end %> <%# form_for %>
+
+<div id="cancelActions">
+<%=
+  # Cancel button
+
+  if @user.new_record?
+    message = 'Discard all entered information?'
+    path = users_path()
+  else
+    message = 'Discard all changes?'
+    path = @user
+  end
+  form_tag(path, :method => :get) do 
+    submit_tag('Cancel', :confirm => message)
+  end
+%>
+</div>
+
+</div>

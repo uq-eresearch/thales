@@ -1,4 +1,5 @@
 <%= form_for(@settings) do |f| %>
+
   <% if @settings.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@settings.errors.count, "error") %> prohibited this setting from being saved:</h2>
@@ -11,36 +12,51 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :oaipmh_repositoryName %><br />
-    <%= f.text_field :oaipmh_repositoryName %>
-  </div>
-  <div class="field">
-    <%= f.label :oaipmh_adminEmail %><br />
-    <%= f.text_field :oaipmh_adminEmail %>
-  </div>
+  <div id="show">
+    <h3>OAI-PMH settings</h3>
 
-  <div class="field">
-    <%= f.label :rifcs_group %><br />
-    <%= f.text_field :rifcs_group %>
-  </div>
-  <div class="field">
-    <%= f.label :rifcs_originatingSource %><br />
-    <%= f.text_field :rifcs_originatingSource %>
-  </div>
+    <div class="item">
+      <dl>
+	<dt><%= f.label(:oaipmh_repositoryName, 'Repository name') %></dt>
+	<dd class="first"><%= f.text_field :oaipmh_repositoryName %></dd>
+      </dl>
+    </div>
 
-  <div class="actions">
-    <%= f.submit(id: 'save') %>
-  </div>
+    <div class="item">
+      <dl>
+	<dt><%= f.label(:oaipmh_adminEmail, 'Administator email') %></dt>
+	<dd class="first"><%= f.text_field :oaipmh_adminEmail %></dd>
+      </dl>
+    </div>
 
-<div id="cancelActions">
-<%=
-  # Cancel button
-  form_tag(settings_path, :method => :get) do 
-    submit_tag('Cancel', :confirm => 'Discard all changes?')
-  end
-%>
+    <h3>RIF-CS settings</h3>
+
+    <div class="item">
+      <dl>
+	<dt><%= f.label(:rifcs_group, 'Group') %></dt>
+	<dd class="first"><%= f.text_field :rifcs_group %></dd>
+      </dl>
+    </div>
+
+    <div class="item">
+      <dl>
+	<dt><%= f.label(:rifcs_originatingSource, 'Originating source') %></dt>
+	<dd class="first"><%= f.text_field :rifcs_originatingSource %></dd>
+      </dl>
+    </div>
+
+    <div id="submitActions">
+      <%= f.submit('Save settings', id: 'save') %>
+    </div>
+  <% end %>
+
+  <div id="cancelActions">
+    <%=
+       # Cancel button
+       form_tag(settings_path, :method => :get) do 
+         submit_tag('Cancel', :confirm => 'Discard all changes?')
+       end
+    %>
+  </div>
 </div>
 
-
-<% end %>

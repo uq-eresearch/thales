@@ -1,5 +1,5 @@
 Thales::Application.routes.draw do
-  resources :settings
+  resources :settings, only: [ :index, :edit, :update ]
 
   resources :capacities
 

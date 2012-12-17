@@ -1,31 +1,52 @@
 <% content_for(:page_title) do "Settings" end %>
 <% content_for(:page_heading) do "Settings" end %>
 
-<p id="notice"><%= notice %></p>
+<% if notice %>
+  <p id="notice"><%= notice %></p>
+<% end %>
+
+<div id="show">
 
 <h3>OAI-PMH settings</h3>
+<div class="item">
+  <dl>
+    <dt><span>OAI-PMH repositoryName</span></dt>
+    <dd class="first"><%= @settings.oaipmh_repositoryName %></dd>
+  </dl>
+</div>
 
-<p>
-  <b>OAI-PMH repositoryName:</b>
-  <%= @settings.oaipmh_repositoryName %>
-</p>
-<p>
-  <b>OAI-PMH adminEmail:</b>
-  <%= @settings.oaipmh_adminEmail %>
-</p>
+<div class="item">
+  <dl>
+    <dt><span>OAI-PMH adminEmail</span></dt>
+    <dd class="first"><%= @settings.oaipmh_adminEmail %></dd>
+  </dl>
+</div>
 
 <h3>RIF-CS settings</h3>
 
-<p>
-  <b>RIF-CS group:</b>
-  <%= @settings.rifcs_group %>
-</p>
+<div class="item">
+  <dl>
+    <dt><span>RIF-CS group</span></dt>
+    <dd class="first"><%= @settings.rifcs_group %></dd>
+  </dl>
+</div>
 
-<p>
-  <b>RIF-CS originating source:</b>
-  <%= @settings.rifcs_originatingSource %>
-</p>
+<div class="item">
+  <dl>
+    <dt><span>RIF-CS originating source</span></dt>
+    <dd class="first"><%= @settings.rifcs_originatingSource %></dd>
+  </dl>
+</div>
 
-<%= link_to 'Edit', edit_setting_path(@settings) %>
+
+<div id="editActions">
+<%=
+   form_tag(edit_setting_path(@settings), :method => :get) do
+     submit_tag('Edit settings')
+   end
+%>
+</div>
+
+</div>
 
 <% content_for(:navigation) { side_nav_bar(:administration) } %>

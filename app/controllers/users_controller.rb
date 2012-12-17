@@ -1,7 +1,10 @@
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 require 'securerandom'
 
 require 'thales/authentication/password'
+
+# Ruby on Rails controller
 
 class UsersController < ApplicationController
 
