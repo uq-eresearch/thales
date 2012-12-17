@@ -64,6 +64,8 @@ module Thales
         #
         def to_rif
 
+          settings = Setting.instance
+
           r_class = Thales::Datamodel::CLASS_FOR[ser_type]
           @data = r_class.new.deserialize(ser_data)
 
@@ -81,9 +83,9 @@ module Thales
 
           Nokogiri::XML::Builder.new { |xml|
             xml.registryObjects(xmlns: RIFCS_NS) {
-              xml.registryObject(group: "Thales Group") {
+              xml.registryObject(group: settings.rifcs_group) {
                 xml.key(uuid)
-                xml.originatingSource("Thales Originating Source")
+                xml.originatingSource(settings.rifcs_originatingSource)
                 @data.to_rifcs(xml, updated_at)
               }
             }

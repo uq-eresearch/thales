@@ -1,4 +1,6 @@
 Thales::Application.routes.draw do
+  resources :settings
+
   resources :capacities
 
   resources :authorities

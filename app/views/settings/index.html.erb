@@ -1,0 +1,31 @@
+<% content_for(:page_title) do "Settings" end %>
+<% content_for(:page_heading) do "Settings" end %>
+
+<p id="notice"><%= notice %></p>
+
+<h3>OAI-PMH settings</h3>
+
+<p>
+  <b>OAI-PMH repositoryName:</b>
+  <%= @settings.oaipmh_repositoryName %>
+</p>
+<p>
+  <b>OAI-PMH adminEmail:</b>
+  <%= @settings.oaipmh_adminEmail %>
+</p>
+
+<h3>RIF-CS settings</h3>
+
+<p>
+  <b>RIF-CS group:</b>
+  <%= @settings.rifcs_group %>
+</p>
+
+<p>
+  <b>RIF-CS originating source:</b>
+  <%= @settings.rifcs_originatingSource %>
+</p>
+
+<%= link_to 'Edit', edit_setting_path(@settings) %>
+
+<% content_for(:navigation) { side_nav_bar(:administration) } %>

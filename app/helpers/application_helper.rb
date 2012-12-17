@@ -32,7 +32,7 @@ module ApplicationHelper
     content_tag(:ul, id: 'navigation') do
       [
        side_nav_records(expand == :records),
-       content_tag(:li) { link_to('Settings', '/', class: 'head') },
+       # content_tag(:li) { link_to('Settings', '/', class: 'head') },
        side_nav_administration(expand == :administration),
        content_tag(:li) { link_to('Help', '/help', class: 'head link') },
       ].reduce :+
@@ -77,6 +77,7 @@ module ApplicationHelper
             content_tag(:li) { link_to('Users', users_path) },
             content_tag(:li) { link_to('Create new user', new_user_path) },
             content_tag(:li) { link_to('Roles', roles_path) },
+            content_tag(:li) { link_to('Settings', settings_path) },
            ].reduce :+
          end # </ul>
        else

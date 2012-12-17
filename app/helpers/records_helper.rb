@@ -120,11 +120,8 @@ module RecordsHelper
           c += content_tag(:dt) { label }
 
           c += content_tag(:dd, first ? { :class => 'first' } : nil) {
-            if val.respond_to?(:uri)
-              show_property_link(val)
-            else
-              val
-            end
+            show_property_value(val)
+            #SHOW_METHODS[:contact_emailxx].call(val)
           }
 
           first = false
@@ -134,8 +131,26 @@ module RecordsHelper
     end # :div
   end
 
+  SHOW_METHODS = {}
+
+  SHOW_METHODS[:contact_email] =
+    ->(x) {
+    "contact email are cool"
+  }
+
+  SHOW_METHODS.default =
+    ->(val) {
+    "default"
+  }
+
   private
-  def show_property_link(val)
+  def show_property_value(val)
+
+    if ! val.respond_to?(:uri)
+      # Text property
+      return val
+    end
+
     # Link property
 
     uri = val.uri

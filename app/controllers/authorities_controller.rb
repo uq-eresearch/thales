@@ -1,4 +1,3 @@
-require 'uuid'
 
 class AuthoritiesController < ApplicationController
   # GET /authorities
