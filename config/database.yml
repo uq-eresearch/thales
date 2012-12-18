@@ -12,11 +12,16 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
-development:
+
+defaults: &defaults
   adapter: postgresql
   encoding: unicode
-  database: thales_development
+  min_messages: warning
   pool: 5
+
+development:
+  <<: *defaults
+  database: thales_development
   username: thales
   password:
 
@@ -39,18 +44,14 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  adapter: postgresql
-  encoding: unicode
+  <<: *defaults
   database: thales_test
-  pool: 5
   username: thales
   password:
 
 production:
-  adapter: postgresql
-  encoding: unicode
+  <<: *defaults
   database: thales_production
-  pool: 5
   username: thales
   password:
 
