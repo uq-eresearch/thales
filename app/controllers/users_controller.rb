@@ -8,7 +8,7 @@ require 'thales/authentication/password'
 
 class UsersController < ApplicationController
 
-#  before_filter :authenticate
+  before_filter :authenticate
 
   # GET /users
   # GET /users.json
