@@ -5,31 +5,61 @@
   <p id="notice"><%= notice %></p>
 <% end %>
 
-<div id="user">
-<dl>
-  <dt>Given name</dt><%#
-%><dd><%= @user.givenname %></dd><%#
-%><dt>Surname:</dt><%#
-%><dd><%= @user.surname %></dd><%#
-%><dt>Roles:</dt><%#
-%><dd>
-    <% @user.roles.map { |r| r.shortname }.sort.each do |role_name| %>
-      <span><%= role_name %></span>
-    <% end %>
-  </dd><%#
-%><dt>Authentication:</dt><%#
-%><dd>
-    <%= case@user.auth_type
-	when nil
-	'[login not permitted]'
-	when Thales::Authentication::Password::AUTH_TYPE
-	  "#{@user.auth_name} (password)"
-	else
-	  '[unknown]'
-	end %>
-  </dd>
-</dl>
+<div id="propertiesShow">
 
+  <h3>User details</h3>
+
+<div class="item">
+  <dl>
+    <dt>Given name</dt>
+    <dd class="first"><%= @user.givenname %></dd>
+  </dl>
+</div>
+
+<div class="item">
+  <dl>
+    <dt>Surname:</dt>
+    <dd class="first"><%= @user.surname %></dd>
+  </dl>
+</div>
+
+<h3>Authentication</h3>
+
+<div class="item">
+  <dl>
+    <dt>Username:</dt>
+    <dd class="first"><%= @user.auth_name %></dd>
+  </dl>
+</div>
+
+<div class="item">
+  <dl>
+    <dt>Method:</dt>
+    <dd class="first">
+      <%= case@user.auth_type
+	  when nil
+	  '[login not permitted]'
+	  when Thales::Authentication::Password::AUTH_TYPE
+	  "Password"
+	  else
+	  '[unknown]'
+	  end %>
+    </dd>
+  </dl>
+</div>
+
+<h3>Authorization</h3>
+
+<div class="item">
+  <dl>
+    <dt>Roles:</dt>
+    <dd class="first">
+      <% @user.roles.map { |r| r.shortname }.sort.each do |role_name| %>
+      <span><%= role_name %></span>
+      <% end %>
+    </dd>
+  </dl>
+</div>
 
   <div id="editActions">
   <%=

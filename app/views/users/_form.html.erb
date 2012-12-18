@@ -1,53 +1,73 @@
-<div id="editform">
+<% if @user.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
-<%= form_for(@user) do |f| %>
-  <% if @user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
-
-      <ul>
+    <ul>
       <% @user.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+      <li><%= msg %></li>
       <% end %>
-      </ul>
+    </ul>
+  </div>
+<% end %>
+
+<div id="propertiesEdit">
+
+  <%= form_for(@user) do |f| %>
+
+    <div class="item">
+      <dl>
+	<dt><%= f.label :givenname %></dt>
+	<dd><%= f.text_field :givenname %></dd>
+      </dl>
     </div>
-  <% end %>
 
-<div id="user">
-<dl>
-  <dt><%= f.label :givenname %></dt><%#
-%><dd><%= f.text_field :givenname %></dd><%#
+    <div class="item">
+      <dl>
+	<dt><%= f.label :surname %></dt>
+	<dd><%= f.text_field :surname %></dd>
+      </dl>
+    </div>
 
-%><dt><%= f.label :surname %></dt><%#
-%><dd><%= f.text_field :surname %></dd><%#
-
-%><dt>Roles</dt><%#
-%><dd>
+    <div class="item">
+      <dl>
+	<dt>Roles</dt>
+	<dd>
     <% Role.order('name').each do |role| %>
       <%= check_box_tag "role[]", role.id, @user.roles.include?(role), :id => "role_#{role.id}" %>
       <%= label_tag("role_#{role.id}", role.name) %><br/>
     <% end %>
-  </dd><%#
+	</dd>
+      </dl>
+    </div>
 
-%><dt><%= f.label :auth_name, 'Username' %></dt><%#
-%><dd><%= f.text_field :auth_name %><%#
+    <div class="item">
+      <dl>
+	<dt><%= f.label :auth_name, 'Username' %></dt>
+	<dd><%= f.text_field :auth_name %>
+	</dd>
+      </dl>
+    </div>
 
-%><dt><%= f.label :auth_value, 'Password' %></dt><%#
-%><dd><%= f.password_field :auth_value %></dd><%#
+    <div class="item">
+      <dl>
+	<dt><%= f.label :auth_value, 'Password' %></dt>
+	<dd><%= f.password_field :auth_value %></dd>
+      </dl>
+    </div>
 
-%><dt></dt><%#
-%><dd><%= f.password_field :auth_value_confirmation %></dd>
-</dl>  
+    <div class="item">
+      <dl>
+	<dt></dt>
+	<dd><%= f.password_field :auth_value_confirmation %></dd>
+      </dl>
+    </div>
 
-  <div class="submitActions">
-    <%= f.submit %>
-  </div>  
-</div>
+    <div id="submitActions">
+      <%= f.submit('Save user', id: 'save') %>
+    </div>
+    <% end %>
 
-<% end %> <%# form_for %>
-
-<div id="cancelActions">
-<%=
+    <div id="cancelActions"><%=
   # Cancel button
 
   if @user.new_record?
@@ -60,7 +80,6 @@
   form_tag(path, :method => :get) do 
     submit_tag('Cancel', :confirm => message)
   end
-%>
-</div>
+%></div>
 
 </div>
