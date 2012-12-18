@@ -29,7 +29,7 @@ module RecordsHelper
     end
 
     data.property_all do |gid, values|
-      result += show_property(values, g_profile[gid], gid)
+      result += show_property(symbol, values, g_profile[gid], gid)
     end
 
     return raw result
@@ -68,7 +68,7 @@ module RecordsHelper
           result += content_tag(:h3) { heading }
           heading = nil
         end
-        result += show_property(values, data.class.profile[symbol])
+        result += show_property(symbol, values, data.class.profile[symbol])
       end
 
     end
@@ -80,6 +80,7 @@ module RecordsHelper
   #
   # ==== Parameters
   #
+  # +symbol+:: property symbol
   # +values+:: array of values
   # +prop_info+:: optional profile item defining the property.
   # +gid+:: global identifier for the property.
@@ -88,7 +89,7 @@ module RecordsHelper
   #
   # HTML
 
-  def show_property(values, prop_info = nil, gid = nil)
+  def show_property(symbol, values, prop_info = nil, gid = nil)
 
 # TODO: what did this do?    if ! data.property_populated?(gid)
 #      return nil
@@ -120,8 +121,8 @@ module RecordsHelper
           c += content_tag(:dt) { label }
 
           c += content_tag(:dd, first ? { :class => 'first' } : nil) {
-            show_property_value(val)
-            #SHOW_METHODS[:contact_emailxx].call(val)
+            SHOW_METHODS[symbol].call(val, self)
+            #self.content_tag(:strong, "aaa")
           }
 
           first = false
@@ -133,18 +134,55 @@ module RecordsHelper
 
   SHOW_METHODS = {}
 
+  SHOW_METHODS[:identifier] =
+    ->(value, result) {
+    result.content_tag(:span, style: 'font-size: small;') { value }
+  }
+
+  SHOW_METHODS[:tag_FoR] =
+    ->(val, result) {
+    uri = val.uri
+    display_text = val.hint
+    if display_text.nil? || display_text.blank?
+      display_text = uri
+      if uri.start_with?(Thales::Datamodel::EResearch::Base::FOR_URI_PREFIX)
+        rest = uri[Thales::Datamodel::EResearch::Base::FOR_URI_PREFIX.length..-1]
+        if rest =~ /^(\d+)$/
+          display_text = "<#{$~[1]}>"
+        end
+      end
+    end
+    result.content_tag(:span, :title => "FoR code: #{uri}") { display_text }
+  }
+
+  SHOW_METHODS[:tag_SEO] =
+    ->(val, result) {
+    uri = val.uri
+    display_text = val.hint
+    if display_text.nil? || display_text.blank?
+      display_text = uri
+      if uri.start_with?(Thales::Datamodel::EResearch::Base::SEO_URI_PREFIX)
+        rest = uri[Thales::Datamodel::EResearch::Base::SEO_URI_PREFIX.length..-1]
+        if rest =~ /^(\d+)$/
+          display_text = "<#{$~[1]}>"
+        end
+      end
+    end
+    result.content_tag(:span, :title => "SEO code: #{uri}") { display_text }
+  }
+
   SHOW_METHODS[:contact_email] =
-    ->(x) {
-    "contact email are cool"
+    ->(value, result) {
+    result.content_tag(:a, :href => "mailto:#{value}") { value }
+  }
+
+  SHOW_METHODS[:web_page] =
+    ->(value, result) {
+    result.content_tag(:a, :href => value) { value }
   }
 
   SHOW_METHODS.default =
-    ->(val) {
-    "default"
-  }
-
-  private
-  def show_property_value(val)
+    ->(val, result) {
 
     if ! val.respond_to?(:uri)
       # Text property
@@ -170,26 +208,26 @@ module RecordsHelper
         data = r_class.new.deserialize(record.ser_data)
 
         m += '<br/>' if m != ''
-        m += link_to(data.display_title, record,
-                     class: 'link-internal',
-                     title: "Internal record: #{display_text}")
+        m += result.link_to(data.display_title, record,
+                            class: 'link-internal',
+                            title: "Internal record: #{display_text}")
       end
-      raw m
+      result.raw m
 
     else
       # No record exist in the system with this identifier, so display it
       # as an external hyperlink or as text.
       if uri.starts_with?('https://', 'http://', 'mailto:')
         # Display link as a hyperlink
-        content_tag(:a, :href => uri,
+        result.content_tag(:a, :href => uri,
                     class: 'link-external', title: 'External identifier') { display_text }
       else
         # Display link as non-hyperlinked text
-        content_tag(:span, :title => val.uri,
+        result.content_tag(:span, :title => val.uri,
                     :class => 'link-identifier') { display_text }
       end
     end
-  end
+  }
 
   # Generates HTML for displaying the subtype of a record.
   #
@@ -206,7 +244,9 @@ module RecordsHelper
     sts = data.subtype
     if sts
       sts.each do |st|
-        result += show_property([ st[/[^\/]*\/[^\/]*$/] ], { label: 'Type/subtype' })
+        result += show_property(:subtype,
+                                [ st[/[^\/]*\/[^\/]*$/] ],
+                                { label: 'Type/subtype' })
       end
     end
     return raw result
