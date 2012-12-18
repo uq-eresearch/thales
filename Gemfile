@@ -7,6 +7,9 @@ gem 'rails', '3.2.8'
 
 gem 'pg'
 
+group :development, :test do
+  gem 'rspec-rails'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -37,7 +40,6 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'debugger'
 
-gem 'rspec-rails'
 gem 'nokogiri'
 gem 'pbkdf2'
 gem 'oai', :git => 'https://github.com/tjdett/ruby-oai.git', :branch => 'next'
