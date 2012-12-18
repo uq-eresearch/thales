@@ -164,6 +164,8 @@ module Thales
           return '(untitled)'
         end
 
+        RIFCS_NS = 'http://ands.org.au/standards/rif-cs/registryObjects'
+
         # Represents the base properties as RIF-CS.
         #
         # This method is used by the subclasses in their +to_rifcs+

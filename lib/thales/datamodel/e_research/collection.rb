@@ -188,7 +188,7 @@ module Thales
 
         def to_rifcs(builder, date_modified = nil)
 
-          collection_attrs = {}
+          collection_attrs = { 'xmlns' => RIFCS_NS }
           collection_attrs[:type] = rifcs_subtype()
           if date_modified
             collection_attrs[:dateModified] = date_modified.iso8601
