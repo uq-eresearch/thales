@@ -19,21 +19,21 @@ class SettingsController < ApplicationController
 
   # GET /settings/1/edit
   def edit
-    @settings = Setting.instance
+    @setting = Setting.instance
   end
 
   # PUT /settings/1
   # PUT /settings/1.json
   def update
-    @settings = Setting.instance
+    @setting = Setting.instance
 
     respond_to do |format|
-      if @settings.update_attributes(params[:setting])
+      if @setting.update_attributes(params[:setting])
         format.html { redirect_to settings_path, notice: 'Setting was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
-        format.json { render json: @settings.errors, status: :unprocessable_entity }
+        format.json { render json: @setting.errors, status: :unprocessable_entity }
       end
     end
   end

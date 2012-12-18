@@ -1,10 +1,10 @@
 
-  <% if @settings.errors.any? %>
+  <% if @setting.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@settings.errors.count, "error") %> prohibited this setting from being saved:</h2>
+      <h2><%= pluralize(@setting.errors.count, "error") %> prohibited this setting from being saved:</h2>
 
       <ul>
-      <% @settings.errors.full_messages.each do |msg| %>
+      <% @setting.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
       </ul>
@@ -12,7 +12,7 @@
   <% end %>
 
   <div id="show">
-<%= form_for(@settings) do |f| %>
+    <%= form_for(@setting) do |f| %>
     <h3>OAI-PMH settings</h3>
 
     <div class="item">
@@ -48,15 +48,15 @@
     <div id="submitActions">
       <%= f.submit('Save settings', id: 'save') %>
     </div>
-  <% end %>
+    <% end %>
 
-  <div id="cancelActions">
+    <div id="cancelActions">
     <%=
        # Cancel button
        form_tag(settings_path, :method => :get) do 
          submit_tag('Cancel', :confirm => 'Discard all changes?')
        end
     %>
+    </div>
   </div>
-</div>
 
