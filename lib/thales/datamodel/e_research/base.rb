@@ -72,6 +72,7 @@ module Thales
           :description => {
             label: 'Description',
             singular: true,
+            textarea: true,
             maxlength: 2000, # TODO
             gid: "#{PROPERTY_BASE_URI}/description"
           },

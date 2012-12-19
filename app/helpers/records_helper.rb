@@ -356,7 +356,11 @@ module RecordsHelper
           end
           c += content_tag(:dd, { :class => 'first' }) do
             attr = maxlength.nil? ? {} : { :maxlength => maxlength }
-            text_field_tag(name, value_str, attr)
+            if info[:textarea]
+              text_area_tag(name, value_str, attr)
+            else
+              text_field_tag(name, value_str, attr)
+            end
           end
         end # :dl
       end # :div
