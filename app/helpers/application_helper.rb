@@ -12,10 +12,10 @@ module ApplicationHelper
   #      <ul class="section">
   #        <li><a href="<%= records_path %>">Search</a></li>
   #        <li><a href="<%= records_path %>">Browse</a></li>
-  #        <li><a href="<%= new_record_path type: 'collection'  %>">Create a new collection record</a></li>
-  #        <li><a href="<%= new_record_path type: 'party' %>">Create a new party record</a></li>
-  #        <li><a href="<%= new_record_path type: 'activity' %>">Create a new activity record</a></li>
-  #        <li><a href="<%= new_record_path type: 'service' %>">Create a new service record</a></li>
+  #        <li><a href="<%= new_record_path type: 'collection'  %>">New collection record</a></li>
+  #        <li><a href="<%= new_record_path type: 'party' %>">New party record</a></li>
+  #        <li><a href="<%= new_record_path type: 'activity' %>">New activity record</a></li>
+  #        <li><a href="<%= new_record_path type: 'service' %>">New service record</a></li>
   #      </ul>
   #    </li>
   #    <li><a class="head" href="/">Settings</a></li>
@@ -48,13 +48,13 @@ module ApplicationHelper
          content_tag(:ul, class: 'section') do
            [
             content_tag(:li) { link_to('Browse', records_path) },
-            content_tag(:li) { link_to('Create collection',
+            content_tag(:li) { link_to('New collection record',
                                        new_record_path(type: 'collection')) },
-            content_tag(:li) { link_to('Create party',
+            content_tag(:li) { link_to('New party record',
                                        new_record_path(type: 'party')) },
-            content_tag(:li) { link_to('Create activity',
+            content_tag(:li) { link_to('New activity record',
                                        new_record_path(type: 'activity')) },
-            content_tag(:li) { link_to('Create service',
+            content_tag(:li) { link_to('New service record',
                                        new_record_path(type: 'service')) },
            ].reduce :+
          end # </ul>

@@ -33,8 +33,10 @@
 	<dt>Roles</dt>
 	<dd>
     <% Role.order('name').each do |role| %>
-      <%= check_box_tag "role[]", role.id, @user.roles.include?(role), :id => "role_#{role.id}" %>
-      <%= label_tag("role_#{role.id}", role.name) %><br/>
+      <%= check_box_tag("role[]", role.id, @user.roles.include?(role),
+	                id: "role_#{role.id}", class: 'checkbox') %>
+      <%= label_tag("role_#{role.id}",
+                    role.name.blank? ? '(unamed role)' : role.name ) %><br/>
     <% end %>
 	</dd>
       </dl>

@@ -205,6 +205,9 @@ div#propertiesShow {
         padding: $inputPadding;
         width: $inputWidth;
       }
+      input.checkbox {
+        width: auto;
+      }
       input#upload_datafile {
 	  border: 0;
       }
