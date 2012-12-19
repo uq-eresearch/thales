@@ -62,11 +62,7 @@
 </div>
 
   <div id="editActions">
-  <%=
-    form_tag(edit_user_path(@user), :method => :get) do 
-      submit_tag('Edit this user')
-    end
-  %>
+    <%= link_to('Edit this user', edit_user_path(@user), class: 'buttonEdit') %>
   </div>
 
 </div>

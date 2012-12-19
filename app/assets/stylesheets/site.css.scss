@@ -139,6 +139,30 @@ div#login-block {
   }
 }
 
+/* New button */
+
+a.buttonEdit,
+a.buttonNew {
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  display: inline-block;
+  margin: 2ex 0;
+  border: 1px solid #8a8a8a;
+  border-radius: 3px;
+  padding: 1px 8px;
+  color: #000;
+  background: #e8e8e8;
+  background: -webkit-linear-gradient(top, #ffffff, #e8e8e8, #f0f0f0);
+  text-decoration: none;
+  font-family: "Lucida Grande", sans-serif;
+  font-size: 11px;
+}
+a.buttonEdit:active,
+a.buttonNew:active {
+  background: #ccc;
+}
+
 /* Navigation */
 
 ul#navigation {

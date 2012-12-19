@@ -40,11 +40,7 @@
 
 
 <div id="editActions">
-<%=
-   form_tag(edit_setting_path(@settings), :method => :get) do
-     submit_tag('Edit settings')
-   end
-%>
+  <%= link_to('Edit settings', edit_setting_path(@settings), class: 'buttonEdit') %>
 </div>
 
 </div>

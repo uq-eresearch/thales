@@ -22,11 +22,7 @@
 </div>
 
 <div id="editActions">
-  <%=
-    form_tag(edit_role_path(@role), :method => :get) do 
-      submit_tag('Edit this role')
-    end
-  %>
+  <%= link_to('Edit this role', edit_role_path(@role), class: 'buttonEdit') %>
 </div>
 
 </div>
