@@ -151,6 +151,9 @@ class RecordsController < ApplicationController
   # DELETE /records/1.json
   def destroy
     @record = Record.find(params[:id])
+
+    @record.data_destroy()
+
     @record.destroy
 
     respond_to do |format|

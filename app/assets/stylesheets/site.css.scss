@@ -23,8 +23,8 @@ $inputBorder: 1px;
 $inputPadding: $labelPaddingTop;
 $inputWidth: $fieldWidth - 2 * ($inputMargin + $inputBorder + $inputPadding);
 
-$actionsMarginTop: 30px;
-$actionsMarginBottom: 20px;
+$actionsMarginTop: 10px;
+$actionsMarginBottom: 25px;
 
 body {
  background: #eee;
@@ -37,7 +37,13 @@ div#header {
  border: 0;
  padding: 0.5ex 0em;
  background: #666;
+ background-image: -webkit-linear-gradient(top, #555, #666 20%, #666);
+ background-image: linear-gradient(to bottom, #555, #666 20%, #666);
  min-height: 64px
+
+ h1 {
+  text-shadow: 1px 1px 1px #000;
+ }
 }
 div.inner {
  position: relative;
@@ -55,7 +61,9 @@ h1 {
 div#topnav {
   display: block;
   margin: 0; border:0; padding: 0;
-  background: black;
+  background: #333333;
+  background-image: -webkit-linear-gradient(top, #404040 0%, #333333 50%, #222222 51%, #383838 100%);
+  background-image: linear-gradient(to bottom, #404040 0%, #333333 50%, #222222 51%, #383838 100%);
   font-size: 9pt;
 
   ul {
@@ -71,7 +79,7 @@ div#topnav {
 div#topnav a {
  display: inline-block;
  min-height: 17px;
- padding: 8px 2em;
+ padding: 12px 2em 6px 2em;
  color: white;
  text-transform: uppercase;
  text-decoration: none;
@@ -90,6 +98,8 @@ div#main div.inner {
  padding: $contentPadding;
  width: $mainWidth - $contentPadding * 2;
  background: white;
+ -webkit-box-shadow: 3px 3px 2px  #ccc;
+ box-shadow:         3px 3px 2px  #ccc;
  min-height: $contentMinHeight;
 }
 
@@ -114,7 +124,6 @@ div#login-block {
   position: absolute;
   top: 0;
   right: 0;
-  background: black;
   font-size: 9pt;
 
   p.username {
@@ -139,8 +148,26 @@ div#login-block {
   }
 }
 
-/* New button */
 
+/* Action area */
+
+div#actions {
+  position: relative;
+  width: $fieldWidth;
+  margin: $actionsMarginTop 0 $actionsMarginBottom ($labelWidth + $labelMarginRight);
+  padding: 0;
+  min-height: 40px;
+  div.main { position: absolute; right: 0px; }
+  div.alt { position: absolute; top: 0px; }
+  div.subordinate { position: absolute; left: -$labelWidth; }
+
+  input { margin: $actionsMarginTop 0 $actionsMarginBottom 0; }
+}
+
+/* Button hyperlinks */
+
+a.buttonCancel,
+a.buttonDelete,
 a.buttonEdit,
 a.buttonNew {
   -webkit-appearance: button;
@@ -150,14 +177,18 @@ a.buttonNew {
   margin: 2ex 0;
   border: 1px solid #8a8a8a;
   border-radius: 3px;
-  padding: 1px 8px;
+  padding: 2px 8px;
   color: #000;
   background: #e8e8e8;
-  background: -webkit-linear-gradient(top, #ffffff, #e8e8e8, #f0f0f0);
+  background-image: -webkit-linear-gradient(top, #ffffff, #e8e8e8, #f0f0f0);
+  background-image: linear-gradient(to bottom, #ffffff, #e8e8e8, #f0f0f0);
   text-decoration: none;
   font-family: "Lucida Grande", sans-serif;
-  font-size: 11px;
+  font-size: 10px;
 }
+
+a.buttonCancel:active,
+a.buttonDelete:active,
 a.buttonEdit:active,
 a.buttonNew:active {
   background: #ccc;
@@ -175,6 +206,7 @@ ul#navigation {
  border-radius: 8px;
  padding: 8px 0;
  background: #ddd;
+
    ul {
      padding: 0;
    }
@@ -193,6 +225,8 @@ ul#navigation {
      a:hover {
        text-decoration: underline;
        background: #666;
+       background-image: -webkit-linear-gradient(top, #444 0%, #555 20%, #333 51%, #555 100%);
+       background-image: linear-gradient(to bottom, #444 0%, #555 20%, #333 51%, #555 100%);
        color: #fff;
      }
      a.head {

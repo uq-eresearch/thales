@@ -91,27 +91,23 @@
 -->
 
 <!-- :confirm => question, -->
-  <div id="submitActions">
-    <%= f.submit(:id => 'save') %>
+  <div id="actions">
+    <div class="main">
+      <%= f.submit(@record.new_record? ? 'Create record' : 'Save record') %>
+    </div>
+    <div class="alt">
+	<%=
+	   if @record.new_record?
+	     link_to('Cancel', records_path, class: 'buttonCancel',
+	             confirm: 'Discard and do not create a new record?')
+	   else
+	     link_to('Cancel', @record, class: 'buttonCancel',
+	             confirm: 'Discard any changes and leave record unchanged?')
+	   end
+	%>
+    </div>
   </div>
 
-<% end %> <%# form_for %>
-
-<div id="cancelActions">
-<%=
-  # Cancel button
-
-  if @record.new_record?
-    message = 'Discard all entered information?'
-    path = records_path
-  else
-    message = 'Discard all changes?'
-    path = @record
-  end
-  form_tag(path, :method => :get) do 
-    submit_tag('Cancel', :confirm => message)
-  end
-%>
-</div>
+<% end %>
 
 </div>

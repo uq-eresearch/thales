@@ -1,62 +1,62 @@
 
-  <% if @setting.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@setting.errors.count, "error") %> prohibited this setting from being saved:</h2>
+<% if @setting.errors.any? %>
+<div id="error_explanation">
+  <h2><%= pluralize(@setting.errors.count, "error") %> prohibited this setting from being saved:</h2>
 
-      <ul>
-      <% @setting.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div id="propertiesEdit">
-    <%= form_for(@setting) do |f| %>
-    <h3>OAI-PMH settings</h3>
-
-    <div class="item">
-      <dl>
-	<dt><%= f.label(:oaipmh_repositoryName, 'Repository name') %></dt>
-	<dd class="first"><%= f.text_field :oaipmh_repositoryName %></dd>
-      </dl>
-    </div>
-
-    <div class="item">
-      <dl>
-	<dt><%= f.label(:oaipmh_adminEmail, 'Administator email') %></dt>
-	<dd class="first"><%= f.text_field :oaipmh_adminEmail %></dd>
-      </dl>
-    </div>
-
-    <h3>RIF-CS settings</h3>
-
-    <div class="item">
-      <dl>
-	<dt><%= f.label(:rifcs_group, 'Group') %></dt>
-	<dd class="first"><%= f.text_field :rifcs_group %></dd>
-      </dl>
-    </div>
-
-    <div class="item">
-      <dl>
-	<dt><%= f.label(:rifcs_originatingSource, 'Originating source') %></dt>
-	<dd class="first"><%= f.text_field :rifcs_originatingSource %></dd>
-      </dl>
-    </div>
-
-    <div id="submitActions">
-      <%= f.submit('Save settings', id: 'save') %>
-    </div>
+  <ul>
+    <% @setting.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
     <% end %>
+  </ul>
+</div>
+<% end %>
 
-    <div id="cancelActions">
-    <%=
-       # Cancel button
-       form_tag(settings_path, :method => :get) do 
-         submit_tag('Cancel', :confirm => 'Discard all changes?')
-       end
-    %>
+<div id="propertiesEdit">
+  <%= form_for(@setting) do |f| %>
+  <h3>OAI-PMH settings</h3>
+
+  <div class="item">
+    <dl>
+      <dt><%= f.label(:oaipmh_repositoryName, 'Repository name') %></dt>
+      <dd class="first"><%= f.text_field :oaipmh_repositoryName %></dd>
+    </dl>
+  </div>
+
+  <div class="item">
+    <dl>
+      <dt><%= f.label(:oaipmh_adminEmail, 'Administator email') %></dt>
+      <dd class="first"><%= f.text_field :oaipmh_adminEmail %></dd>
+    </dl>
+  </div>
+
+  <h3>RIF-CS settings</h3>
+
+  <div class="item">
+    <dl>
+      <dt><%= f.label(:rifcs_group, 'Group') %></dt>
+      <dd class="first"><%= f.text_field :rifcs_group %></dd>
+    </dl>
+  </div>
+
+  <div class="item">
+    <dl>
+      <dt><%= f.label(:rifcs_originatingSource, 'Originating source') %></dt>
+      <dd class="first"><%= f.text_field :rifcs_originatingSource %></dd>
+    </dl>
+  </div>
+
+  <div id="actions">
+    <div class="main">
+      <%= f.submit('Save settings') %>
+    </div>
+    <div class="alt">
+      <%=
+	 link_to('Cancel', settings_path, class: 'buttonCancel',
+	         confirm: 'Discard any changes and leave settings unchanged?')
+      %>
     </div>
   </div>
 
+  <% end %>
+
+</div>

@@ -29,18 +29,23 @@
       </dl>
     </div>
 
-    <div id="submitActions">
-      <%= f.submit(id: 'save') %>
+    <div id="actions">
+      <div class="main">
+	<%= f.submit(@role.new_record? ? 'Create role' : 'Save role') %>
+      </div>
+      <div class="alt">
+	<%= 
+	   if @role.new_record?
+	     link_to('Cancel', roles_path, class: 'buttonCancel',
+	             confirm: 'Discard and do not create a new role?')
+	   else
+	     link_to('Cancel', @role, class: 'buttonCancel',
+	             confirm: 'Discard any changes and leave role unchanged?')
+	   end
+	   %>
+      </div>
     </div>
-  <% end %>
 
-  <div id="cancelActions">
-    <%=
-       # Cancel button
-       form_tag(roles_path, :method => :get) do 
-         submit_tag('Cancel', :confirm => 'Discard all changes?')
-       end
-    %>
-  </div>
+  <% end %>
 
 </div>

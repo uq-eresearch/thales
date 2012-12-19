@@ -24,9 +24,6 @@ $inputBorder: 1px;
 $inputPadding: $labelPaddingTop;
 $inputWidth: $fieldWidth - 2 * ($inputMargin + $inputBorder + $inputPadding);
 
-$actionsMarginTop: 30px;
-$actionsMarginBottom: 20px;
-
 /* General */
 
 /* Search form */
@@ -99,7 +96,7 @@ table#gradient-style {
     h1 {
       font-size: inherit;
       text-transform: none;
-
+      margin-right: 5em;
       a {
         display: inline-block;
         width: 100%;
@@ -244,30 +241,10 @@ div#propertiesShow {
   div.item#SEO input { width: 80px; }
   div.item#keyword input { width: 150px; margin: 0; }
 
-  /* Buttons */
-
-  div#submitActions {
-    width: $fieldWidth;
-    margin: $actionsMarginTop 0 $actionsMarginBottom ($labelWidth + $labelMarginRight);
-    padding: 0;
-  }
-  input#save {
-    float: right;
-  }
-
-  div#cancelActions {
-    width: $fieldWidth;
-    margin: $actionsMarginTop 0 $actionsMarginBottom ($labelWidth + $labelMarginRight);
-    padding: 0;
-  }
-
-  div#editActions {
-    margin: 50px 0 0 0;
-    text-align: right;
-  }
 }
 
 p#updatedTime {
+ clear: both;
  font-size: small;
  color: #ccc;
 }

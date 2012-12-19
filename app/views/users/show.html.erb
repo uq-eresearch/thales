@@ -61,10 +61,15 @@
   </dl>
 </div>
 
-  <div id="editActions">
-    <%= link_to('Edit this user', edit_user_path(@user), class: 'buttonEdit') %>
+<div id="actions">
+  <div class="main">
+    <%= link_to('Edit user', edit_user_path(@user), class: 'buttonEdit') %>
   </div>
-
+  <div class="subordinate">
+    <%= link_to('Delete user', @user, method: :delete, class: 'buttonDelete',
+	        confirm: 'Delete this user?') %>
+  </div>
+</div>
 </div>
 
 <% content_for(:navigation) { side_nav_bar(:administration) } %>

@@ -21,8 +21,14 @@
   </dl>
 </div>
 
-<div id="editActions">
-  <%= link_to('Edit this role', edit_role_path(@role), class: 'buttonEdit') %>
+<div id="actions">
+  <div class="main">
+    <%= link_to('Edit role', edit_role_path(@role), class: 'buttonEdit') %>
+  </div>
+  <div class="subordinate">
+    <%= link_to('Delete role', @role, method: :delete, class: 'buttonDelete',
+	        confirm: 'Delete this role?' ) %>
+  </div>
 </div>
 
 </div>

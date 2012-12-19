@@ -1,24 +1,40 @@
 <% content_for(:page_title) do "Users" end %>
 <% content_for(:page_heading) do "Users" end %>
 
-<table id="users">
-  <tr>
-    <th>Surname</th>
-    <th>Givenname</th>
-    <th></th>
-  </tr>
+<table id="gradient-style" summary="Users">
+  <thead>
+    <tr>
+      <th>Users</th>
+    </tr>
+  </thead>
 
-<% @users.each do |user| %>
-  <tr>
-    <td><%= user.surname %></td>
-    <td class="givenname"><%= user.givenname %></td>
-    <td><%= link_to 'Show', user, :title => "Show: #{user.uuid}" %>
-    <%= link_to 'Edit', edit_user_path(user) %>
-    <%= link_to 'Delete', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
-<% end %>
+  <tbody>
+    <% @users.each do |user| %>
+    <tr>
+      <td>
+	<%
+	   display_name = "#{user.givenname} #{user.surname}"
+	   display_name.rstrip!
+	   display_name.lstrip!
+	   if display_name.empty?
+	     display_name = "(no name)"
+	   end
+	   %>
+	<%= link_to display_name, user %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr><td><%= pluralize(@users.size, 'user') %></td></tr>
+  </tfoot>
 </table>
 
-<%= link_to('Create new user', new_user_path, class: 'buttonNew') %>
+<div id="actions">
+  <div class="main">
+    <%= link_to('New user', new_user_path, class: 'buttonNew') %>
+  </div>
+</div>
 
 <% content_for(:navigation) { side_nav_bar(:administration) } %>

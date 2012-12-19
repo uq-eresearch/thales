@@ -3,26 +3,40 @@
 
 <p id="notice"><%= notice %></p>
 
-<table id="roles">
-  <tr>
-    <th>Name</th>
-    <th>Shortname</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<table id="gradient-style" summary="Roles">
+  <thead>
+    <tr>
+      <th>Roles</th>
+    </tr>
+  </thead>
 
-<% @roles.each do |role| %>
-  <tr>
-    <td><%= role.name %></td>
-    <td><%= role.shortname %></td>
-    <td><%= link_to 'Show', role, :title => "Show: #{role.uuid}" %></td>
-    <td><%= link_to 'Edit', edit_role_path(role) %></td>
-    <td><%= link_to 'Delete', role, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
-<% end %>
+  <tbody>
+    <% @roles.each do |role| %>
+    <tr>
+      <td>
+	<% display_name = role.name
+	   if display_name.empty?
+	     display_name = role.shortname
+	     if display_name.empty?
+	       display_name = "(no name)"
+	     end
+	   end
+	   %>
+	<%= link_to display_name, role, :title => role.uuid %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr><td><%= pluralize(@roles.size, 'role') %></td></tr>
+  </tfoot>
 </table>
 
-<%= link_to('Create new role', new_role_path, class: 'buttonNew') %>
+<div id="actions">
+  <div class="main">
+    <%= link_to('New role', new_role_path, class: 'buttonNew') %>
+  </div>
+</div>
 
 <% content_for(:navigation) { side_nav_bar(:administration) } %>

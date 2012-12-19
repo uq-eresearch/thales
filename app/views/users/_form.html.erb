@@ -62,24 +62,23 @@
       </dl>
     </div>
 
-    <div id="submitActions">
-      <%= f.submit('Save user', id: 'save') %>
+    <div id="actions">
+      <div class="main">
+	<%= f.submit(@user.new_record? ? 'Create user' : 'Save user') %>
+      </div>
+      <div class="alt">
+	<%=
+	   if @user.new_record?
+	     link_to('Cancel', users_path, class: 'buttonCancel',
+	             confirm: 'Discard and do not create a new user?')
+	   else
+	     link_to('Cancel', @user, class: 'buttonCancel',
+	             confirm: 'Discard any changes and leave user unchanged?')
+	   end
+	%>
+      </div>
     </div>
+
     <% end %>
-
-    <div id="cancelActions"><%=
-  # Cancel button
-
-  if @user.new_record?
-    message = 'Discard all entered information?'
-    path = users_path()
-  else
-    message = 'Discard all changes?'
-    path = @user
-  end
-  form_tag(path, :method => :get) do 
-    submit_tag('Cancel', :confirm => message)
-  end
-%></div>
 
 </div>

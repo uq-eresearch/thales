@@ -68,8 +68,15 @@
 
   <%#= show_all(@data) # for debugging %>
 
-  <div id="editActions">
-    <%= link_to('Edit this record', edit_record_path(@record), class: 'buttonEdit') %>
+  <div id="actions">
+    <div class="main">
+      <%= link_to('Edit record', edit_record_path(@record), class: 'buttonEdit') %>
+    </div>
+  <div class="subordinate">
+    <%= link_to('Delete record', @record, method: :delete, class: 'buttonDelete',
+	        confirm: 'Delete this record?') %>
+  </div>
+
   </div>
 
   <%#= link_to "RIF-CS version", record_path(@record, :rifcs) %>

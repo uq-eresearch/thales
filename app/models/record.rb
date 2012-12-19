@@ -35,6 +35,8 @@ class Record < ActiveRecord::Base
     self.ser_type = type
     self.ser_data = data.serialize
 
+    # Update the entries in the 'ident' index-table
+
     old_set = {}
     self.idents.each do |ident|
       old_set[ident.identifier] = ident
@@ -59,6 +61,17 @@ class Record < ActiveRecord::Base
       end
     end
     
+  end
+
+  # Undo what data_set does.
+  # Call this before destroying a record.
+
+  def data_destroy
+    # Remove any entries from the 'ident' index-table
+
+    self.idents.each do |i|
+      self.idents.delete(i)
+    end
   end
 
   # Finds records by identifiers inside their data
