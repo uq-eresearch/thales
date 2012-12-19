@@ -78,7 +78,6 @@ module Thales
 
           rights_access: {
             label: 'Access rights',
-            singular: true,
             textarea: true,
             maxlength: DEFAULT_MAXLENGTH,
             gid: "#{PROPERTY_BASE_URI}/rights_access",

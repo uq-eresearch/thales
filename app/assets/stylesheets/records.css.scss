@@ -8,7 +8,7 @@ $contentMargin: 20px;
 $contentWidth: 674px;
 $contentRadius: 8px;
 
-$itemMarginTop: 5px;
+$itemMarginTop: 15px;
 $itemMarginBottom: 0px;
 
 $labelWidth: 220px;
@@ -219,23 +219,26 @@ div#propertiesShow {
     } /* dl */
 
     /* Add field button */
-    
+
+    $addButtonHeight: 2ex;
     p.addField {
       margin: 0;
       text-align: right;
+      position: relative; top: -$addButtonHeight; left: $contentWidth;
+      width: 2em;
+      a.addField {
+	position: absolute; top: 0px; bottom: -10px;
+	display: block;
+	height: $addButtonHeight;
+	padding: 0px 4px 0 4px;
+	text-decoration: none;
+	color: #ccc;
+      }
+      a.addField:hover {
+        color: #fff;
+	background: green;
+      }
     }
-    a.addField {
-      display: inline-block;
-      padding: 2px 4px;
-      border-radius: 5px;
-      text-decoration: none;
-      color: #999;
-    }
-    a.addField:hover {
-      color: #fff;
-      background: green;
-    }
-
   } /* div.item */
 
   /* Custom formatting for certain fields */
