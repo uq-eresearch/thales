@@ -7,8 +7,8 @@
 require 'oai'
 
 require 'setting'
-require 'thales/output/oaipmh/record'
-require 'thales/output/oaipmh/rifcs_format'
+require_relative 'record'
+require_relative 'rifcs_format'
 
 module Thales
   module Output

@@ -8,11 +8,9 @@
 #
 # Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
-basedir = File.expand_path(File.dirname(__FILE__))
-require "#{basedir}/cornerstone"
-require "#{basedir}/e_research/collection"
-require "#{basedir}/e_research/party"
-require "#{basedir}/e_research/activity"
-require "#{basedir}/e_research/service"
+require_relative 'e_research/collection'
+require_relative 'e_research/party'
+require_relative 'e_research/activity'
+require_relative 'e_research/service'
 
 #EOF

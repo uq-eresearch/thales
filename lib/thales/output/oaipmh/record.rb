@@ -10,9 +10,8 @@
 
 require 'nokogiri'
 
-#require 'partyTester/config'
-require 'thales/output/oaipmh/set'
-require 'thales/datamodel/e_research'
+require_relative '../../datamodel/e_research'
+require_relative 'set'
 
 module Thales
   module Output

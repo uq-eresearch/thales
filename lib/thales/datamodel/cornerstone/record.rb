@@ -7,10 +7,9 @@
 
 require 'nokogiri'
 
-basedir = File.expand_path(File.dirname(__FILE__))
-require "#{basedir}/property_text"
-require "#{basedir}/property_link"
-require "#{basedir}/profile"
+require_relative 'property_text'
+require_relative 'property_link'
+require_relative 'profile'
 
 module Thales
   module Datamodel

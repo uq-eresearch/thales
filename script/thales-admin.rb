@@ -1,11 +1,8 @@
 #!/bin/env ruby
 #
-# Copyright (C) 2012, The University of Queensland. (ITEE eResearch Lab)
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 VERBOSE = true
-
-$LOAD_PATH.unshift File.dirname(__FILE__) + '/../app'
-$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
 #require 'logger'
 require 'optparse'
@@ -13,11 +10,11 @@ require 'nokogiri'
 require 'active_record'
 require 'pg'
 
-require 'models/property'
-require 'models/record'
-require 'models/entry'
+require_relative '../app/models/property'
+require_relative '../app/models/record'
+require_relative '../app/models/entry'
 
-require 'thales/datamodel'
+require_relative '../lib/thales/datamodel'
 
 #----------------------------------------------------------------
 

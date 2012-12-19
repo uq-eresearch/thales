@@ -4,8 +4,7 @@
 
 #----------------------------------------------------------------
 
-basedir = File.expand_path(File.dirname(__FILE__))
-require "#{basedir}/datamodel/e_research"
+require_relative 'datamodel/e_research'
 
 module Thales
   module Datamodel

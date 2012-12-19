@@ -2,8 +2,7 @@
 
 require 'securerandom'
 
-basedir = File.expand_path(File.dirname(__FILE__))
-require "#{basedir}/ident"
+require_relative 'ident'
 
 # Ruby on Rails model.
 
