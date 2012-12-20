@@ -1,0 +1,39 @@
+<% content_for(:page_title) do "OAI-PMH published records" end %>
+<% content_for(:page_heading) do "OAI-PMH published records" end %>
+
+<table id="gradient-style" summary="OAI-PMH published records">
+  <thead>
+    <tr>
+      <th>OAI-PMH unique identifier</th>
+      <th>Record</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @oaipmh_records.each do |oaipmh_record| %>
+    <tr>
+      <td><%= link_to "prefix/#{oaipmh_record.id}", oaipmh_record %></td>
+      <td><%= oaipmh_record.record_id %></td>
+      <td><%= oaipmh_record.deleted? ? 'deleted' : 'active' %></td>
+    </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td colspan="3"><%= pluralize(@oaipmh_records.size, 'published record') %></td>
+    </tr>
+  </tfoot>
+</table>
+
+<br />
+
+<div id="actions">
+  <div class="main">
+    <%= link_to('New OAI-PMH record', new_oaipmh_record_path, class: 'buttonNew') %>
+  </div>
+</div>
+
+
+<% content_for(:navigation) { side_nav_bar(:administration) } %>

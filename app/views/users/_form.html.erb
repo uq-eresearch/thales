@@ -17,21 +17,21 @@
     <div class="item">
       <dl>
 	<dt><%= f.label :givenname %></dt>
-	<dd><%= f.text_field :givenname %></dd>
+	<dd class="first"><%= f.text_field :givenname %></dd>
       </dl>
     </div>
 
     <div class="item">
       <dl>
 	<dt><%= f.label :surname %></dt>
-	<dd><%= f.text_field :surname %></dd>
+	<dd class="first"><%= f.text_field :surname %></dd>
       </dl>
     </div>
 
     <div class="item">
       <dl>
 	<dt>Roles</dt>
-	<dd>
+	<dd class="first">
     <% Role.order('name').each do |role| %>
       <%= check_box_tag("role[]", role.id, @user.roles.include?(role),
 	                id: "role_#{role.id}", class: 'checkbox') %>
@@ -45,7 +45,7 @@
     <div class="item">
       <dl>
 	<dt><%= f.label :auth_name, 'Username' %></dt>
-	<dd><%= f.text_field :auth_name %>
+	<dd class="first"><%= f.text_field :auth_name %>
 	</dd>
       </dl>
     </div>
@@ -53,14 +53,14 @@
     <div class="item">
       <dl>
 	<dt><%= f.label :auth_value, 'Password' %></dt>
-	<dd><%= f.password_field :auth_value %></dd>
+	<dd class="first"><%= f.password_field :auth_value %></dd>
       </dl>
     </div>
 
     <div class="item">
       <dl>
-	<dt></dt>
-	<dd><%= f.password_field :auth_value_confirmation %></dd>
+	<dt>Confirm password</dt>
+	<dd class="first"><%= f.password_field :auth_value_confirmation %></dd>
       </dl>
     </div>
 

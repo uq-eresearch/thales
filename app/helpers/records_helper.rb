@@ -536,6 +536,30 @@ module RecordsHelper
     end
   end
 
+  def form_oaipmh_status(record)
+
+    content_tag(:div, { class: 'item' }) do
+      content_tag(:dl) do
+        c = content_tag(:dt) { 'Status' }
+        c += content_tag(:dd, { class: 'first' }) do
+
+          options = []
+          if record.oaipmh_record.nil?
+            options << [ 'Not in feed (current status)', 0 ]
+            options << [ 'Publish', 1 ]
+          elsif record.oaipmh_record.deleted?
+            options << [ 'Deleted record in the feed (current status)', 0 ]
+            options << [ 'Publish', 1 ]
+          else
+            options << [ 'Published record in the feed (current status)', 0 ]
+            options << [ 'Deleted record in the feed', -1 ]
+          end
+          select_tag(:oaipmh_status, options_for_select(options))
+        end
+      end
+    end
+  end
+
 end
 
 #EOF

@@ -1,0 +1,49 @@
+<% if @oaipmh_record.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@oaipmh_record.errors.count, "error") %> prohibited this oaipmh_record from being saved:</h2>
+
+    <ul>
+    <% @oaipmh_record.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div id="propertiesEdit">
+
+  <%= form_for(@oaipmh_record) do |f| %>
+
+  <div class="item">
+    <dl>
+      <dt><%= f.label :withdrawn %></dt>
+      <dd class="first"><%= f.check_box :withdrawn %></dd>
+    </dl>
+  </div>
+  <div class="item">
+    <dl>
+      <dt><%= f.label :record_id %></dt>
+      <dd class="first"><%= f.text_field :record_id %></dd>
+    </dl>
+  </div>
+
+  <div id="actions">
+    <div class="main">
+      <%= f.submit(@oaipmh_record.new_record? ? 'Create OAI-PMH record' : 'Save OAI-PMH record') %>
+    </div>
+    <div class="alt">
+      <%= 
+	   if @oaipmh_record.new_record?
+	     link_to('Cancel', oaipmh_records_path, class: 'buttonCancel',
+	             confirm: 'Discard and do not create a new OAI-PMH record?')
+	   else
+	     link_to('Cancel', @oaipmh_record, class: 'buttonCancel',
+	             confirm: 'Discard any changes and leave the OAI-PMH record unchanged?')
+	   end
+	 %>
+    </div>
+  </div>
+
+<% end %>
+
+</div>

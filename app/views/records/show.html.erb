@@ -81,6 +81,21 @@
 
   <%#= link_to "RIF-CS version", record_path(@record, :rifcs) %>
 
+  <p id="status">
+    OAI-PMH status:
+    <%=
+       oai_rec = @record.oaipmh_record
+       if oai_rec.nil?
+         'not published'
+       else
+         if oai_rec.deleted?
+           'published as a deleted record'
+         else
+           'published'
+         end
+       end
+       %></p>
+
   <p id="updatedTime" title="<%= @record.updated_at.iso8601 %>">Last updated: <%= @record.updated_at.to_s(:rfc822) %></p>
 </div>
 

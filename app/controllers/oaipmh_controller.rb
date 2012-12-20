@@ -1,3 +1,4 @@
+# Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
 require 'thales/output/oaipmh/record_provider'
 
@@ -16,7 +17,7 @@ class OaipmhController < ApplicationController
     provider = Thales::Output::OAIPMH::RecordProvider.new
     response =  provider.process_request(options)
 
-    render :text => response, :content_type => 'text/text' # for testing
+    render :text => response, :content_type => 'text/xml' # for testing
     # render :text => response, :content_type => 'application/xml'
   end
 end

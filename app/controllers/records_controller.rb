@@ -121,6 +121,11 @@ class RecordsController < ApplicationController
     r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
     @record.data_set(@record.ser_type, r_class.new(params[:data]))
 
+    if params[:oaipmh_status] == '1'
+      # Publish
+      @record.build_oaipmh_record(withdrawn: false)
+    end
+
     if @record.save
       redirect_to @record, notice: 'Record was successfully created.'
     else
@@ -135,6 +140,23 @@ class RecordsController < ApplicationController
 
     r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
     @record.data_set(@record.ser_type, r_class.new(params[:data]))
+
+
+    if params[:oaipmh_status] == '1'
+      # Change to published
+      if @record.oaipmh_record.nil?
+        @record.build_oaipmh_record(withdrawn: false)
+      else
+        @record.oaipmh_record.withdrawn = false
+        @record.oaipmh_record.save
+      end
+    elsif params[:oaipmh_status] == '-1'
+      # Change to deleted
+      if @record.oaipmh_record
+        @record.oaipmh_record.withdrawn = true
+        @record.oaipmh_record.save
+      end
+    end
 
     respond_to do |format|
       if @record.update_attributes(params[:record])

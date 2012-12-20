@@ -90,7 +90,9 @@
 </div>
 -->
 
-<!-- :confirm => question, -->
+  <h3>OAI-PMH publish</h3>
+  <%= form_oaipmh_status(@record) %>
+
   <div id="actions">
     <div class="main">
       <%= f.submit(@record.new_record? ? 'Create record' : 'Save record') %>

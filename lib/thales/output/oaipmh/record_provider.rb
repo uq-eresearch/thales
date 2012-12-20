@@ -7,7 +7,7 @@
 require 'oai'
 
 require 'setting'
-require_relative 'record'
+require 'oaipmh_record'
 require_relative 'rifcs_format'
 
 module Thales
@@ -18,24 +18,25 @@ module Thales
       # created model in app/models/party_record.rb
 
       class RecordProvider < OAI::Provider::Base
-        
-        # Obtain the email address to use as the adminEmail.  Either
-        # from the ADMIN_EMAIL environment variable, or derive it from
-        # the current user and hostname.
-
-       
-        #----
-        # Configuring the default provider
 
         settings = Setting.instance
+
+        # Configuring the default provider
 
         repository_name settings.oaipmh_repositoryName
         admin_email settings.oaipmh_adminEmail
 
-        rclass = Thales::Output::OAIPMH::Record
-        source_model OAI::Provider::ActiveRecordWrapper.new(rclass)
+        source_model OAI::Provider::ActiveRecordWrapper.new(OaipmhRecord)
 
         register_format(RifcsFormat.instance)
+
+        # Returns the prefix used by ruby-oai to create the OAI-PMH
+        # unique identifers. Each record in the OAI-PMH feed has
+        # a unique identifier that is this prefix concatenated with
+        # a slash character and the OAI-PMH record.id.
+        #
+        # See the identifier_for method in ruby-oai's
+        # oai/provider/response/record_response.rb file.
 
         def self.prefix
           "oai:%s" % URI.parse(self.url).host

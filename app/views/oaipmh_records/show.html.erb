@@ -1,0 +1,62 @@
+<% content_for(:page_title) do "OAI-PMH record: #{@oaipmh_record.id}" end %>
+<% content_for(:page_heading) do "OAI-PMH record #{@oaipmh_record.id}" end %>
+
+<% if notice %>
+  <p id="notice"><%= notice %></p>
+<% end %>
+
+<div id="propertiesShow">
+
+  <div class="item">
+    <dl>
+      <dt>OAI-PMH unique identifier:</dt>
+      <dd class="first"><span style="color: #ccc;">RecordProvider.prefix/</span><%= @oaipmh_record.id %></dd>
+    </dl>
+  </div>
+
+  <div class="item">
+    <dl>
+      <dt>Withdrawn:</dt>
+      <dd class="first">
+	<%= @oaipmh_record.withdrawn ? 'yes' : 'no' %> 
+      </dd>
+    </dl>
+  </div>
+
+  <div class="item">
+    <dl>
+      <dt>Record:</dt>
+      <dd class="first">
+	<%=
+	   record = @oaipmh_record.record
+	   if record.nil?
+	     '(unavailable)'
+	   else 
+             r_class = Thales::Datamodel::CLASS_FOR[record.ser_type]
+	     data = r_class.new.deserialize(record.ser_data)
+	     link_to(data.display_title, record, :title => record.uuid)
+	   end
+	%>
+      </dd>
+    </dl>
+  </div>
+
+  <div class="item">
+    <dl>
+      <dt>Published in OAI-PMH feed as:</dt>
+      <dd class="first"><%= @oaipmh_record.deleted? ? 'deleted record' : 'active record' %></dd>
+    </dl>
+  </div>
+
+<div id="actions">
+  <div class="main">
+    <%= link_to('Edit OAI-PMH record', edit_oaipmh_record_path(@oaipmh_record), class: 'buttonEdit') %>
+  </div>
+  <div class="subordinate">
+    <%= link_to('Purge OAI-PMH record', @oaipmh_record, method: :delete, class: 'buttonDelete',
+	        confirm: 'Purge this OAI-PMH record? Do you really want to do this?') %>
+  </div>
+</div>
+</div>
+
+<% content_for(:navigation) { side_nav_bar(:administration) } %>

@@ -13,6 +13,7 @@ class Record < ActiveRecord::Base
   attr_accessible :ser_data
 
   has_many :idents, :dependent => :destroy
+  has_one :oaipmh_record
 
   # Sets the uuid.
   #

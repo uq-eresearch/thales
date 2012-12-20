@@ -1,4 +1,6 @@
 Thales::Application.routes.draw do
+  resources :oaipmh_records
+
   resources :settings, only: [ :index, :edit, :update ]
 
   resources :capacities

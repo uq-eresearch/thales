@@ -12,7 +12,8 @@ require 'pg'
 
 require_relative '../app/models/property'
 require_relative '../app/models/record'
-require_relative '../app/models/entry'
+require_relative '../app/models/oaipmh_record'
+#require_relative '../app/models/entry'
 
 require_relative '../lib/thales/datamodel'
 
@@ -69,6 +70,7 @@ def create_update_records(items)
       r = Record.new
       r.uuid_set(item[:uuid])
       r.data_set(item[:ser_type], item[:data])
+      r.build_oaipmh_record(withdrawn: false) # unpublished -> publish
 
       if ! r.save
         $stderr.puts "Error: could not save new record in database"
@@ -81,6 +83,14 @@ def create_update_records(items)
       # Replace existing record that has the same UUID
       r = existing.first
       r.data_set(item[:ser_type], item[:data])
+
+      if r.oaipmh_record.nil?
+        r.build_oaipmh_record(withdrawn: false) # unpublished -> publish
+      else
+        r.oaipmh_record.withdrawn = false # delete -> publish
+        r.oaipmh_record.save
+      end
+
       if ! r.save
         $stderr.puts "Error: could not update record: #{item[:uuid]}"
         exit 1
