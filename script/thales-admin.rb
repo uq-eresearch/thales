@@ -58,6 +58,50 @@ def duplicate_uuids(items)
   end
 end
 
+# Sets/changes the OAI-PMH publishing status of a record.
+#
+# Note: it is not possible to change an already published record
+# (one that is currently active or deleted) to an unpublished one.
+# That would violate the strict deleted record tracking in OAI-PMH.
+# A future enhancement could be to relax/override this restriction
+# to support transient or no deletion tracking in the OAI-PMH feed.
+#
+# ==== Parameters
+#
+# +new_status+:: string containing unpublished, active or deleted.
+# +r+:: the record
+
+def set_oaipmh_status(new_status, r)
+
+  if r.oaipmh_record.nil?
+    # Currently unpublished (also true when record is new)
+    if new_status == 'active'
+      r.build_oaipmh_record(withdrawn: false)
+    elsif new_status == 'deleted'
+      r.build_oaipmh_record(withdrawn: true)
+    elsif new_status == 'unpublished'
+      # not published: so do not create an oaipmh_record
+    else
+      raise "internal error: #{new_status}"
+    end
+
+  else
+    # Currently published (active or deleted): change existing oaipmh_record
+    if new_status == 'active'
+      r.oaipmh_record.withdrawn = false
+    elsif new_status == 'deleted'
+      r.oaipmh_record.withdrawn = true
+    elsif new_status == 'unpublished'
+      s = (r.oaipmh_record.withdrawn ? 'deleted' : 'active')
+      $stderr.puts "Warning: OAI-PMH status: cannot change #{s} to unpublished: #{r.uuid}"
+    else
+      raise "internal error: #{new_status}"
+    end
+    r.oaipmh_record.save
+  end
+
+end
+
 def create_update_records(items)
 
   items.each do |item|
@@ -70,7 +114,7 @@ def create_update_records(items)
       r = Record.new
       r.uuid_set(item[:uuid])
       r.data_set(item[:ser_type], item[:data])
-      r.build_oaipmh_record(withdrawn: false) # unpublished -> publish
+      set_oaipmh_status(item[:oaipmh_status], r)
 
       if ! r.save
         $stderr.puts "Error: could not save new record in database"
@@ -83,13 +127,7 @@ def create_update_records(items)
       # Replace existing record that has the same UUID
       r = existing.first
       r.data_set(item[:ser_type], item[:data])
-
-      if r.oaipmh_record.nil?
-        r.build_oaipmh_record(withdrawn: false) # unpublished -> publish
-      else
-        r.oaipmh_record.withdrawn = false # delete -> publish
-        r.oaipmh_record.save
-      end
+      set_oaipmh_status(item[:oaipmh_status], r)
 
       if ! r.save
         $stderr.puts "Error: could not update record: #{item[:uuid]}"
@@ -139,12 +177,17 @@ def import(options)
           type_uri = db_record.xpath('db:type', NS).first.inner_text
           ser_type = Thales::Datamodel::IDENTITY_FOR[type_uri]
           r_class = Thales::Datamodel::CLASS_FOR[ser_type]
+          oaipmh_status = db_record.xpath('db:oaipmh_status', NS).first.inner_text
+          if ! ['unpublished', 'active', 'deleted' ].include?(oaipmh_status)
+            raise "#{fname}: incorrect OAI-PMH status value: #{oaipmh_status}"
+          end
 
           db_record.xpath('c:data', NS).each do |c_data|
             r = r_class.new.deserialize(c_data)
             item = {
               :ser_type => ser_type,
               :data => r,
+              :oaipmh_status => oaipmh_status,
             }
             if uuid_element
               item[:uuid] = uuid_element.inner_text
@@ -158,14 +201,27 @@ def import(options)
 
       connect(options[:adapter])
 
+      # Check for UUID clashes
+
       dup = duplicate_uuids(items)
       if ! dup.empty? && ! options[:force]
-        $stderr.puts "Error: #{dup.size} UUIDs already exist (use --force to overwrite)"
-        dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
+        $stderr.print "Error: #{dup.size} UUIDs already exist"
+        if options[:verbose].nil?
+          $stderr.print ', use --verbose to list them'
+        end
+        $stderr.puts ' (use --force to replace them)'
+
+        if options[:verbose]
+          dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
+        end
         exit 1
       end
-      
+
+      # Update database with imported records
+
       create_update_records(items)
+
+      # Verbose
 
       if options[:verbose]
         num_created = items.count { |i| i[:status] == ACTION_CREATED }
@@ -198,6 +254,10 @@ def export(options)
           xml.id(record.uuid)
           xml.type(r_class::TYPE)
           data.serialize_xml(xml)
+
+          oai = record.oaipmh_record
+          xml.oaipmh_status(oai.nil? ? 'unpublished' : (oai.withdrawn ? 'deleted' : 'active'))
+
         }
       end # Record.all.each
 
