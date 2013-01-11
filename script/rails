@@ -1,6 +1,68 @@
 #!/usr/bin/env ruby
 # This command will automatically be run when you run "rails" with Rails 3 gems installed from the root of your application.
 
-APP_PATH = File.expand_path('../../config/application',  __FILE__)
-require File.expand_path('../../config/boot',  __FILE__)
-require 'rails/commands'
+PRIV_KEY = File.expand_path('../config/pki/server.key', File.dirname(__FILE__))
+CERT = File.expand_path('../config/pki/server.crt', File.dirname(__FILE__))
+
+# Add an --ssl option to the 'server' command
+
+if 0 < ARGV.size && (ARGV[0] == 'server' ||  ARGV[0] == 's')
+  if ARGV.include?('--ssl') || ARGV.include?('-s')
+    ARGV.delete('--ssl')
+    ARGV.delete('-s')
+
+    if ! File.exist?(PRIV_KEY)
+      $stderr.puts "Error: TLS/SSL: server private key missing: #{PRIV_KEY}"
+      exit 1
+    end
+    if ! File.exist?(CERT)
+      $stderr.puts "Error: TLS/SSL: server certificate missing: #{CERT}"
+      exit 1
+    end
+
+    # Add support for TLS/SSL
+
+    require 'rails/commands/server'
+    require 'rack'
+    require 'webrick/https'
+    
+    module Rails
+      class Server < ::Rack::Server
+    
+        def default_options
+          ssl_options = {
+            :Port        => 3000,
+            :environment => (ENV['RAILS_ENV'] || "development").dup,
+            :daemonize   => false,
+            :debugger    => false,
+            :pid         => File.expand_path("tmp/pids/server.pid"),
+            :config      => File.expand_path("config.ru"),
+
+            :SSLEnable => true,
+            :SSLVerifyClient => OpenSSL::SSL::VERIFY_NONE,
+            :SSLPrivateKey => OpenSSL::PKey::RSA.new(File.open(PRIV_KEY).read),
+            :SSLCertificate => OpenSSL::X509::Certificate.new(File.open(CERT).read),
+            :SSLCertName => [["CN", WEBrick::Utils::getservername]],
+          }
+          super.merge(ssl_options)
+        end
+      end
+    end
+    
+  end
+end
+
+begin
+  APP_PATH = File.expand_path('../../config/application',  __FILE__)
+  require File.expand_path('../../config/boot',  __FILE__)
+  require 'rails/commands'
+
+rescue Errno::EACCES => e
+  if e.message == 'Permission denied - bind(2)'
+    # Produce a more user friendly error message for protected ports
+    $stderr.puts "Error: Insufficient privileges for port? (use sudo or rvmsudo)"
+    exit 1
+  else
+    raise e
+  end
+end

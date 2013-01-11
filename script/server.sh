@@ -14,6 +14,7 @@ HELP=
 VERBOSE=
 PORT=$DEFAULT_PORT
 FORCE=
+SSL=
 
 ACTION=
 
@@ -25,16 +26,17 @@ PROG=`basename $0`
 getopt -T > /dev/null
 if [ $? -eq 4 ]; then
   # GNU enhanced getopt is available
-  eval set -- `getopt --long help,verbose,port:,force --options fhvp: -- "$@"`
+  eval set -- `getopt --long help,verbose,port:,force,ssl --options fhvp:s -- "$@"`
 else
     # Original getopt is available
-  eval set -- `getopt fhvp: "$@"`
+  eval set -- `getopt fhvp:s "$@"`
 fi
 
 while [ $# -gt 0 ]; do
   case "$1" in
     -f | --force)       FORCE=yes;;
     -p | --port)        PORT="$2"; shift;;
+    -s | --ssl)         SSL="--ssl";;
     -h | --help)        HELP=yes;;
     -v | --verbose)     VERBOSE=yes;;
     --)                 shift; break;;
@@ -48,7 +50,9 @@ if [ $HELP ]; then
   echo "  -p | --port num"
   echo "        port to run server on (default: $DEFAULT_PORT)"
   echo "  -f | --force"
-  echo "        force start the server even if the PID file exists"
+  echo "        start/restart the server even if the PID file exists"
+  echo "  -s | --ssl"
+  echo "        start/restart the server with TLS/SSL"
   echo "  -h | --help"
   echo "        show this message"
   echo "  -v | --verbose"
@@ -104,7 +108,7 @@ case "$ACTION" in
 	  exit 1
 	fi
 
-	rails server -d --port=${PORT}
+	rails server -d --port=${PORT} ${SSL}
 
 	sleep 3
 	if [ ! -f $PIDFILE ]; then
@@ -129,7 +133,7 @@ case "$ACTION" in
 		echo "Waiting for server to stop"
 		sleep 1
 	    done
-	    rails server -d --port=${PORT}
+	    rails server -d --port=${PORT} ${SSL}
 
 	else
 	    echo "Warning: PID file not found: server not running?" >&2
