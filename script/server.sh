@@ -97,6 +97,13 @@ case "$ACTION" in
 	      exit 1
 	    fi
 	fi
+
+	which rails >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	  echo 'Error: rails command not found (run "bundle install"?)' >&2
+	  exit 1
+	fi
+
 	rails server -d --port=${PORT}
 	;;
 
