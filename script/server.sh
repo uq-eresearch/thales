@@ -105,6 +105,12 @@ case "$ACTION" in
 	fi
 
 	rails server -d --port=${PORT}
+
+	sleep 3
+	if [ ! -f $PIDFILE ]; then
+	  echo "Error: rails server failed to start (try \"rails server -d\")" >&2
+	  exit 1
+	fi
 	;;
 
     stop)
