@@ -1,0 +1,11 @@
+language: ruby
+bundler_args: --without="development"
+rvm:
+  - 1.9.3
+before_install:
+  - "sed -i -e 's/username: thales/username: postgres/g' config/database.yml"
+before_script:
+  - "psql -c 'create database thales_test;' -U postgres"
+script: "RAILS_ENV=test bundle exec rake db:migrate spec"
+notifications:
+  email: false
