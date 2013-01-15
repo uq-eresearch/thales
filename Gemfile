@@ -1,9 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.8'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem 'rails', '>= 3.2.11'
 
 gem 'pg'
 
@@ -42,6 +39,6 @@ gem 'jquery-rails'
 
 gem 'nokogiri'
 gem 'pbkdf2'
-gem 'oai', :git => 'https://github.com/tjdett/ruby-oai.git', :branch => 'next'
+gem 'oai'
 
 #EOF
