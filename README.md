@@ -1,6 +1,11 @@
 Thales
 ======
 
+[![Build Status](https://secure.travis-ci.org/uq-eresearch/thales.png)
+](http://travis-ci.org/uq-eresearch/thales)
+[![Dependency Status](https://gemnasium.com/uq-eresearch/thales.png)
+](https://gemnasium.com/uq-eresearch/thales)
+
 Description
 -----------
 
