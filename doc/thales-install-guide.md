@@ -6,11 +6,14 @@ Requirements
 
 Mandatory:
 
-- Ruby (version 1.9.3 or later)
-- Ruby on Rails (version 3.2.11 or later)
-- [Bundler](http://gembundler.com) (or manage the gems manually)
+- Git
 - [PostgreSQL](http://www.postgresql.org/) (or another Ruby on Rails
   supported database)
+- Ruby (version 1.9.3 or later)
+- [Bundler](http://gembundler.com) (or manage the gems manually)
+
+Bundler will be used to install the required gems, such as: _Ruby on
+Rails_ (3.2.11), _nokogiri_, _pg_ and _ruby-oai_.
 
 Optional:
 
@@ -19,9 +22,9 @@ Optional:
 Installation
 ------------
 
-1. Install Ruby and PostgreSQL. See
-   [Installing Ruby and PostgreSQL on Fedora] for an example of how to
-   do this.
+1. Install the required software: Git, PostgreSQL, Ruby and
+   Bundler. See [Installing software on Fedora] for an example of how
+   to do this.
 
 1. Obtain a copy of the application:
 
@@ -151,32 +154,34 @@ copied to _config/pki/server.crt_ and the unencrypted private key
 copied to _config/pki/server.key_.
 
 
+Installing software on Fedora
+-----------------------------
 
-Installing Ruby and PostgreSQL on Fedora
-----------------------------------------
+This section describes how to install Ruby on
+[Fedora](https://fedoraproject.org) 18. It uses:
 
-This section describes how to install Ruby on a minimal installation
-of [Fedora](https://fedoraproject.org) 18. It installs
-[Ruby Version Manager (RVM)](https://rvm.io) for Ruby and uses the
-PostgreSQL from the distribution. The steps will be
-different for other environments.
+- Fedora with a _minimal install_ software selection.
+- [Ruby Version Manager (RVM)](https://rvm.io) for Ruby.
+- PostgreSQL from the distribution.
+
+The steps will be different for other environments.
 
 These instructions assume you are using a non-root account and sudo.
 
 1. Install packages needed by RVM
 
-        sudo yum install postgresql-server
-        sudo yum install git
-        sudo yum install tar bzip2 make gcc gcc-c++
-        sudo yum install zlib-devel openssl-dev
-        sudo yum install readline-devel libyaml-devel libffi-devel \
-                         libxml2-devel libxslt-devel postgresql-devel
+        sudo yum install  postgresql-server \
+          git \
+          tar bzip2 make gcc gcc-c++ \
+          zlib-devel openssl-devel \
+          readline-devel libyaml-devel libffi-devel libxml2-devel libxslt-devel postgresql-devel
 
-    The first set is required for the distribution's installation of
-    PostgreSQL. The second set is required to obtain the
-    application. The third set is required for RVM. The fourth set is
-    required for Bundler (and must be installed before RVM compiles
-    Ruby). The fifth set is for other gems that the application needs.
+    The first line for the distribution's installation of
+    PostgreSQL. The second line is for Git, used to obtain the
+    application. The third line is required for RVM. The fourth line
+    is required for Bundler (and must be installed before RVM compiles
+    Ruby). The fifth line is required for other gems that the
+    application needs.
 
 2. Install [Ruby Version Manager](https://rvm.io/) and the latest
    stable Ruby (or explicitly specify `--ruby-1.9.3` to get that
@@ -205,9 +210,10 @@ These instructions assume you are using a non-root account and sudo.
 
 [Firewalld]: https://fedoraproject.org/wiki/FirewallD
 
-#### Trouble shooting
+Trouble shooting
+----------------
 
-##### ERROR: Gem bundler is not installed, run 'gem install bundler' first
+**ERROR: Gem bundler is not installed, run 'gem install bundler' first**
 
 The _zlib-devel_ and/or _openssl-devel_ packages were not installed
 when Ruby was compiled, so _bundler_ was not installed. Install
