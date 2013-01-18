@@ -40,5 +40,6 @@ gem 'jquery-rails'
 gem 'nokogiri'
 gem 'pbkdf2'
 gem 'oai', :git => 'https://github.com/code4lib/ruby-oai.git'
+gem 'rack-ssl-enforcer'
 
 #EOF

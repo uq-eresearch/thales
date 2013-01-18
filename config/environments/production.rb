@@ -1,6 +1,11 @@
 Thales::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
+  # Enforce SSL for login and user configuration pages
+  unless ENV['DISABLE_HTTPS']
+    config.middleware.use Rack::SslEnforcer, :only => [ %r{^/login}, %r{^/users} ]
+  end
+
   # Code is not reloaded between requests
   config.cache_classes = true
 

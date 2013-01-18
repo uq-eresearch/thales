@@ -153,6 +153,17 @@ To run the server with TLS/SSL, the server certificate needs to be
 copied to _config/pki/server.crt_ and the unencrypted private key
 copied to _config/pki/server.key_.
 
+Production deployment
+---------------------
+
+Thales will enforce the use of HTTPS for logins and user pages in the
+production environment (i.e. `RAILS_ENV=production`). That is,
+requests over HTTP to those pages are redirected to the equivalent
+HTTPS URL.
+
+If you need to run in a production environment where HTTPS is not
+available, you run with `DISABLE_HTTPS=1` in the environment to
+disable this.
 
 Installing software on Fedora
 -----------------------------
