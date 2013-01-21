@@ -203,7 +203,7 @@ module Thales
             }
           end
 
-          description.each { |x| builder.description(x, type: 'brief') }
+          description.each { |x| builder.description(x, type: 'full') }
 
           tag_keyword.each { |x| builder.subject(x, type: 'local') }
           tag_FoR_to_rifcs(builder)
