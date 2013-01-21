@@ -51,7 +51,7 @@ test:
 
 production:
   <<: *defaults
-  database: thales_production
+  database: thales
   username: thales
   password:
 
