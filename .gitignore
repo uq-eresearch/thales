@@ -15,5 +15,4 @@
 /tmp
 
 # Ignore Ruby on Rails generated files
-Gemfile.lock
 db/schema.rb
