@@ -177,7 +177,7 @@ def import(options)
           type_uri = db_record.xpath('db:type', NS).first.inner_text
           ser_type = Thales::Datamodel::IDENTITY_FOR[type_uri]
           r_class = Thales::Datamodel::CLASS_FOR[ser_type]
-          oaipmh_status = db_record.xpath('db:oaipmh_status', NS).first.inner_text
+          oaipmh_status = db_record.xpath('db:oaipmh_status', NS).first.try(:inner_text) || 'unpublished'
           if ! ['unpublished', 'active', 'deleted' ].include?(oaipmh_status)
             raise "#{fname}: incorrect OAI-PMH status value: #{oaipmh_status}"
           end
