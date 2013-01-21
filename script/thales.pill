@@ -1,0 +1,28 @@
+# Run first: rvm wrapper `rvm current` thales unicorn
+
+Bluepill.application('thales', :log_file => '/var/log/thales/unicorn.log') do |app|
+  app.process('unicorn') do |process|
+    RAILS_ROOT = '/opt/thales/code'
+
+    process.pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'unicorn.pid')
+    process.working_dir = RAILS_ROOT
+    process.daemonize = true
+
+    process.start_command = "/opt/thales/.rvm/bin/thales_unicorn -c config/unicorn.rb -E production -p 3000"
+    process.stop_command = "kill -QUIT {{PID}}"
+    process.restart_command = "kill -USR2 {{PID}}"
+  
+    process.uid = process.gid = 'thales'
+    process.stdout = process.stderr = '/var/log/thales/unicorn.log'
+  
+    process.start_grace_time = 8.seconds
+    process.stop_grace_time = 5.seconds
+    process.restart_grace_time = 13.seconds
+  
+    process.monitor_children do |child_process|
+      child_process.stop_command = "kill -QUIT {{PID}}"
+    
+      child_process.checks :mem_usage, :every => 10.seconds, :below => 150.megabytes, :times => [3,4], :fires => :stop
+    end
+  end
+end
