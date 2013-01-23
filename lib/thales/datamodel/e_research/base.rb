@@ -170,8 +170,9 @@ module Thales
         private
         def identifier_type(id)
           id_type = 'local' # until proven otherwise
-          if id =~ %r{^http://nla.gov.au/nla.party-\d+$} ||
-             id =~ %r{^nla.party-\d+$}
+
+          if (id =~ %r{^http://nla\.gov\.au/nla\.party-\d+$} || 
+              id =~ %r{^nla\.party-\d+$})
             id_type = 'AU-ANL:PEAU'
           else
             begin
@@ -181,9 +182,16 @@ module Thales
                    id.starts_with?('https://') ||
                    id.starts_with?('ftp:') ||
                    id.starts_with?('mailto:'))
-                id_type = 'uri'
+                id_type = 'uri' # until a specific type of URI is identified
+
+                if id.starts_with?('http://purl.org/')
+                  id_type = 'purl'
+                elsif id.starts_with?('http://dx.doi.org/')
+                  id_type = 'doi'
+                end
               end
             rescue URI::InvalidURIError
+              # Not a URI
             end
           end
 
