@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2012, The University of Queensland. (ITEE eResearch Lab)
 
+require 'uri'
 require_relative '../cornerstone'
 
 module Thales
@@ -164,6 +165,31 @@ module Thales
           return '(untitled)'
         end
 
+        # Derive the type attribute value for a RIF-CS identifier.
+
+        private
+        def identifier_type(id)
+          id_type = 'local' # until proven otherwise
+          if id =~ %r{^http://nla.gov.au/nla.party-\d+$} ||
+             id =~ %r{^nla.party-\d+$}
+            id_type = 'AU-ANL:PEAU'
+          else
+            begin
+              uri = URI::parse(id)
+              if uri.absolute? &&
+                  (id.starts_with?('http://') ||
+                   id.starts_with?('https://') ||
+                   id.starts_with?('ftp:') ||
+                   id.starts_with?('mailto:'))
+                id_type = 'uri'
+              end
+            rescue URI::InvalidURIError
+            end
+          end
+
+          return id_type
+        end
+
         RIFCS_NS = 'http://ands.org.au/standards/rif-cs/registryObjects'
 
         # Represents the base properties as RIF-CS.
@@ -178,7 +204,9 @@ module Thales
         protected
         def base_to_rifcs(builder)
 
-          identifier.each { |x| builder.identifier(x, type: 'uri') }
+          identifier.each do |x|
+            builder.identifier(x, type: identifier_type(x))
+          end
 
           if (subtype &&
               subtype[0] &&
