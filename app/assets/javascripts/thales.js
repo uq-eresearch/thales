@@ -11,7 +11,7 @@ var thales = (function() {
 	// Generate identity for new field
 
         var num = dl.find('dt').length.toString();
-	var ident = 'collection_' + name_base + '_' + num;
+	var ident = 'data_' + name_base + '_' + num;
 
 	// Add label
 
@@ -32,7 +32,7 @@ var thales = (function() {
 	newInput = $(document.createElement("input"));
 	newInput.attr('id', ident);
 	newInput.attr('maxlength', 42); /* TODO */
-	newInput.attr('name', 'collection[' + name_base + '][' + num + ']');
+	newInput.attr('name', 'data[' + name_base + '][' + num + ']');
 	newInput.attr('type', 'text');
 	newDD = $(document.createElement("dd"));
 	newDD.append(newInput);
