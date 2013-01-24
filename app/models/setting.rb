@@ -16,10 +16,6 @@ class Setting < ActiveRecord::Base
   DEFAULT_RIFCS_GROUP = 'Thales'
   DEFAULT_RIFCS_ORIGINATINGSOURCE = 'Thales'
 
-  # Cached copy of row from database
-
-  @instance = nil
-
   # Reset to system defaults
 
   def self.reset
@@ -27,19 +23,12 @@ class Setting < ActiveRecord::Base
     if s
       s.destroy
     end
-    @instance = nil
   end
 
   # Retrieve the settings
 
-  def self.instance(force_reload = nil)
-    if @instance.nil? || force_reload
-      @instance = find(:first)
-      if @instance.nil?
-        @instance = create_default
-      end
-    end
-    return @instance
+  def self.instance
+    find(:first) || create_default
   end
 
   private
