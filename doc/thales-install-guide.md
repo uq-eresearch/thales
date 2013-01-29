@@ -22,6 +22,8 @@ Optional:
 Installation
 ------------
 
+### Common to both development and production installations
+
 1. Install the required software: Git, PostgreSQL, Ruby and
    Bundler. See [Installing software on Fedora] for an example of how
    to do this.
@@ -42,11 +44,19 @@ Installation
 
         bundle install
 
-6. Configure connection between the application and PostgreSQL
+    This will install Ruby on Rails, as well as the other required
+	gems.
+	
+6. Configure the connection between the application and PostgreSQL
 
-    There are different ways of doing this. These instructions
-    will assume PostgreSQL is running on the same machine as
-    the Web application and a user name and password is used.
+    There are different ways of doing this. These instructions will
+    assume PostgreSQL is running on the same machine as the Web
+    application and a user name and password is used.  Another common
+    method is to use the same database username as the login
+    username. See the
+    [PostgreSQL documentation on client authentication](http://www.postgresql.org/docs/9.2/interactive/client-authentication.html)
+    for more details.
+	
    
     a. Choose a database user name. These instructions uses "thales" as
        the database user name.
@@ -55,7 +65,7 @@ Installation
        file. The default allows local access (i.e. via Unix-domain
        sockets) for all users to all databases via peer authentication
        method (i.e. operating system user name matches the database
-       user name).
+       user name), but it will be edited to add password authentication.
 
         sudoedit /var/lib/pgsql/data/pg_hba.conf
 		
@@ -67,59 +77,169 @@ Installation
 	   
 	        local  all   thales  md5
 
-    c. Start PostgreSQL. If it is already running, restart it (so that
-	   it loads the client authentication configuration file.)
+    c. Start PostgreSQL.
 
         sudo service postgresql start
 
-    d. Create the database user:
+       If it is already running, restart it (so that it loads the
+	   client authentication configuration file.)
 
-        sudo -u postgres psql
+        sudo service postgresql restart
+
+Please continue with the [Development installation] or
+[Production installation] instructions.
+
+### Development installation
+
+These steps continue on from the [Common to both development and production installations].
+
+These steps assume the Web application is run using the WEBrick HTTP
+server, which comes as standard with Ruby 1.9.3.
+
+1. Create PostgreSQL user.
+
+        $ sudo -u postgres psql
         postgres=# CREATE USER thales WITH CREATEDB PASSWORD 'p@ssw0rd';
         postgres=# \du
         postgres=# \q
 
-    e. Edit configuration
+	   Note: The CREATEDB role allows the user to drop any database
+	   (not just the ones it owns). This can be a security risk, so
+	   please consider if it is suitable for your setup before using
+	   it.  The CREATEDB role is needed if you want to run the RSpec
+	   tests and the db:create Rake task.
+		
+2. Edit configuration
 
-    Edit _config/database.yml_ to set the username and password
-    (for development, test and production environments) to the
-    new PostgreSQL username and password.
+    Edit _config/database.yml_ to set the username and password to the
+	new PostgreSQL username and password.
 	
 	    vi config/database.yml
 
-    Do this for the the three environments (development, test and production).
+    Do this for the development and test environments.
 	
-        ...
-		username: thales
-		password: p@ssw0rd
-		...
+	    development:
+          ...
+		  username: thales
+		  password: p@ssw0rd
+		  ...
+	    test:
+          ...
+		  username: thales
+		  password: p@ssw0rd
+		  ...
 		
-7. Create, define and populate the database:
+3. Create, define and populate the development database.
 
         rake db:create
         rake db:migrate
         rake db:seed
 
-    After "rake db:migrate" has been run at least once, the rake
-    targets of "db:setup" and "db:reset" can be used instead of the
-    sequence of db:create, db:migrate and db:seed.
+4. Run the RSpec tests.
+
+        rake spec
+	
+5. Start the development Rails server (see [Starting the Rails server]).
+
+The application can be accessed by visiting <http://localhost:3000/>
+(replacing "localhost" with the correct hostname, if necessary.)  The
+initial account has the user name of "root" and no password.
+
+The OAI-PMH feed will be available at <http://localhost:3000/oai>
+(replacing "localhost" with the correct hostname.)
+
+
+### Production installation
+
+These steps continue on from the [Common to both development and production installations].
+
+These steps assume the Web application is run using the
+[Unicorn](http://unicorn.bogomips.org) HTTP server; that HTTP server
+is started using the [Bluepill](https://github.com/arya/bluepill)
+process monitor; and [nginx](http://nginx.org) is used to provide
+TLS/SSL security.
+
+1. Create PostgreSQL user and the production database.
+
+        $ sudo -u postgres psql
+        postgres=# CREATE USER thales WITH PASSWORD 'p@ssw0rd';
+        postgres=# \du
+        postgres=# CREATE DATABASE thales OWNER thales;
+        postgres=# \l
+        postgres=# \q
+
+	
+2. Edit configuration
+
+    Edit _config/database.yml_ to set the username and password to the
+    new PostgreSQL username and password.
+	
+	    vi config/database.yml
+
+    Do this for the production environment.
+	
+	    production:
+          ...
+		  username: thales
+		  password: p@ssw0rd
+		  ...
+  
+3. Define and populate the database.
+
+        RAILS_ENV=production rake db:migrate
+        RAILS_ENV=production rake db:seed
+
+4. Precompile the assets.
+
+        RAILS_ENV=production rake assets:precompile
+
+5. Install Bluepill.
+   **This step needs work work.**
+
+    a. Install Bluepill.
+   
+        rvmsudo gem install bluepill
+
+    b. Configure logging according to the
+    [Bluepill installation instructions](https://github.com/arya/bluepill#readme).
+
+    c. Create direcoty for Bluepill's pid and sock files.
+   
+        sudo mkdir /var/run/bluepill
+		
+6. Install the init.d startup script.
+   **This step needs more work.**
+
+    a. Install the Bluepill configuration file.
+   
+        sudo cp script/thales.pill /etc/bluepill/thales.pill
+		
+    b. Copy the init.d script to the /etc/init.d directory.
+   
+        sudo cp script/thales-bluepill.init /etc/init.d/thales.init
+
+7. Install nginx.
+   **This step needs more work.**
+   
+8. Start the server.
+
+        sudo service thales start
+
+#### TLS/SSL in the production deployments
+
+Thales will enforce the use of HTTPS for logins and user settings
+pages in the production environment
+(i.e. `RAILS_ENV=production`). That is, requests over HTTP to those
+pages are redirected to the equivalent HTTPS URL.
+
+If you need to run in a production environment where HTTPS is not
+available, run it with `DISABLE_HTTPS=1` in the environment to
+disable this.
 
 Operation
 ---------
 
-1. Start PostgreSQL.
-
-2. Start the Rails server (see [Starting the Rails server]).
-
-3. Visit the start page <http://localhost:3000/> (replacing
-   "localhost" with the correct hostname, if necessary.)  The initial
-   account has the user name of "root" and no password.
-
-4. Harvest from the OAI-PMH feed at <http://localhost:3000/oai>
-   (replacing "localhost" with the correct hostname.)
-
-
-### Managing the Rails server
+### Managing the development Rails server
 
 #### Starting the Rails server
 
@@ -153,17 +273,6 @@ To run the server with TLS/SSL, the server certificate needs to be
 copied to _config/pki/server.crt_ and the unencrypted private key
 copied to _config/pki/server.key_.
 
-Production deployment
----------------------
-
-Thales will enforce the use of HTTPS for logins and user pages in the
-production environment (i.e. `RAILS_ENV=production`). That is,
-requests over HTTP to those pages are redirected to the equivalent
-HTTPS URL.
-
-If you need to run in a production environment where HTTPS is not
-available, you run with `DISABLE_HTTPS=1` in the environment to
-disable this.
 
 Installing software on Fedora
 -----------------------------
@@ -175,7 +284,9 @@ This section describes how to install Ruby on
 - [Ruby Version Manager (RVM)](https://rvm.io) for Ruby.
 - PostgreSQL from the distribution.
 
-The steps will be different for other environments.
+Thales can be installed on other environments. It has been
+successfully installed on Fedora 17 and CentOS 6.3.  The steps will be
+slightly different when installing on other environments.
 
 These instructions assume you are using a non-root account and sudo.
 
@@ -194,30 +305,35 @@ These instructions assume you are using a non-root account and sudo.
     Ruby). The fifth line is required for other gems that the
     application needs.
 
-2. Install [Ruby Version Manager](https://rvm.io/) and the latest
-   stable Ruby (or explicitly specify `--ruby-1.9.3` to get that
-   particular version of Ruby):
+2. Install [Ruby Version Manager](https://rvm.io/) and Ruby 1.9.3:
 
-        curl -L https://get.rvm.io | bash -s stable --ruby
+        curl -L https://get.rvm.io | bash -s -- --version 1.9.3
         . ~/.rvm/scripts/rvm
 
+    Thales has been tested with Ruby 1.9.3-p374.
+	
 3. Initialize PostgreSQL:
 
         sudo postgresql-setup initdb
 
 4. Configure firewalls
 
-    Choose which TCP/IP port to run the Web application on (the
-    default is 3000) and configure the firewall to allow access to
-    that port.
+    Choose which TCP/IP port for the Web application and configure the
+	firewall to allow access to that port.  For development and
+	testing the default is port 3000. For production, you probably
+	want to use port 80 or 443.
 
     Fedora 18 uses [FirewallD] (instead of _iptables_ of previous
     releases).
 
-        sudo firewall-cmd --list-all
+        sudo firewall-cmd --get-active-zones
+        sudo firewall-cmd --list-all --zone=public
 		
-        sudo firewall-cmd --add-port=3000/tcp
+        sudo firewall-cmd --add-port=3000/tcp     # Note: not permanent
+		
         sudo firewall-cmd --permanent --zone=public --add-port=3000/tcp
+		
+        sudo firewall-cmd --add-service=http     # Note: not permanent
 
 [Firewalld]: https://fedoraproject.org/wiki/FirewallD
 
@@ -235,6 +351,16 @@ these packages and reinstall Ruby.
         rvm uninstall ruby-1.9.3-p362 # using value obtained from list
         rvm install ruby-1.9.3-p362
 
+**Data directory is not empty!**
+
+PostgreSQL has already been initialized. You do not need to run
+`sudo postgresql-setup initdb` again.
+
+**PG::Error: ERROR:  permission denied to create database**
+
+The PostgreSQL user does not have permission to create or drop
+databases. This error is usually encountered when trying to run Rake
+targets such as: db:create, db:drop, db:setup, db:reset or spec.
 
 Contact
 -------
