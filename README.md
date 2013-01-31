@@ -29,11 +29,11 @@ describes how to operate the Web application after it has been
 installed. The user guide describes how to manage metadata records
 using the Web application.
 
-- [Thales Installation Guide](/uq-eresearch/thales/blob/master/doc/thales-install-guide.md)
-- [Thales Administration Guide](/uq-eresearch/thales/blob/master/doc/thales-admin-guide.md)
-- [Thales User Guide](/uq-eresearch/thales/blob/master/doc/thales-user-guide.md)
+- [Thales Installation Guide](/blob/master/doc/thales-install-guide.md)
+- [Thales Administration Guide](/blob/master/doc/thales-admin-guide.md)
+- [Thales User Guide](/blob/master/doc/thales-user-guide.md)
 
-These can be found in the _doc_ directory.
+These can be also be found in the _doc_ directory.
 
 Contact
 -------
