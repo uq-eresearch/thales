@@ -1,8 +1,21 @@
 Thales Installation Guide
 =========================
 
+Introduction
+------------
+
+These instructions describe how to install Thales for either
+development or production environments.
+
+Setup the required software and then start with the installation steps
+that are [Common to both development and production installations].
+
 Requirements
 ------------
+
+Thales is a Ruby on Rails Web application. It can run on any platform
+that support Ruby on Rails.  By default, it is configured to use
+PostgreSQL.
 
 Mandatory:
 
@@ -19,20 +32,20 @@ Optional:
 
 - [Ruby Version Manager (RVM)](https://rvm.io)
 
+For an example of how to setup these required software on Fedora 18,
+see [Installing software on Fedora].
+
 Installation
 ------------
 
-### Common to both development and production installations
 
-1. Install the required software: Git, PostgreSQL, Ruby and
-   Bundler. See [Installing software on Fedora] for an example of how
-   to do this.
+### Common to both development and production installations
 
 1. Obtain a copy of the application:
 
         git clone https://github.com/uq-eresearch/thales.git
 
-2. Change into the directory:
+2. Change into the project directory:
 
         cd thales
 
@@ -47,7 +60,7 @@ Installation
     This will install Ruby on Rails, as well as the other required
 	gems.
 	
-6. Configure the connection between the application and PostgreSQL
+5. Configure the connection between the application and PostgreSQL
 
     There are different ways of doing this. These instructions will
     assume PostgreSQL is running on the same machine as the Web
@@ -59,7 +72,14 @@ Installation
 	
    
     a. Choose a database user name. These instructions uses "thales" as
-       the database user name.
+       the database user name, but any database user name can be used.
+	   
+ 	   If the database user name is the same as the login user name
+	   nothing more needs to be done, since by default PostgreSQL is
+	   setup to accept Unix socket connections from local users.
+	   
+	   If the database user name is different from the login user name,
+	   continue with step 6b.
 
     b. Edit the PostgreSQL client authentication configuration
        file. The default allows local access (i.e. via Unix-domain
@@ -77,14 +97,12 @@ Installation
 	   
 	        local  all   thales  md5
 
-    c. Start PostgreSQL.
+    c. Start or restart PostgreSQL.
 
         sudo service postgresql start
 
        If it is already running, restart it (so that it loads the
 	   client authentication configuration file.)
-
-        sudo service postgresql restart
 
 Please continue with the [Development installation] or
 [Production installation] instructions.
@@ -93,10 +111,7 @@ Please continue with the [Development installation] or
 
 These steps continue on from the [Common to both development and production installations].
 
-These steps assume the Web application is run using the WEBrick HTTP
-server, which comes as standard with Ruby 1.9.3.
-
-1. Create PostgreSQL user.
+1. Create PostgreSQL user with the CREATEDB role.
 
         $ sudo -u postgres psql
         postgres=# CREATE USER thales WITH CREATEDB PASSWORD 'p@ssw0rd';
@@ -138,7 +153,9 @@ server, which comes as standard with Ruby 1.9.3.
 4. Run the RSpec tests.
 
         rake spec
-	
+
+    The tests should run without producing any failures.
+   
 5. Start the development Rails server (see [Starting the Rails server]).
 
 The application can be accessed by visiting <http://localhost:3000/>
@@ -151,24 +168,27 @@ The OAI-PMH feed will be available at <http://localhost:3000/oai>
 
 ### Production installation
 
-These steps continue on from the [Common to both development and production installations].
+These steps continue on from the
+[Common to both development and production installations].
 
-These steps assume the Web application is run using the
-[Unicorn](http://unicorn.bogomips.org) HTTP server; that HTTP server
-is started using the [Bluepill](https://github.com/arya/bluepill)
-process monitor; and [nginx](http://nginx.org) is used to provide
-TLS/SSL security.
+These steps assume the production Web application is run using the
+[Unicorn](http://unicorn.bogomips.org) HTTP server and
+[nginx](http://nginx.org) is used to provide TLS/SSL security.
+
+#### Common
 
 1. Create PostgreSQL user and the production database.
 
         $ sudo -u postgres psql
-        postgres=# CREATE USER thales WITH PASSWORD 'p@ssw0rd';
+        postgres=# CREATE USER thales WITH PASSWORD 'rte0vurt3spes6ryqu5mo9hy9pybi2ra';
         postgres=# \du
         postgres=# CREATE DATABASE thales OWNER thales;
         postgres=# \l
         postgres=# \q
 
-	
+    Note: unlike in development, this database user does not have the
+    CREATEDB role.
+   
 2. Edit configuration
 
     Edit _config/database.yml_ to set the username and password to the
@@ -181,7 +201,7 @@ TLS/SSL security.
 	    production:
           ...
 		  username: thales
-		  password: p@ssw0rd
+		  password: rte0vurt3spes6ryqu5mo9hy9pybi2ra
 		  ...
   
 3. Define and populate the database.
@@ -193,8 +213,71 @@ TLS/SSL security.
 
         RAILS_ENV=production rake assets:precompile
 
-5. Install Bluepill.
-   **This step needs work work.**
+5. Create wrapper script so that Unicorn can be run in the correct
+   RVM gemset.
+
+        rvm current # use the result from this as the second argument in the next command
+		
+        rvm wrapper ruby-1.9.3-p374@thales thales unicorn
+
+    This will create a wrapper script called `~/.rvm/bin/thales_unicorn`.
+
+6. Edit the Unicorn configuration file: setting the THALES_PROJ_DIR to where
+   the sources have been installed and the user to run worker processers as.
+
+        vi config/unicorn.rb
+		
+Continue with either the [Basic startup] or
+[Startup using Bluepill process monitor] steps.
+
+#### Basic startup
+
+This option uses a basic init.d script to start and stop the Unicorn
+HTTP server.
+
+1. Configure the application to automatically start when the OS starts.
+
+    a. Copy the basic init.d script to the /etc/init.d directory.
+   
+        sudo cp script/thales-basic.init /etc/init.d/thales
+
+    b. Edit it to set:
+	
+       - PROJ_DIR to the directory where Thales has been installed;
+	   - UNICORN to the wrapper script created in step 5; and
+	   - PID_FILE to the path to the PID file in _config/unicorn.rb_
+	  
+            sudoedit /etc/init.d/thales
+		
+    c. Register it.
+   
+        sudo chkconfig thales on
+
+2. Start the application.
+   
+        sudo service thales start
+
+    The application will be running on port 30123 (unless you change
+    it in the init.d script). The firewall should be configured to
+    block access external access to this TCP/IP port.
+
+    Other available commands are:
+
+        sudo service thales status
+        sudo service thales restart
+        sudo service thales stop
+	
+	
+Continue with the [Proxy server setup] steps.
+   
+#### Startup using Bluepill process monitor
+
+This option uses the [Bluepill](https://github.com/arya/bluepill)
+process monitor to start, stop and monitor the Unicorn HTTP server.
+
+**[This section needs more work.]**
+
+1. Install Bluepill.
 
     a. Install Bluepill.
    
@@ -207,8 +290,7 @@ TLS/SSL security.
    
         sudo mkdir /var/run/bluepill
 		
-6. Install the init.d startup script.
-   **This step needs more work.**
+2. Install the init.d startup script.
 
     a. Install the Bluepill configuration file.
    
@@ -218,12 +300,22 @@ TLS/SSL security.
    
         sudo cp script/thales-bluepill.init /etc/init.d/thales.init
 
-7. Install nginx.
-   **This step needs more work.**
-   
-8. Start the server.
+3. Start the server.
 
         sudo service thales start
+
+Continue with the [Proxy server setup] steps.
+
+##### Proxy server setup
+
+This section continues from either [Basic startup] or
+[Startup using Bluepill process monitor].
+
+**[This section needs more work.]**
+
+1. Install nginx.
+
+2. Configure it to proxy port 30123.
 
 #### TLS/SSL in the production deployments
 
@@ -239,11 +331,24 @@ disable this.
 Operation
 ---------
 
-### Managing the development Rails server
+### Managing the Rails server
+
+These instructions describe how to use WEBrick or Unicorn 
+as the HTTP server.
+
+WEBrick comes with Ruby 1.9.3 and is the standard Rails development
+server. It is not recommended for production use.
+
+[Unicorn] is a fast HTTP server and its gem is included in the project.
+It can be used in production and in development.
+
+[Unicorn]: http://unicorn.bogomips.org
 
 #### Starting the Rails server
 
-The rails server can be started using:
+##### WEBrick
+
+The WEBrick HTTP server can be manually started in development mode using:
 
     rails server -d
 
@@ -251,9 +356,19 @@ Or use the helper script:
 
     script/server.sh start
 
+##### Unicorn
+
+The Unicorn HTTP server can be manually started in development mode using:
+
+    unicorn -D -c config/unicorn.rb --port 3000
+
+Note: if the port number is not specified, the default is 8080.
+
 #### Stopping the Rails server
 
-The rails server can be stopped using:
+##### WEBrick
+
+The WEBrick HTTP server can be manually stopped using:
 
     kill -s SIGINT processID
 
@@ -262,6 +377,14 @@ Where the _processID_ can be found in the file `tmp/pid/server.pid`.
 Or use the helper script:
 
     script/server.sh stop
+
+##### Unicorn
+
+The Unicorn HTTP server can be manually stopped using:
+
+    kill -s SIGQUIT processID
+
+Where the _processID_ can be found by running `ps -ef | grep "unicorn master"`.
 
 #### Other functions of the helper script
 
@@ -278,17 +401,18 @@ Installing software on Fedora
 -----------------------------
 
 This section describes how to install Ruby on
-[Fedora](https://fedoraproject.org) 18. It uses:
+[Fedora](https://fedoraproject.org) 18 as an example of how to setup
+the required software platform. Thales can be installed on other
+platforms too.
+
+It uses:
 
 - Fedora with a _minimal install_ software selection.
-- [Ruby Version Manager (RVM)](https://rvm.io) for Ruby.
+- Single-user installation of [Ruby Version Manager (RVM)](https://rvm.io)
+  for Ruby
 - PostgreSQL from the distribution.
 
-Thales can be installed on other environments. It has been
-successfully installed on Fedora 17 and CentOS 6.3.  The steps will be
-slightly different when installing on other environments.
-
-These instructions assume you are using a non-root account and sudo.
+These instructions use a non-root account with sudo access.
 
 1. Install packages needed by RVM
 
@@ -305,9 +429,9 @@ These instructions assume you are using a non-root account and sudo.
     Ruby). The fifth line is required for other gems that the
     application needs.
 
-2. Install [Ruby Version Manager](https://rvm.io/) and Ruby 1.9.3:
+2. Install [Ruby Version Manager](https://rvm.io/) and Ruby.
 
-        curl -L https://get.rvm.io | bash -s -- --version 1.9.3
+        curl -L https://get.rvm.io | bash -s stable --ruby
         . ~/.rvm/scripts/rvm
 
     Thales has been tested with Ruby 1.9.3-p374.
@@ -316,7 +440,11 @@ These instructions assume you are using a non-root account and sudo.
 
         sudo postgresql-setup initdb
 
-4. Configure firewalls
+4. Setup PostgreSQL to start automatically when the OS starts.
+
+        sudo chkconfig postgresql on
+
+5. Configure firewalls
 
     Choose which TCP/IP port for the Web application and configure the
 	firewall to allow access to that port.  For development and
@@ -326,15 +454,23 @@ These instructions assume you are using a non-root account and sudo.
     Fedora 18 uses [FirewallD] (instead of _iptables_ of previous
     releases).
 
+    Show the active zones and current settings for the public zone:
+	
         sudo firewall-cmd --get-active-zones
         sudo firewall-cmd --list-all --zone=public
 		
+    For development, allow use of port 3000:
+	
         sudo firewall-cmd --add-port=3000/tcp     # Note: not permanent
-		
         sudo firewall-cmd --permanent --zone=public --add-port=3000/tcp
-		
+	
+	For production, allow use of the standard ports of 80 and 445:
+	
         sudo firewall-cmd --add-service=http     # Note: not permanent
-
+        sudo firewall-cmd --permanent --zone=public --add-service=http
+        sudo firewall-cmd --add-service=https     # Note: not permanent
+        sudo firewall-cmd --permanent --zone=public --add-service=https
+		
 [Firewalld]: https://fedoraproject.org/wiki/FirewallD
 
 Trouble shooting
@@ -360,7 +496,8 @@ PostgreSQL has already been initialized. You do not need to run
 
 The PostgreSQL user does not have permission to create or drop
 databases. This error is usually encountered when trying to run Rake
-targets such as: db:create, db:drop, db:setup, db:reset or spec.
+targets (e.g.: db:create, db:drop, db:setup, db:reset or spec) and the
+PostgreSQL user does not have the CREATEDB role.
 
 Contact
 -------
