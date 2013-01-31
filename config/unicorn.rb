@@ -17,5 +17,7 @@ stdout_path "#{THALES_PROJ_DIR}/log/unicorn.stdout.log"
 # Effective user and group for worker processes as log files.
 # If this is commented out, then the current user will be used
 # (which will be root if it is started by initd).
-#user 'thales', 'thales'
+# Note: this is very important if relying on ident login authentication
+# to PostgreSQL.
+user 'thales', 'thales'
 
