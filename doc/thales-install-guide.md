@@ -213,7 +213,7 @@ These steps assume the production Web application is run using the
 
         RAILS_ENV=production rake assets:precompile
 
-5. Create wrapper script so that Unicorn can be run in the correct
+5. Create a wrapper script so that Unicorn can be run in the correct
    RVM gemset.
 
         rvm current # use the result from this as the second argument in the next command
@@ -237,7 +237,7 @@ HTTP server.
 
 1. Configure the application to automatically start when the OS starts.
 
-    a. Copy the basic init.d script to the /etc/init.d directory.
+    a. Copy the init.d script (basic) to the /etc/init.d directory.
    
         sudo cp script/thales-basic.init /etc/init.d/thales
 
@@ -273,36 +273,66 @@ Continue with the [Proxy server setup] steps.
 #### Startup using Bluepill process monitor
 
 This option uses the [Bluepill](https://github.com/arya/bluepill)
-process monitor to start, stop and monitor the Unicorn HTTP server.
-
-**[This section needs more work.]**
+process monitor to manage the Unicorn HTTP server.
 
 1. Install Bluepill.
 
-    a. Install Bluepill.
+    a. Install the Bluepill gem.
    
-        rvmsudo gem install bluepill
+        gem install bluepill
 
     b. Configure logging according to the
     [Bluepill installation instructions](https://github.com/arya/bluepill#readme).
 
-    c. Create direcoty for Bluepill's pid and sock files.
-   
-        sudo mkdir /var/run/bluepill
-		
-2. Install the init.d startup script.
+2. Create a wrapper script so that Bluepill can be run in the correct
+   RVM gemset.
 
-    a. Install the Bluepill configuration file.
-   
-        sudo cp script/thales.pill /etc/bluepill/thales.pill
+        rvm current # use the result from this as the second argument in the next command
 		
-    b. Copy the init.d script to the /etc/init.d directory.
-   
-        sudo cp script/thales-bluepill.init /etc/init.d/thales.init
+        rvm wrapper ruby-1.9.3-p374@thales thales bluepill
 
-3. Start the server.
+    This will create a wrapper script called `~/.rvm/bin/thales_bluepill`.
+
+3. Configure Bluepill by editing the Thales Bluepill config file. Edit
+   it to set:
+
+    - USER to the user name to run the Unicorn processes as.
+    - RAILS_ROOT to the directory where Thales is installed
+    - UNICORN to the location of the wrapper script created above.
+
+            vi config/bluepill.pill
+		
+	
+4. Configure the application to automatically start when the OS starts.
+
+    a. Copy the init.d script (Bluepill) to the /etc/init.d directory.
+   
+        sudo cp script/thales-bluepill.init /etc/init.d/thales
+
+    b. Edit it to set:
+	
+       - BLUEPILL_BIN to the wrapper script for Bluepill created above.
+	   - BLUEPILL_CONFIG to the location of the above Bluepill config file.
+
+            sudoedit /etc/init.d/thales
+		
+    c. Register it.
+   
+        sudo chkconfig thales on
+
+5. Start the application.
 
         sudo service thales start
+
+    The application will be running on port 30123 (unless you change
+    it in the Bluepill config file). The firewall should be configured to
+    block access external access to this TCP/IP port.
+
+    Other available commands are:
+
+        sudo service thales status
+        sudo service thales restart
+        sudo service thales stop
 
 Continue with the [Proxy server setup] steps.
 

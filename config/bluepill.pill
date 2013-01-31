@@ -1,0 +1,56 @@
+# Bluepill configuration for Thales
+
+# Operating system user to run processes under.
+# If this is not set, the user that runs Bluepill will be used (e.g. root if
+# started by init.d).
+#USER = nil
+USER = 'thales'
+
+# Set RAILS_ROOT to where Thales is installed.
+RAILS_ROOT = '/home/thales/thales'
+
+# Set UNICORN to the location of the Unicorn executable.
+# If using RVM, this will be the Unicorn wrapper script.
+UNICORN = "/home/thales/.rvm/bin/thales_unicorn" # RVM wrapper script
+
+PORT = 30123
+
+Bluepill.application('thales',
+                     :log_file => File.join(RAILS_ROOT, 'log', 'bluepill.log')) do |app|
+  app.process('unicorn') do |process|
+
+    process.working_dir = RAILS_ROOT
+
+    # Note: Unicorn has been configured (in config/unicorn.rb) to create its
+    # own PID file and the start_command below tells it to daemonize itself.
+    # Therefore, Bluepill must not daemonize Unicorn; and Bluepill must
+    # be configured to use for that Unicorn created PID file.
+    # Bluepill expects to find that PID file after start_grace_time.
+    #
+    # The process.pid_file MUST be the same PID file specified in
+    # config/unicorn.rb.
+
+    process.pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'unicorn.pid')
+    process.daemonize = false
+
+    process.start_command = "#{UNICORN} --daemonize -c config/unicorn.rb -E production -p #{PORT}"
+    process.stop_command = "kill -QUIT {{PID}}"
+    process.restart_command = "kill -USR2 {{PID}}"
+  
+    if USER
+      process.uid = process.gid = USER
+    end
+    process.stdout = File.join(RAILS_ROOT, 'log', 'unicorn.stdout.log')
+    process.stderr = File.join(RAILS_ROOT, 'log', 'unicorn.stderr.log')
+  
+    process.start_grace_time = 8.seconds
+    process.stop_grace_time = 5.seconds
+    process.restart_grace_time = 13.seconds
+  
+    process.monitor_children do |child_process|
+      child_process.stop_command = "kill -QUIT {{PID}}"
+    
+      child_process.checks :mem_usage, :every => 10.seconds, :below => 150.megabytes, :times => [3,4], :fires => :stop
+    end
+  end
+end
