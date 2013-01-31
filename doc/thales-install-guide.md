@@ -58,7 +58,9 @@ Installation
         bundle install
 
     This will install Ruby on Rails, as well as the other required
-	gems.
+	gems. If this is for a production-only installation, unnecessary
+	gems can be excluded by using `bundle install
+	--without="development test"`.
 	
 5. Configure the connection between the application and PostgreSQL
 
@@ -79,7 +81,7 @@ Installation
 	   setup to accept Unix socket connections from local users.
 	   
 	   If the database user name is different from the login user name,
-	   continue with step 6b.
+	   continue with the next step.
 
     b. Edit the PostgreSQL client authentication configuration
        file. The default allows local access (i.e. via Unix-domain
@@ -97,12 +99,12 @@ Installation
 	   
 	        local  all   thales  md5
 
-    c. Start or restart PostgreSQL.
+6. Start or restart PostgreSQL.
+
+     If PostgreSQL is already running, restart it (so that it loads the
+	 client authentication configuration file.)
 
         sudo service postgresql start
-
-       If it is already running, restart it (so that it loads the
-	   client authentication configuration file.)
 
 Please continue with the [Development installation] or
 [Production installation] instructions.
@@ -155,8 +157,19 @@ These steps continue on from the [Common to both development and production inst
         rake spec
 
     The tests should run without producing any failures.
-   
-5. Start the development Rails server (see [Starting the Rails server]).
+
+5. If using the Unicorn Web server, create the directory to hold the
+   PID file (that was specified in the Unicorn config file) and make
+   sure it is writable by the Unicorn process worker (see
+   config/unicorn.rb). This is important because Unicorn will fail if
+   the directory not exist.
+
+        mkdir tmp/pids
+		
+    If using the WEBrick Web server, this is not necssary because it will
+    automatically create the temporary directories it needs.
+
+6. Start the development Rails server (see [Starting the Rails server]).
 
 The application can be accessed by visiting <http://localhost:3000/>
 (replacing "localhost" with the correct hostname, if necessary.)  The
@@ -222,11 +235,23 @@ These steps assume the production Web application is run using the
 
     This will create a wrapper script called `~/.rvm/bin/thales_unicorn`.
 
-6. Edit the Unicorn configuration file: setting the THALES_PROJ_DIR to where
-   the sources have been installed and the user to run worker processers as.
+6. Edit the Unicorn configuration file. Set the following:
 
-        vi config/unicorn.rb
-		
+    - THALES_PROJ_DIR to where the sources have been installed
+	- the user to run worker processers as.
+
+            vi config/unicorn.rb
+
+     Take note of the location of the PID file defined in this
+     configuration file.
+	 
+7. Create the directory to hold the PID file (that was specified in
+   the Unicorn config file) and make sure it is writable by the
+   Unicorn process worker. This is important because Unicorn will fail
+   if the directory not exist.
+
+        mkdir tmp/pids
+	
 Continue with either the [Basic startup] or
 [Startup using Bluepill process monitor] steps.
 
@@ -258,8 +283,12 @@ HTTP server.
         sudo service thales start
 
     The application will be running on port 30123 (unless you change
-    it in the init.d script). The firewall should be configured to
-    block access external access to this TCP/IP port.
+    it in the init.d script).
+	
+    Attempting to access http://localhost:30123 from the host (since
+	the firewall should be blocking external access to this port)
+	should return a HTTP redirection to the (currently non-existent)
+	HTTPS secured login page.
 
     Other available commands are:
 
@@ -325,8 +354,12 @@ process monitor to manage the Unicorn HTTP server.
         sudo service thales start
 
     The application will be running on port 30123 (unless you change
-    it in the Bluepill config file). The firewall should be configured to
-    block access external access to this TCP/IP port.
+    it in the init.d script).
+	
+    Attempting to access http://localhost:30123 from the host (since
+	the firewall should be blocking external access to this port)
+	should return a HTTP redirection to the (currently non-existent)
+	HTTPS secured login page.
 
     Other available commands are:
 
@@ -358,13 +391,13 @@ If you need to run in a production environment where HTTPS is not
 available, run it with `DISABLE_HTTPS=1` in the environment to
 disable this.
 
-Operation
----------
+Operating the development server
+--------------------------------
 
 ### Managing the Rails server
 
 These instructions describe how to use WEBrick or Unicorn 
-as the HTTP server.
+as the development HTTP server.
 
 WEBrick comes with Ruby 1.9.3 and is the standard Rails development
 server. It is not recommended for production use.
@@ -431,9 +464,9 @@ Installing software on Fedora
 -----------------------------
 
 This section describes how to install Ruby on
-[Fedora](https://fedoraproject.org) 18 as an example of how to setup
+[Fedora](https://fedoraproject.org) 18, as one example of how to setup
 the required software platform. Thales can be installed on other
-platforms too.
+platforms too, but the steps will be different.
 
 It uses:
 
@@ -442,7 +475,9 @@ It uses:
   for Ruby
 - PostgreSQL from the distribution.
 
-These instructions use a non-root account with sudo access.
+These instructions use a non-root account with sudo access. By
+default, the configuration files and scripts assume the user name is
+"thales", but this can be changed during the installation process.
 
 1. Install packages needed by RVM
 
