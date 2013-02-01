@@ -45,6 +45,13 @@ Installation
 
         git clone https://github.com/uq-eresearch/thales.git
 
+    Note: if deploying a production installation, consider carefully
+    where the application will be installed, because the reverse proxy
+    will need to access some of the files, but it is usually running
+    as a differnt user to the owner of the files. For a production
+    deployment consider installing it under somewhere like `/opt`
+    where the permissions can allow all users read access.
+	
 2. Change into the project directory:
 
         cd thales
@@ -164,7 +171,7 @@ These steps continue on from the [Common to both development and production inst
    config/unicorn.rb). This is important because Unicorn will fail if
    the directory not exist.
 
-        mkdir tmp/pids
+        mkdir -p tmp/pids
 		
     If using the WEBrick Web server, this is not necssary because it will
     automatically create the temporary directories it needs.
@@ -250,7 +257,7 @@ These steps assume the production Web application is run using the
    Unicorn process worker. This is important because Unicorn will fail
    if the directory not exist.
 
-        mkdir tmp/pids
+        mkdir -p tmp/pids
 	
 Continue with either the [Basic startup] or
 [Startup using Bluepill process monitor] steps.
@@ -297,7 +304,7 @@ HTTP server.
         sudo service thales stop
 	
 	
-Continue with the [Proxy server setup] steps.
+Continue with the [Reverse proxy server setup] steps.
    
 #### Startup using Bluepill process monitor
 
@@ -367,18 +374,91 @@ process monitor to manage the Unicorn HTTP server.
         sudo service thales restart
         sudo service thales stop
 
-Continue with the [Proxy server setup] steps.
+Continue with the [Reverse proxy server setup] steps.
 
-##### Proxy server setup
+##### Reverse proxy server setup
 
 This section continues from either [Basic startup] or
 [Startup using Bluepill process monitor].
 
-**[This section needs more work.]**
+A reverse proxy server will be used to efficiently serve static
+content and the content from the Unicorn HTTP server. It will also be
+used to provide TLS/SSL security.
 
-1. Install nginx.
 
-2. Configure it to proxy port 30123.
+1. Install [nginx](http://nginx.org).
+
+    In these steps, we will download and compile nginx, instead
+    of using the distribution's release.
+   
+    a. Download the sources from <http://nginx.org>
+
+		cd
+		curl -O http://nginx.org/download/nginx-1.2.6.tar.gz
+
+    b. Unpack the sources.
+   
+        tar xfz nginx-1.2.6.tar.gz
+		cd nginx-1.2.6
+	
+    c. Ensure dependencies are installed.
+   
+        sudo yum install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel
+
+    d. Compile and install. There are many options, but the essential
+       one is the SSL module.
+
+        ./configure --help
+        ./configure --with-http_ssl_module
+        make
+        sudo make install
+
+2. Configure _nginx_ to proxy requests to the Unicorn HTTP server
+   running on port 30123, and to serve both HTTP and HTTPS requests.
+
+    a. Create a user account to run _nginx_.
+	
+	    sudo useradd --shell /sbin/nologin --home-dir /usr/local/nginx -c "Nginx server" nginx
+
+    b. Obtain a TLS/SSL certificate for the site and install
+	   it and its private key.
+
+        pushd ~/my-pki-credentials
+	    sudo cp my-domain.crt /usr/local/nginx/conf/tls_ssl.crt
+		sudo cp my-domain.key /usr/local/nginx/conf/tls_ssl.key
+		chmod 444 /usr/local/nginx/conf/tls_ssl.crt
+        chmod 400 /usr/local/nginx/conf/tls_ssl.key # keep private key secure!
+		popd
+		
+    c. Configure nginx. You can use the supplied example configuration
+	   file as a starting point, but remember to optimize it for your
+	   setup.
+	
+	    sudo cp thales/config/nginx.conf /usr/local/nginx/conf/nginx.conf
+
+    d. Start nginx
+	
+        sudo /usr/local/nginx/sbin/nginx
+	
+	e. Test the server by visiting <http://localhost> and <https://localhost>.
+	
+      Note: a common problem is the HTML page appears, but without the
+	  CSS styling. This is usually a permissions problem: the _nginx_
+	  user does not have permissions to read the static asset
+	  files. Usually one of the parent directories does not have read
+	  and execute permissions for other users.
+	
+	f. If necessary, modify the configuration and retest.
+	
+         sudoedit /usr/local/nginx/conf/nginx.conf
+         sudo /usr/local/nginx/sbin/nginx -t
+         sudo /usr/local/nginx/sbin/nginx -s reload
+
+    g. When finished, stop the nginx server.
+     
+         sudo /usr/local/nginx/sbin/nginx -s quit
+
+4. Setup _nginx_ to start automatically when the OS starts.
 
 #### TLS/SSL in the production deployments
 
@@ -563,6 +643,17 @@ The PostgreSQL user does not have permission to create or drop
 databases. This error is usually encountered when trying to run Rake
 targets (e.g.: db:create, db:drop, db:setup, db:reset or spec) and the
 PostgreSQL user does not have the CREATEDB role.
+
+**403 Forbidden**
+
+When accessing a static file, this could be caused by the reverse
+proxy or HTTP server not having sufficient permissions to read the
+file. Normally, the worker process is running as a different user
+(e.g. nginx) from the owner of the files (e.g. thales).
+
+Check the permissions on the file - and all ancestor directories -
+allow the server's user to access it. Typically, the home directory
+for a user is only readable by that user.
 
 Contact
 -------
