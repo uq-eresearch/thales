@@ -165,11 +165,11 @@ These steps continue on from the [Common to both development and production inst
 
     The tests should run without producing any failures.
 
-5. If using the Unicorn Web server, create the directory to hold the
-   PID file (that was specified in the Unicorn config file) and make
-   sure it is writable by the Unicorn process worker (see
-   config/unicorn.rb). This is important because Unicorn will fail if
-   the directory not exist.
+5. If using the Unicorn Web server for development testing, create the
+   directory to hold the PID file (that was specified in the Unicorn
+   config file) and make sure it is writable by the Unicorn process
+   worker (see config/unicorn.rb). This is important because Unicorn
+   will fail if the directory not exist.
 
         mkdir -p tmp/pids
 		
@@ -244,18 +244,19 @@ These steps assume the production Web application is run using the
 
 6. Edit the Unicorn configuration file. Set the following:
 
-    - THALES_PROJ_DIR to where the sources have been installed
-	- the user to run worker processers as.
+    - THALES_PROJ_DIR to where the sources have been installed;
+	- _pid_ to the location of the PID file (e.g. /var/run/thales/unicorn.pid);
+	- _user_ to the user that owns the worker processes.
 
             vi config/unicorn.rb
 
-     Take note of the location of the PID file defined in this
-     configuration file.
+     Take note of the location of the PID file and user defined in
+     this configuration file for the next step.
 	 
-7. Create the directory to hold the PID file (that was specified in
-   the Unicorn config file) and make sure it is writable by the
-   Unicorn process worker. This is important because Unicorn will fail
-   if the directory not exist.
+7. Create the directory to hold the PID file and make sure it is
+   writable by the Unicorn process worker (both are specified in the
+   Unicorn config file). This is important because Unicorn will fail
+   if the directory does not exist.
 
         mkdir -p tmp/pids
 	
@@ -334,7 +335,7 @@ process monitor to manage the Unicorn HTTP server.
 
     - USER to the user name to run the Unicorn processes as.
     - RAILS_ROOT to the directory where Thales is installed
-    - UNICORN to the location of the wrapper script created above.
+    - UNICORN to the location of the Unicorn wrapper script.
 
             vi config/bluepill.pill
 		
@@ -393,7 +394,7 @@ used to provide TLS/SSL security.
    
     a. Download the sources from <http://nginx.org>
 
-		cd
+		pushd ~
 		curl -O http://nginx.org/download/nginx-1.2.6.tar.gz
 
     b. Unpack the sources.
@@ -413,28 +414,38 @@ used to provide TLS/SSL security.
         make
         sudo make install
 
-2. Configure _nginx_ to proxy requests to the Unicorn HTTP server
-   running on port 30123, and to serve both HTTP and HTTPS requests.
-
-    a. Create a user account to run _nginx_.
+2. Create a user account to run _nginx_.
 	
 	    sudo useradd --shell /sbin/nologin --home-dir /usr/local/nginx -c "Nginx server" nginx
 
-    b. Obtain a TLS/SSL certificate for the site and install
-	   it and its private key.
+3. Change file and directory permissions to allow the nginx user
+   to read the precompiled asset files. How this is done will depend
+   on where the application was installed. For example, if they were
+   installed in the user's home directory:
+
+        namei -l /home/thales/thales/public/assets
+        chmod o+rx /home/thales
+
+4. Configure _nginx_ to proxy requests to the Unicorn HTTP server
+   running on port 30123, and to serve both HTTP and HTTPS requests.
+
+    a. Obtain a TLS/SSL certificate for the site.
+	
+    b. Install the certificate and its (unencrypted) private key.
 
         pushd ~/my-pki-credentials
 	    sudo cp my-domain.crt /usr/local/nginx/conf/tls_ssl.crt
 		sudo cp my-domain.key /usr/local/nginx/conf/tls_ssl.key
-		chmod 444 /usr/local/nginx/conf/tls_ssl.crt
-        chmod 400 /usr/local/nginx/conf/tls_ssl.key # keep private key secure!
+		sudo chmod 444 /usr/local/nginx/conf/tls_ssl.crt
+        sudo chmod 400 /usr/local/nginx/conf/tls_ssl.key # keep private key secure!
 		popd
 		
     c. Configure nginx. You can use the supplied example configuration
 	   file as a starting point, but remember to optimize it for your
 	   setup.
 	
-	    sudo cp thales/config/nginx.conf /usr/local/nginx/conf/nginx.conf
+	    popd
+	    sudo cp config/nginx.conf /usr/local/nginx/conf/nginx.conf
 
     d. Start nginx
 	
@@ -581,10 +592,14 @@ default, the configuration files and scripts assume the user name is
 
     Thales has been tested with Ruby 1.9.3-p374.
 	
-3. Initialize PostgreSQL:
+3. Initialize PostgreSQL.
 
         sudo postgresql-setup initdb
 
+    That command is for newer (e.g. 9.x) releases of PostgreSQL. On
+    older versions of PostgreSQL (e.g. 8.x), use `sudo service
+    postgresql initdb` instead.
+   
 4. Setup PostgreSQL to start automatically when the OS starts.
 
         sudo chkconfig postgresql on
@@ -593,9 +608,11 @@ default, the configuration files and scripts assume the user name is
 
     Choose which TCP/IP port for the Web application and configure the
 	firewall to allow access to that port.  For development and
-	testing the default is port 3000. For production, you probably
+	testing the default is port 3000. For production, you will
 	want to use port 80 or 443.
 
+    a. FirewallD
+	
     Fedora 18 uses [FirewallD] (instead of _iptables_ of previous
     releases).
 
@@ -609,13 +626,29 @@ default, the configuration files and scripts assume the user name is
         sudo firewall-cmd --add-port=3000/tcp     # Note: not permanent
         sudo firewall-cmd --permanent --zone=public --add-port=3000/tcp
 	
-	For production, allow use of the standard ports of 80 and 445:
+	For production, allow use of the standard ports of 80 and 443:
 	
         sudo firewall-cmd --add-service=http     # Note: not permanent
         sudo firewall-cmd --permanent --zone=public --add-service=http
         sudo firewall-cmd --add-service=https     # Note: not permanent
         sudo firewall-cmd --permanent --zone=public --add-service=https
+
+    b. iptables
+	
+    For systems running _iptables_, edit the iptables configuration file:
+	
+	    sudoedit /etc/sysconfig/iptables
 		
+	Add the following lines:
+	
+        -A INPUT -m state --state NEW -m tcp -p tcp --dport 3000 -j ACCEPT
+        -A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+        -A INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+		
+	Restart _iptables_ so the new settings are used:
+	
+	    sudo service iptables restart
+	
 [Firewalld]: https://fedoraproject.org/wiki/FirewallD
 
 Trouble shooting
@@ -644,6 +677,18 @@ databases. This error is usually encountered when trying to run Rake
 targets (e.g.: db:create, db:drop, db:setup, db:reset or spec) and the
 PostgreSQL user does not have the CREATEDB role.
 
+**Nginx is constantly in the starting state**
+
+If running `sudo service thales status` shows that Unicorn is always
+"starting", check that the Unicorn PID file directory exists.
+
+If it cannot create the PID file, Unicorn will not start.
+
+**502 Bad Gateway**
+
+The Unicorn HTTP server is not running or nginx has not been correctly
+configured.
+
 **403 Forbidden**
 
 When accessing a static file, this could be caused by the reverse
@@ -654,6 +699,10 @@ file. Normally, the worker process is running as a different user
 Check the permissions on the file - and all ancestor directories -
 allow the server's user to access it. Typically, the home directory
 for a user is only readable by that user.
+
+**HTML page shows, but without any CSS styling**
+
+The precompiled assets are not being served. See **403 Forbidden** above.
 
 Contact
 -------
