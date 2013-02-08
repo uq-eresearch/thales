@@ -149,10 +149,9 @@ def import(options)
   oaipmh_default_status = options[:oaipmh_default_status] || 'unpublished'
   oaipmh_force_status = options[:oaipmh_force_status]
 
+  items = []
+
   options[:import].each do |fname|
-
-    items = []
-
     begin
       File.open(fname, 'r') do |f|
 
@@ -206,43 +205,43 @@ def import(options)
         end
 
       end
-
-      connect(options[:adapter])
-
-      # Check for UUID clashes
-
-      dup = duplicate_uuids(items)
-      if ! dup.empty? && ! options[:force]
-        $stderr.print "Error: #{dup.size} UUIDs already exist"
-        if options[:verbose].nil?
-          $stderr.print ', use --verbose to list them'
-        end
-        $stderr.puts ' (use --force to replace them)'
-
-        if options[:verbose]
-          dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
-        end
-        exit 1
-      end
-
-      # Update database with imported records
-
-      create_update_records(items)
-
-      # Verbose
-
-      if options[:verbose]
-        num_created = items.count { |i| i[:status] == ACTION_CREATED }
-        num_updated = items.count { |i| i[:status] == ACTION_UPDATED }
-        updated_str = options[:force] ? ", #{num_updated} updated" : ''
-
-        puts "Importing: #{fname}: #{items.size} records (#{num_created} created#{updated_str})"
-      end
-
     rescue Errno::ENOENT => e
       raise "import file: #{e}"
     end
+  end # each file
 
+  # Connect to database
+
+  connect(options[:adapter])
+
+  # Check for UUID clashes
+
+  dup = duplicate_uuids(items)
+  if ! dup.empty? && ! options[:force]
+    $stderr.print "Error: #{dup.size} UUIDs already exist"
+    if options[:verbose].nil?
+      $stderr.print ', use --verbose to list them'
+    end
+    $stderr.puts ' (use --force to replace them)'
+      
+    if options[:verbose]
+      dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
+    end
+    exit 1
+  end
+
+  # Update database with imported records
+
+  create_update_records(items)
+
+  # Verbose
+
+  if options[:verbose]
+    num_created = items.count { |i| i[:status] == ACTION_CREATED }
+    num_updated = items.count { |i| i[:status] == ACTION_UPDATED }
+    updated_str = options[:force] ? ", #{num_updated} updated" : ''
+      
+    puts "Import: #{items.size} records (#{num_created} created#{updated_str})"
   end
 
 end
