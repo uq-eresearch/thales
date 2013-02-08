@@ -146,13 +146,12 @@ end
 
 def import(options)
 
+  oaipmh_default_status = options[:oaipmh_default_status] || 'unpublished'
+  oaipmh_force_status = options[:oaipmh_force_status]
+
   items = []
 
   options[:import].each do |fname|
-    if options[:verbose]
-      puts "Importing: #{fname}"
-    end
-
     begin
       File.open(fname, 'r') do |f|
 
@@ -177,7 +176,15 @@ def import(options)
           type_uri = db_record.xpath('db:type', NS).first.inner_text
           ser_type = Thales::Datamodel::IDENTITY_FOR[type_uri]
           r_class = Thales::Datamodel::CLASS_FOR[ser_type]
-          oaipmh_status = db_record.xpath('db:oaipmh_status', NS).first.try(:inner_text) || 'unpublished'
+
+          if oaipmh_force_status
+            # Use this status, regardless of what the input specifies
+            oaipmh_status = oaipmh_force_status
+          else
+            # Use input status, or default if no input status specified
+            oaipmh_status = db_record.xpath('db:oaipmh_status', NS).first.try(:inner_text) || oaipmh_default_status
+          end
+
           if ! ['unpublished', 'active', 'deleted' ].include?(oaipmh_status)
             raise "#{fname}: incorrect OAI-PMH status value: #{oaipmh_status}"
           end
@@ -198,42 +205,43 @@ def import(options)
         end
 
       end
-
-      connect(options[:adapter])
-
-      # Check for UUID clashes
-
-      dup = duplicate_uuids(items)
-      if ! dup.empty? && ! options[:force]
-        $stderr.print "Error: #{dup.size} UUIDs already exist"
-        if options[:verbose].nil?
-          $stderr.print ', use --verbose to list them'
-        end
-        $stderr.puts ' (use --force to replace them)'
-
-        if options[:verbose]
-          dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
-        end
-        exit 1
-      end
-
-      # Update database with imported records
-
-      create_update_records(items)
-
-      # Verbose
-
-      if options[:verbose]
-        num_created = items.count { |i| i[:status] == ACTION_CREATED }
-        num_updated = items.count { |i| i[:status] == ACTION_UPDATED }
-        updated_str = options[:force] ? ", #{num_updated} updated" : ''
-        puts "  #{items.size} records (#{num_created} created#{updated_str})"
-      end
-
     rescue Errno::ENOENT => e
       raise "import file: #{e}"
     end
+  end # each file
 
+  # Connect to database
+
+  connect(options[:adapter])
+
+  # Check for UUID clashes
+
+  dup = duplicate_uuids(items)
+  if ! dup.empty? && ! options[:force]
+    $stderr.print "Error: #{dup.size} UUIDs already exist"
+    if options[:verbose].nil?
+      $stderr.print ', use --verbose to list them'
+    end
+    $stderr.puts ' (use --force to replace them)'
+      
+    if options[:verbose]
+      dup.each { |u| $stderr.puts "  #{u[:uuid]}" }
+    end
+    exit 1
+  end
+
+  # Update database with imported records
+
+  create_update_records(items)
+
+  # Verbose
+
+  if options[:verbose]
+    num_created = items.count { |i| i[:status] == ACTION_CREATED }
+    num_updated = items.count { |i| i[:status] == ACTION_UPDATED }
+    updated_str = options[:force] ? ", #{num_updated} updated" : ''
+      
+    puts "Import: #{items.size} records (#{num_created} created#{updated_str})"
   end
 
 end
@@ -281,9 +289,16 @@ def delete(options)
     count += 1
   end
 
-  if options[:verbose]
-    puts "#{count} records deleted"
+  oaipmh_count = 0
+  OaipmhRecord.all.each do |r|
+    r.destroy
+    oaipmh_count += 1
   end
+
+  if options[:verbose]
+    puts "Delete: #{count} metadata records deleted (#{oaipmh_count} OAI-PMH records)"
+  end
+
 end
 
 #----------------------------------------------------------------
@@ -318,6 +333,23 @@ def process_arguments
       options[:force] = true
     end
 
+    opt.on("-s", "--oaipmh_default status", "status if not indicated") do |x|
+      if ! ['unpublished', 'active', 'deleted' ].include?(x)
+        $stderr.puts "Usage error: unexpected OAI-PMH default status: #{x}"
+        $stderr.puts "             expecting: unpublished, active or deleted"
+        exit 2
+      end
+      options[:oaipmh_default_status] = x
+    end
+    opt.on("-S", "--oaipmh_force status", "status even if indicated") do |x|
+      if ! ['unpublished', 'active', 'deleted' ].include?(x)
+        $stderr.puts "Usage error: unexpected OAI-PMH force status: #{x}"
+        $stderr.puts "             expecting: unpublished, active or deleted"
+        exit 2
+      end
+      options[:oaipmh_force_status] = x
+    end
+
     opt.on("-D", "--delete", "delete all records") do
       options[:delete] = true
     end
@@ -340,7 +372,7 @@ def process_arguments
   opt_parser.parse!
 
   if ! ARGV.size.zero?
-    puts "Usage error: extra arguments supplied (--help for help)"
+    $stderr.puts "Usage error: extra arguments supplied (--help for help)"
     exit 2
   end
 
