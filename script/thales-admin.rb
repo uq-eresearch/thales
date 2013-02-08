@@ -146,15 +146,12 @@ end
 
 def import(options)
 
-  items = []
-
   oaipmh_default_status = options[:oaipmh_default_status] || 'unpublished'
   oaipmh_force_status = options[:oaipmh_force_status]
 
   options[:import].each do |fname|
-    if options[:verbose]
-      puts "Importing: #{fname}"
-    end
+
+    items = []
 
     begin
       File.open(fname, 'r') do |f|
@@ -238,7 +235,8 @@ def import(options)
         num_created = items.count { |i| i[:status] == ACTION_CREATED }
         num_updated = items.count { |i| i[:status] == ACTION_UPDATED }
         updated_str = options[:force] ? ", #{num_updated} updated" : ''
-        puts "  #{items.size} records (#{num_created} created#{updated_str})"
+
+        puts "Importing: #{fname}: #{items.size} records (#{num_created} created#{updated_str})"
       end
 
     rescue Errno::ENOENT => e
@@ -292,18 +290,14 @@ def delete(options)
     count += 1
   end
 
-  if options[:verbose]
-    puts "#{count} metadata records deleted"
-  end
-
-  count = 0
+  oaipmh_count = 0
   OaipmhRecord.all.each do |r|
     r.destroy
-    count += 1
+    oaipmh_count += 1
   end
 
   if options[:verbose]
-    puts "#{count} OAI-PMH records deleted"
+    puts "Delete: #{count} metadata records deleted (#{oaipmh_count} OAI-PMH records)"
   end
 
 end
