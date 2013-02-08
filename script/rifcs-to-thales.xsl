@@ -11,6 +11,7 @@
    xmlns:rif="http://ands.org.au/standards/rif-cs/registryObjects"
    xmlns:t="http://ns.research.data.uq.edu.au/2012/thales/db"
    xmlns:cs="http://ns.research.data.uq.edu.au/2012/cornerstone"
+   exclude-result-prefixes="rif"
    >
 
   <xsl:output
@@ -53,8 +54,11 @@
 	<xsl:when test="rif:collection">
 	  <xsl:apply-templates select="rif:collection"/>
 	</xsl:when>
+	<xsl:when test="rif:party">
+	  <xsl:apply-templates select="rif:party"/>
+	</xsl:when>
 	<xsl:otherwise>
-	  <xsl:message terminate="yes">Error: record is not a collection: key=<xsl:value-of select="rif:key"/></xsl:message>
+	  <xsl:message terminate="yes">Error: record is not a collection or party: key=<xsl:value-of select="rif:key"/></xsl:message>
 	</xsl:otherwise>
       </xsl:choose>
 
@@ -64,10 +68,22 @@
   <xsl:template match="rif:collection">
     <t:type>http://ns.research.data.uq.edu.au/2012/eResearch/type/collection</t:type>
     <cs:data>
-      <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/subtype">
+      <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/subtype">
 	<xsl:text>http://ns.research.data.uq.edu.au/2012/eResearch/subtype/collection/</xsl:text>
 	<xsl:value-of select="@type"/>
-      </prop>
+      </cs:prop>
+
+      <xsl:apply-templates/>
+    </cs:data>
+  </xsl:template>
+
+  <xsl:template match="rif:party">
+    <t:type>http://ns.research.data.uq.edu.au/2012/eResearch/type/party</t:type>
+    <cs:data>
+      <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/subtype">
+	<xsl:text>http://ns.research.data.uq.edu.au/2012/eResearch/subtype/party/</xsl:text>
+	<xsl:value-of select="@type"/>
+      </cs:prop>
 
       <xsl:apply-templates/>
     </cs:data>
@@ -76,13 +92,60 @@
   <!--****************************************************************-->
 
   <xsl:template match="rif:name">
-    <xsl:if test="count(rif:namePart)!=1">
-      <xsl:message terminate="yes">Error: number of namePart elements != 1: <xsl:value-of select="../../rif:key"/></xsl:message>
-    </xsl:if>
-    <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/title">
-      <xsl:value-of select="."/>
-    </cs:prop>
+    <xsl:choose>
+      <xsl:when test="local-name(..)='collection'">
+	<!-- Collections must only have one name, and that is the title -->
+	<xsl:if test="count(rif:namePart)!=1">
+	  <xsl:message terminate="no">Error: number of namePart elements != 1: <xsl:value-of select="../../rif:key"/></xsl:message>
+	</xsl:if>
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/title">
+	  <xsl:value-of select="."/>
+	</cs:prop>
+      </xsl:when>
+
+      <xsl:when test="local-name(..)='party'">
+	<xsl:apply-templates mode="party-name"/>
+      </xsl:when>
+
+      <xsl:otherwise>
+	<xsl:message terminate="yes">Error: unexpected form of name: <xsl:value-of select="local-name(..)"/> - <xsl:value-of select="../../rif:key"/></xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+
   </xsl:template>
+
+  <xsl:template match="rif:namePart" mode="party-name">
+    <xsl:choose>
+      <xsl:when test="@type='title'">
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/name_title">
+	  <xsl:value-of select="."/>
+	</cs:prop>
+      </xsl:when>
+      <xsl:when test="@type='given'">
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/name_given">
+	  <xsl:value-of select="."/>
+	</cs:prop>
+      </xsl:when>
+      <xsl:when test="@type='family'">
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/name_family">
+	  <xsl:value-of select="."/>
+	</cs:prop>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:message terminate="yes">Error: unexpected namePart @type: <xsl:value-of select="@type"/> in party/name</xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="rif:pref_name" mode="party-name">
+    <!--<xsl:message terminate="no">Warning: rif:pref_name element in name ignored: <xsl:value-of select="."/></xsl:message>-->
+  </xsl:template>
+
+  <xsl:template match="*" mode="party-name">
+    <xsl:message terminate="yes">Error: unexpected element: <xsl:value-of select="local-name()"/> in party/name</xsl:message>
+  </xsl:template>
+
+  <!--................................................................-->
 
   <xsl:template match="rif:description">
     <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/description">
@@ -105,7 +168,45 @@
   </xsl:template>
 
   <xsl:template match="rif:location">
-    <xsl:message terminate="no">Warning: location (discarded): <xsl:value-of select="../../rif:key"/></xsl:message>
+    <!-- xsl:message terminate="no">Warning: location (discarded): <xsl:value-of select="../../rif:key"/></xsl:message-->
+    <xsl:if test="count(*) != 1">
+      <xsl:message terminate="yes">Error: number of child elements in location != 1: <xsl:value-of select="../../rif:key"/></xsl:message>
+    </xsl:if>
+    <xsl:if test="count(rif:address) != 1">
+      <xsl:message terminate="yes">Error: number of address in location != 1: <xsl:value-of select="../../rif:key"/></xsl:message>
+    </xsl:if>
+
+    <xsl:apply-templates mode="location_address" select="rif:address/*"/>
+  </xsl:template>
+
+  <xsl:template match="rif:electronic" mode="location_address">
+    <xsl:choose>
+      <xsl:when test="@type='email'">
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/contact_email"><xsl:value-of select="rif:value"/></cs:prop>
+      </xsl:when>
+      <xsl:when test="@type='url'">
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/web_page"><xsl:value-of select="rif:value"/></cs:prop>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:message terminate="yes">Error: unexpected type in rif:electronic: <xsl:value-of select="@type"/></xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="rif:physical" mode="location_address">
+    <xsl:message terminate="no">
+      <xsl:text>Warning: location/address/physical (discarded): </xsl:text>
+      <xsl:value-of select="rif:addressPart"/>
+    </xsl:message>
+  </xsl:template>
+
+  <xsl:template match="*" mode="location_address">
+    <xsl:message terminate="yes">
+      <xsl:text>Error: unexpected element in location/address: {</xsl:text>
+      <xsl:value-of select="namespace-uri()"/>
+      <xsl:text>}</xsl:text>
+      <xsl:value-of select="local-name()"/>
+  </xsl:message>
   </xsl:template>
 
   <!-- Coverage -->
@@ -143,7 +244,11 @@
       </xsl:when>
 
       <xsl:when test="starts-with(text(), 'LINESTRING')">
-	<xsl:message terminate="no">Warning: coverage with LINESTRING (discarded): <xsl:value-of select="../../../rif:key"/></xsl:message>
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/spatial_polygon">
+	  <!-- convert "LINESTRING(lat1 long1,lat2 long2,lat3 long3)"
+	       to "lat1,long1 lat2,long2 lat3,long3" -->
+	  <xsl:value-of select="translate(substring-after(., 'LINESTRING'), ', ()', ' ,')"/>
+	</cs:prop>
       </xsl:when>
 
       <xsl:otherwise>
@@ -153,7 +258,7 @@
   </xsl:template>
 
   <xsl:template match="*" mode="coverage">
-    <xsl:message terminate="no">Error: unexpected element in coverage: <xsl:value-of select="name()"/></xsl:message>
+    <xsl:message terminate="no">Error: unexpected element in coverage: <xsl:value-of select="local-name()"/></xsl:message>
   </xsl:template>
 
 
@@ -167,13 +272,13 @@
       </xsl:when>
 
       <xsl:when test="@type='anzsrc-for'">
-	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/tag_FoR">
+	<cs:link type="http://ns.research.data.uq.edu.au/2012/eResearch/property/tag_FoR">
 	  <xsl:attribute name="uri">
 	    <xsl:text>http://purl.org/asc/1297.0/2008/for/</xsl:text>
 	    <xsl:value-of select="."/>
 	  </xsl:attribute>
 	  <xsl:value-of select="."/>
-	</cs:prop>
+	</cs:link>
       </xsl:when>
 
       <xsl:otherwise>
@@ -194,8 +299,13 @@
     </cs:prop>
   </xsl:template>
 
-  <xsl:template match="rif:*">
-    <xsl:message terminate="yes">Error: unexpected element: <xsl:value-of select="name()"/></xsl:message>
+  <xsl:template match="*">
+    <xsl:message terminate="yes">
+      <xsl:text>Error: unexpected element: {</xsl:text>
+      <xsl:value-of select="namespace-uri()"/>
+      <xsl:text>}</xsl:text>
+      <xsl:value-of select="local-name()"/>
+    </xsl:message>
   </xsl:template>
 
 </xsl:transform>
