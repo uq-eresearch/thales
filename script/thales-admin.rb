@@ -293,8 +293,19 @@ def delete(options)
   end
 
   if options[:verbose]
-    puts "#{count} records deleted"
+    puts "#{count} metadata records deleted"
   end
+
+  count = 0
+  OaipmhRecord.all.each do |r|
+    r.destroy
+    count += 1
+  end
+
+  if options[:verbose]
+    puts "#{count} OAI-PMH records deleted"
+  end
+
 end
 
 #----------------------------------------------------------------
