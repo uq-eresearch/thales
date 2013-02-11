@@ -88,14 +88,14 @@ module Thales
 
           :tag_FoR => {
             label: 'Field of Research (FoR)',
-            maxlength: 8,
+            maxlength: DEFAULT_MAXLENGTH, # fit URI plus hint
             gid: "#{PROPERTY_BASE_URI}/tag_FoR",
             is_link: true,
           },
 
           :tag_SEO => {
             label: 'Socio-Economic Outcomes (SEO)',
-            maxlength: 8,
+            maxlength: DEFAULT_MAXLENGTH, # fit URI plus hint
             gid: "#{PROPERTY_BASE_URI}/tag_SEO",
             is_link: true,
           },

@@ -41,7 +41,6 @@
       <t:id>
 	<xsl:choose>
 	  <xsl:when test="starts-with(rif:key, 'http://115.146.93.74/redbox/published/detail/')">
-	    <xsl:text>AWMC/</xsl:text>
 	    <xsl:value-of select="substring-after(rif:key, 'http://115.146.93.74/redbox/published/detail/')"/>
 	  </xsl:when>
 	  <xsl:otherwise>
@@ -99,7 +98,7 @@
 	  <xsl:message terminate="no">Error: number of namePart elements != 1: <xsl:value-of select="../../rif:key"/></xsl:message>
 	</xsl:if>
 	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/title">
-	  <xsl:value-of select="."/>
+	  <xsl:value-of select="rif:namePart"/>
 	</cs:prop>
       </xsl:when>
 
@@ -157,7 +156,6 @@
     <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/identifier">
       <xsl:choose>
 	<xsl:when test="starts-with(., 'http://115.146.93.74/redbox/published/detail/')">
-	  <xsl:text>AWMC/</xsl:text>
 	  <xsl:value-of select="substring-after(., 'http://115.146.93.74/redbox/published/detail/')"/>
 	</xsl:when>
 	<xsl:otherwise>
@@ -252,7 +250,9 @@
       </xsl:when>
 
       <xsl:otherwise>
-	<xsl:message terminate="no">Warning: text coverage (discarded): <xsl:value-of select="."/></xsl:message>
+	<cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/spatial_text">
+	  <xsl:value-of select="."/>
+	</cs:prop>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -288,7 +288,11 @@
   </xsl:template>
 
   <xsl:template match="rif:rights">
-    <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/rights">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="rif:accessRights">
+    <cs:prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/rights_access">
       <xsl:value-of select="."/>
     </cs:prop>
   </xsl:template>

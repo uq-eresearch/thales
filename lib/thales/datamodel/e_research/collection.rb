@@ -73,6 +73,12 @@ module Thales
             maxlength: DEFAULT_MAXLENGTH,
             gid: "#{PROPERTY_BASE_URI}/spatial_polygon",
           },
+          spatial_text: {
+            label: 'Spatial (text)',
+            maxlength: DEFAULT_MAXLENGTH,
+            gid: "#{PROPERTY_BASE_URI}/spatial_text",
+            is_link: false,
+          },
 
           # Rights
 
@@ -250,6 +256,11 @@ module Thales
           spatial_polygon.each do |x|
             builder.location {
               builder.spatial(x, type: 'kmlPolyCoords')
+            }
+          end
+          spatial_text.each do |x|
+            builder.location {
+              builder.spatial(x, type: 'text')
             }
           end
         end

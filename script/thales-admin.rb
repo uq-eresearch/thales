@@ -276,7 +276,7 @@ def export(options)
   if fname
     File.open(fname, 'w') { |f| f.puts builder.to_xml }
   else
-    $stderr.puts builder.to_xml
+    puts builder.to_xml
   end
 end
 
