@@ -254,7 +254,7 @@ module Thales
             end
           end
           spatial_polygon.each do |x|
-            builder.location {
+            builder.coverage {
               builder.spatial(x, type: 'kmlPolyCoords')
             }
           end
