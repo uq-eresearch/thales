@@ -242,13 +242,13 @@ module Thales
         private
         def spatial_to_rifcs(builder)
           spatial_geoname.each do |x|
-            builder.location {
+            builder.coverage {
               builder.spatial("name=#{x.hint}", type: 'dcmiPoint') # TODO: include coordinates
             }
           end
           spatial_point.each do |x|
             if x =~ /^\s*([+-]?\d+(\.\d+)?)\,([+-]?\d+(\.\d+)?)\s*$/
-              builder.location {
+              builder.coverage {
                 builder.spatial("east=#{$1}; north=#{$3}", type: 'dcmiPoint')
               }
             end
@@ -259,7 +259,7 @@ module Thales
             }
           end
           spatial_text.each do |x|
-            builder.location {
+            builder.coverage {
               builder.spatial(x, type: 'text')
             }
           end
