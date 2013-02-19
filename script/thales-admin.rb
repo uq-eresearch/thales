@@ -301,6 +301,26 @@ def delete(options)
 
 end
 
+def touch(options)
+  connect(options[:adapter])
+
+  oaipmh_count = 0
+  OaipmhRecord.all.each do |r|
+    if ! r.deleted?
+      r.withdrawn = true
+      r.save # is there a better way to force the timestamp to update
+      r.withdrawn = false
+      r.save
+      oaipmh_count += 1
+    end
+  end
+
+  if options[:verbose]
+    puts "Touch: #{oaipmh_count} active OAI-PMH records timestamps touched"
+  end
+
+end
+
 #----------------------------------------------------------------
 # Process command line arguments.
 # Returns hash of options (and arguments for options that have them).
@@ -354,6 +374,11 @@ def process_arguments
       options[:delete] = true
     end
 
+    opt.on("-t", "--touch",
+           "update timestamp on active OAI-PMH entries") do
+      options[:touch] = true
+    end
+
     opt.on("-a", "--adapter name",
            "database adapter (default=\"#{DEFAULT_DB_ADAPTER}\")") do |x|
       options[:adapter] = x
@@ -376,7 +401,8 @@ def process_arguments
     exit 2
   end
 
-  if ! (options[:export] || options[:delete] || options[:import])
+  if ! (options[:export] || options[:delete] ||
+        options[:import] || options[:touch])
     puts "#{PROG}: no action specified (--help for help)"
     exit 2
   end
@@ -411,6 +437,10 @@ def main
 
     if options[:import]
       import(options)
+    end
+
+    if options[:touch]
+      touch(options)
     end
 
   rescue RuntimeError => s
