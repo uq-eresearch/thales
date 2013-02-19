@@ -340,6 +340,7 @@ module RecordsHelper
       if ! info[:is_link]
         # Text property
         value_str = values[0]
+        placeholder = nil
       else
         # Link property
         if values[0].nil?
@@ -347,6 +348,7 @@ module RecordsHelper
         else
           value_str = "#{values[0].uri} -- #{values[0].hint}"
         end
+        placeholder = 'URI [display text]'
       end
 
       content_tag(:div, { :class => 'item' }) do
@@ -356,6 +358,9 @@ module RecordsHelper
           end
           c += content_tag(:dd, { :class => 'first' }) do
             attr = maxlength.nil? ? {} : { :maxlength => maxlength }
+            if placeholder
+              attr[:placeholder] = placeholder
+            end
             if info[:textarea]
               text_area_tag(name, value_str, attr)
             else
@@ -374,6 +379,12 @@ module RecordsHelper
           s = ''
           count = 0
 
+          if info[:is_link]
+            placeholder = 'URL [description]'
+          else
+            placeholder = nil
+          end
+
           # Fields to hold existing values
 
           values.each do |val|
@@ -386,15 +397,14 @@ module RecordsHelper
             end
 
             s += field_text_0n_internal(count, name_base,
-                                        label, value_str, maxlength)
+                                        label, placeholder, value_str, maxlength)
             count += 1
           end
           
           # An extra blank one to enter in a new value
 
           s += field_text_0n_internal(count, name_base,
-                                      label,
-                                      nil, maxlength)
+                                      label, placeholder, nil, maxlength)
           raw s
         end # dl
         
@@ -415,7 +425,8 @@ module RecordsHelper
 
   # Generate a HTML form field for editing a single value.
 
-  def field_text_1(name_base, label_text, default_value = nil, maxlength = nil)
+  def field_text_1(name_base, label_text, placeholder = nil,
+                   default_value = nil, maxlength = nil)
 
     name = 'data' + '[' + name_base + ']'
 
@@ -426,6 +437,9 @@ module RecordsHelper
         end
         c += content_tag(:dd, { :class => 'first' }) do
           attr = maxlength.nil? ? {} : { :maxlength => maxlength }
+          if placeholder
+            attr[:placeholder] = placeholder
+          end
           text_field_tag(name, default_value, attr)
         end
       end # :dl
@@ -458,7 +472,8 @@ module RecordsHelper
   #
   # HTML
   
-  def field_text_0n(name_base, label_text, values = nil, maxlength = nil)
+  def field_text_0n(name_base, label_text, placeholder,
+                    values = nil, maxlength = nil)
 
     content_tag(:div, { :class => 'item', :id => name_base }) do
 
@@ -473,14 +488,14 @@ module RecordsHelper
 
         values.each do |value|
           s += field_text_0n_internal(count, name_base, label_text,
-                                      value, maxlength)
+                                      placeholder, value, maxlength)
           count += 1
         end
         
         # An extra blank one to enter in a new value
 
         s += field_text_0n_internal(count, name_base, label_text,
-                                    nil, maxlength)
+                                    placeholder, nil, maxlength)
         raw s
       end # dl
       
@@ -499,7 +514,7 @@ module RecordsHelper
 
   private
   def field_text_0n_internal(count, name_base, label_text,
-                             value, maxlength)
+                             placeholder, value, maxlength)
     name = 'data' + '[' + name_base + ']' + '[' + count.to_s + ']'
 
     html = content_tag(:dt) do
@@ -511,6 +526,9 @@ module RecordsHelper
     end
     html += content_tag(:dd, dd_attrs) do
       attr = maxlength.nil? ? {} : { :maxlength => maxlength }
+      if placeholder
+        attr[:placeholder] = placeholder
+      end
       text_field_tag(name, value, attr)
     end
 
