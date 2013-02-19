@@ -548,10 +548,10 @@ module RecordsHelper
             options << [ 'Not in feed (current status)', 0 ]
             options << [ 'Publish', 1 ]
           elsif record.oaipmh_record.deleted?
-            options << [ 'Deleted record in the feed (current status)', 0 ]
+            options << [ 'Deleted record in the feed (current status)', -1 ]
             options << [ 'Publish', 1 ]
           else
-            options << [ 'Published record in the feed (current status)', 0 ]
+            options << [ 'Published record in the feed (current status)', 1 ]
             options << [ 'Deleted record in the feed', -1 ]
           end
           select_tag(:oaipmh_status, options_for_select(options))

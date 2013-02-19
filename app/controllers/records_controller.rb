@@ -141,18 +141,32 @@ class RecordsController < ApplicationController
     r_class = Thales::Datamodel::CLASS_FOR[@record.ser_type]
     @record.data_set(@record.ser_type, r_class.new(params[:data]))
 
-
     if params[:oaipmh_status] == '1'
-      # Change to published
+      # Active
       if @record.oaipmh_record.nil?
+        # Not yet published: make active
         @record.build_oaipmh_record(withdrawn: false)
-      else
+      elsif @record.oaipmh_record.deleted?
+        # Published as deleted: change to publish as active
         @record.oaipmh_record.withdrawn = false
         @record.oaipmh_record.save
+      else
+        # Active already: force timestamp to update if record changed
+        if @record.changed?
+          @record.oaipmh_record.withdrawn = true
+          @record.oaipmh_record.save # is there a better way to force update?
+          @record.oaipmh_record.withdrawn = false
+          @record.oaipmh_record.save
+        end
       end
     elsif params[:oaipmh_status] == '-1'
-      # Change to deleted
-      if @record.oaipmh_record
+      # Deleted
+      if @record.oaipmh_record.nil?
+        # Not yet published: leave it as unpublished
+      elsif @record.oaipmh_record.deleted?
+        # Published as deleted: no change needed
+      else
+        # Active: change to deleted
         @record.oaipmh_record.withdrawn = true
         @record.oaipmh_record.save
       end
