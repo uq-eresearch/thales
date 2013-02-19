@@ -151,11 +151,10 @@ class RecordsController < ApplicationController
         @record.oaipmh_record.withdrawn = false
         @record.oaipmh_record.save
       else
-        # Active already: force timestamp to update if record changed
+        # Active already
         if @record.changed?
-          @record.oaipmh_record.withdrawn = true
-          @record.oaipmh_record.save # is there a better way to force update?
-          @record.oaipmh_record.withdrawn = false
+          # Record changed: force OAI-PMH entry to have updated timestamp
+          @record.oaipmh_record.updated_at = Time.now()
           @record.oaipmh_record.save
         end
       end
