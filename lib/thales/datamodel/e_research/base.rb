@@ -188,6 +188,8 @@ module Thales
                   id_type = 'purl'
                 elsif id.starts_with?('http://dx.doi.org/')
                   id_type = 'doi'
+                elsif id.starts_with?('http://orcid.org/')
+                  id_type = 'ORCID'
                 end
               end
             rescue URI::InvalidURIError
