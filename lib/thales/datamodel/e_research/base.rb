@@ -390,7 +390,10 @@ module Thales
               # Object does not exist in this feed: represent as relatedInfo
               builder.relatedInfo {
                 builder.identifier(value.uri, type: 'uri')
-                builder.title(value.hint)
+                if value.hint && ! value.hint.blank?
+                  builder.title(value.hint)
+                end
+                builder.notes(type)
               }
             end
 
@@ -414,7 +417,9 @@ module Thales
           values.each do |value|
             builder.relatedInfo {
               builder.identifier(value.uri, type: 'uri')
-              builder.title(value.hint)
+              if value.hint && ! value.hint.blank?
+                builder.title(value.hint)
+              end
             }
           end
         end
