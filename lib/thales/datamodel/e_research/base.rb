@@ -378,7 +378,7 @@ module Thales
 
             targets = Record.find_by_identifier(value.uri)
 
-            if targets
+            if ! targets.empty?
               # Object(s) exists in this feed: represent as a relatedObject(s)
               targets.each do |target|
                 builder.relatedObject {
