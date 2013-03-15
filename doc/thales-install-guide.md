@@ -10,6 +10,10 @@ development or production environments.
 Setup the required software and then start with the installation steps
 that are [Common to both development and production installations].
 
+After installing Thales, it needs to be set up for use. For
+information about setting up Thales, see the
+[Thales Administration Guide](thales-admin-guide.md).
+
 Requirements
 ------------
 
@@ -22,7 +26,7 @@ Mandatory:
 - Git
 - [PostgreSQL](http://www.postgresql.org/) (or another Ruby on Rails
   supported database)
-- Ruby (version 1.9.3 or later)
+- Ruby 1.9.3 (Note: dependent Gems do not yet work with Ruby 2.0.)
 - [Bundler](http://gembundler.com) (or manage the gems manually)
 
 Bundler will be used to install the required gems, such as: _Ruby on
@@ -32,8 +36,8 @@ Optional:
 
 - [Ruby Version Manager (RVM)](https://rvm.io)
 
-For an example of how to setup these required software on Fedora 18,
-see [Installing software on Fedora].
+See [Example platform setup] for instructions on using some Linux
+distributions as the platform.
 
 Installation
 ------------
@@ -73,9 +77,9 @@ Installation
 
     There are different ways of doing this. These instructions will
     assume PostgreSQL is running on the same machine as the Web
-    application and a user name and password is used.  Another common
-    method is to use the same database username as the login
-    username. See the
+    application and _password authentication_ is used.  Another common
+    method is to use _trust authentication_, where the database
+    username is the same as the operating system login username. See the
     [PostgreSQL documentation on client authentication](http://www.postgresql.org/docs/9.2/interactive/client-authentication.html)
     for more details.
 	
@@ -127,12 +131,14 @@ These steps continue on from the [Common to both development and production inst
         postgres=# \du
         postgres=# \q
 
+       If using PostgreSQL _trust authentication_, the password can be omitted.
+
 	   Note: The CREATEDB role allows the user to drop any database
 	   (not just the ones it owns). This can be a security risk, so
 	   please consider if it is suitable for your setup before using
 	   it.  The CREATEDB role is needed if you want to run the RSpec
 	   tests and the db:create Rake task.
-		
+
 2. Edit configuration
 
     Edit _config/database.yml_ to set the username and password to the
@@ -206,9 +212,11 @@ These steps assume the production Web application is run using the
         postgres=# \l
         postgres=# \q
 
-    Note: unlike in development, this database user does not have the
-    CREATEDB role.
+	If using PostgreSQL _trust authentication_, the password can be omitted.
    
+    Note: unlike in development, this database user does not have the
+    CREATEDB role to improve security.
+	
 2. Edit configuration
 
     Edit _config/database.yml_ to set the username and password to the
@@ -234,11 +242,9 @@ These steps assume the production Web application is run using the
         RAILS_ENV=production rake assets:precompile
 
 5. Create a wrapper script so that Unicorn can be run in the correct
-   RVM gemset.
+   RVM gemset. The second argument is the name of the gemset.
 
-        rvm current # use the result from this as the second argument in the next command
-		
-        rvm wrapper ruby-1.9.3-p374@thales thales unicorn
+        rvm wrapper `rvm current` thales unicorn
 
     This will create a wrapper script called `~/.rvm/bin/thales_unicorn`.
 
@@ -322,11 +328,9 @@ process monitor to manage the Unicorn HTTP server.
     [Bluepill installation instructions](https://github.com/arya/bluepill#readme).
 
 2. Create a wrapper script so that Bluepill can be run in the correct
-   RVM gemset.
+   RVM gemset. The second argument is the name of the gemset.
 
-        rvm current # use the result from this as the second argument in the next command
-		
-        rvm wrapper ruby-1.9.3-p374@thales thales bluepill
+        rvm wrapper `rvm current` thales bluepill
 
     This will create a wrapper script called `~/.rvm/bin/thales_bluepill`.
 
@@ -361,8 +365,8 @@ process monitor to manage the Unicorn HTTP server.
 
         sudo service thales start
 
-    The application will be running on port 30123 (unless you change
-    it in the init.d script).
+    The application will be running on port 30123 (unless it was changed
+    in the _init.d_ script).
 	
     Attempting to access http://localhost:30123 from the host (since
 	the firewall should be blocking external access to this port)
@@ -395,16 +399,24 @@ used to provide TLS/SSL security.
     a. Download the sources from <http://nginx.org>
 
 		pushd ~
-		curl -O http://nginx.org/download/nginx-1.2.6.tar.gz
+		curl -O http://nginx.org/download/nginx-1.2.7.tar.gz
 
     b. Unpack the sources.
    
-        tar xfz nginx-1.2.6.tar.gz
-		cd nginx-1.2.6
+        tar xfz nginx-1.2.7.tar.gz
+		cd nginx-1.2.7
 	
     c. Ensure dependencies are installed.
-   
+	
+       Either:
+
+       i. If the distribution uses yum (e.g. Fedora and RHEL):
+	   
         sudo yum install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel
+		
+	   ii. If the  distribution uses apt-get (e.g. Ubuntu):
+        
+		sudo apt-get install build-essential libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev
 
     d. Compile and install. There are many options, but the essential
        one is the SSL module.
@@ -418,6 +430,8 @@ used to provide TLS/SSL security.
 	
 	    sudo useradd --shell /sbin/nologin --home-dir /usr/local/nginx -c "Nginx server" nginx
 
+    The warning about the home directory already existing can be ignored.
+   
 3. Change file and directory permissions to allow the nginx user
    to read the precompiled asset files. How this is done will depend
    on where the application was installed. For example, if they were
@@ -431,20 +445,24 @@ used to provide TLS/SSL security.
 
     a. Obtain a TLS/SSL certificate for the site.
 	
+	   For testing, you could use a self-signed test certificate. See
+	   [Creating a self-signed test certificate] for one way of creating
+	   a test certificate.
+	
     b. Install the certificate and its (unencrypted) private key.
 
-        pushd ~/my-pki-credentials
-	    sudo cp my-domain.crt /usr/local/nginx/conf/tls_ssl.crt
-		sudo cp my-domain.key /usr/local/nginx/conf/tls_ssl.key
-		sudo chmod 444 /usr/local/nginx/conf/tls_ssl.crt
-        sudo chmod 400 /usr/local/nginx/conf/tls_ssl.key # keep private key secure!
+        pushd ~/pki-credentials-for-my-domain
+	    sudo cp tls.crt /usr/local/nginx/conf/tls.crt
+		sudo cp tls.key /usr/local/nginx/conf/tls.key
+		sudo chmod 444 /usr/local/nginx/conf/tls.crt
+        sudo chmod 400 /usr/local/nginx/conf/tls.key # keep private key secure!
 		popd
 		
     c. Configure nginx. You can use the supplied example configuration
 	   file as a starting point, but remember to optimize it for your
 	   setup.
 	
-	    popd
+	    popd  # to return to thales source directory
 	    sudo cp config/nginx.conf /usr/local/nginx/conf/nginx.conf
 
     d. Start nginx
@@ -452,7 +470,11 @@ used to provide TLS/SSL security.
         sudo /usr/local/nginx/sbin/nginx
 	
 	e. Test the server by visiting <http://localhost> and <https://localhost>.
-	
+
+       Please see the
+       [Thales Administration guide](thales-admin-guide.md) for
+       information on how to login and set it up for use.
+		
       Note: a common problem is the HTML page appears, but without the
 	  CSS styling. This is usually a permissions problem: the _nginx_
 	  user does not have permissions to read the static asset
@@ -465,7 +487,7 @@ used to provide TLS/SSL security.
          sudo /usr/local/nginx/sbin/nginx -t
          sudo /usr/local/nginx/sbin/nginx -s reload
 
-    g. When finished, stop the nginx server.
+    g. When finished, manually stop the nginx server.
      
          sudo /usr/local/nginx/sbin/nginx -s quit
 
@@ -551,27 +573,36 @@ copied to _config/pki/server.crt_ and the unencrypted private key
 copied to _config/pki/server.key_.
 
 
-Installing software on Fedora
------------------------------
+Example platform setup
+----------------------
 
-This section describes how to install Ruby on
-[Fedora](https://fedoraproject.org) 18, as one example of how to setup
-the required software platform. Thales can be installed on other
-platforms too, but the steps will be different.
+This section describes how to setup the required software on Linux.
 
-It uses:
+These steps might be different for different Linux distributions and
+different configurations. These steps have been tested with a minimal
+install of:
 
-- Fedora with a _minimal install_ software selection.
+- [Fedora](https://fedoraproject.org) 18
+- [CentOS](https://www.centos.org) 6.3
+- [Scientific Linux](https://www.scientificlinux.org) 6.3
+- [Ubuntu](http://www.ubuntu.com) 12.10
+
+These steps have chosen to use:
+
 - Single-user installation of [Ruby Version Manager (RVM)](https://rvm.io)
   for Ruby
 - PostgreSQL from the distribution.
 
 These instructions use a non-root account with sudo access. By
 default, the configuration files and scripts assume the user name is
-"thales", but this can be changed during the installation process.
+"thales", but any username can be used.
 
 1. Install packages needed by RVM
 
+    Either:
+   
+    a. If the distribution uses yum (e.g. Fedora and RHEL):
+	
         sudo yum install  postgresql-server \
           git \
           tar bzip2 make gcc gcc-c++ \
@@ -585,20 +616,35 @@ default, the configuration files and scripts assume the user name is
     Ruby). The fifth line is required for other gems that the
     application needs.
 
+    b. If the distribution uses apt-get (e.g. Ubuntu):
+	
+	     sudo apt-get install \
+           build-essential openssl libreadline6 libreadline6-dev curl git-core \
+		   zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev \
+		   autoconf libc6-dev libgdbm-dev ncurses-dev automake \
+		   libtool bison subversion pkg-config libffi-dev \
+           libpg-dev
+
 2. Install [Ruby Version Manager](https://rvm.io/) and Ruby.
 
-        curl -L https://get.rvm.io | bash -s stable --ruby
+        curl -L https://get.rvm.io | bash -s stable --ruby=1.9.3
         . ~/.rvm/scripts/rvm
 
     Thales has been tested with Ruby 1.9.3-p374.
 	
+	As of 14 March 2013, it does not work with Ruby 2.0, because one
+	of the Gems it uses (ruby-oai 0.0.9) does not work with Ruby
+	2.0.0.
+	
 3. Initialize PostgreSQL.
 
+    a. For PostgreSQL 9.x:
+	
         sudo postgresql-setup initdb
 
-    That command is for newer (e.g. 9.x) releases of PostgreSQL. On
-    older versions of PostgreSQL (e.g. 8.x), use `sudo service
-    postgresql initdb` instead.
+    b. For PostgreSQL 8.x:
+	
+        sudo service postgresql initdb
    
 4. Setup PostgreSQL to start automatically when the OS starts.
 
@@ -613,8 +659,7 @@ default, the configuration files and scripts assume the user name is
 
     a. FirewallD
 	
-    Fedora 18 uses [FirewallD] (instead of _iptables_ of previous
-    releases).
+    For systems running [FirewallD] (e.g. Fedora 18).
 
     Show the active zones and current settings for the public zone:
 	
@@ -635,7 +680,9 @@ default, the configuration files and scripts assume the user name is
 
     b. iptables
 	
-    For systems running _iptables_, edit the iptables configuration file:
+    For systems running _iptables_.
+	
+	Edit the iptables configuration file:
 	
 	    sudoedit /etc/sysconfig/iptables
 		
@@ -651,10 +698,27 @@ default, the configuration files and scripts assume the user name is
 	
 [Firewalld]: https://fedoraproject.org/wiki/FirewallD
 
+Creating a self-signed test certificate
+---------------------------------------
+
+These commands can be used to create a self-signed certificate for
+testing purposes:
+
+    openssl req -newkey rsa:2048 -nodes -keyout tls.key -out tls.csr
+    # Above command will prompt for extra information	
+	openssl x509 -req -in tls.csr -signkey tls.key -days 90 -out tls.crt
+    rm tls.csr
+	chmod 444 tls.crt
+	chmod 400 tls.key
+			
 Trouble shooting
 ----------------
 
 **ERROR: Gem bundler is not installed, run 'gem install bundler' first**
+
+Attempting to run 'gem install bundler' (as suggested by the error
+message) will usually fail with another error that says "Loading
+command: install (LoadError) cannot load such file -- zlib".
 
 The _zlib-devel_ and/or _openssl-devel_ packages were not installed
 when Ruby was compiled, so _bundler_ was not installed. Install
@@ -662,8 +726,8 @@ these packages and reinstall Ruby.
 
         sudo yum install zlib-devel openssl-devel
         rvm list
-        rvm uninstall ruby-1.9.3-p362 # using value obtained from list
-        rvm install ruby-1.9.3-p362
+        rvm uninstall ruby-1.9.3-p362 # using value obtained from 'rvm list'
+        rvm install ruby
 
 **Data directory is not empty!**
 
@@ -707,7 +771,7 @@ The precompiled assets are not being served. See **403 Forbidden** above.
 Contact
 -------
 
-For more information, please contact [Hoylen Sue](mailto:h.sue@uq.edu.au)
+For more information, please contact [Hoylen Sue](mailto:hoylen@hoylen.com)
 or [The University of Queensland eResearch Lab](http://itee.uq.edu.au/~eresearch/).
 
 Acknowledgements

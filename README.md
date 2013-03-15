@@ -32,6 +32,7 @@ using the Web application.
 - [Thales Installation Guide](/doc/thales-install-guide.md)
 - [Thales Administration Guide](/doc/thales-admin-guide.md)
 - [Thales User Guide](/doc/thales-user-guide.md)
+- [Thales Development Guide](/doc/thales-devel-guide.md)
 
 These can be also be found in the _doc_ directory.
 
