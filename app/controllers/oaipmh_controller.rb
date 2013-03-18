@@ -12,7 +12,7 @@ class OaipmhController < ApplicationController
     # Remove controller and action from the options.
     # (Rails adds them automatically.)
     options = params.delete_if { |k,v| %w{controller action}.include?(k) }
-    options['url'] = "#{request.base_url}/oai"
+    options['url'] = "#{request.base_url}/oaipmh"
 
     provider = Thales::Output::OAIPMH::RecordProvider.new
     response =  provider.process_request(options)
