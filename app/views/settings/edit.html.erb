@@ -2,3 +2,10 @@
 <% content_for(:page_heading) do "Editing settings" end %>
 
 <%= render 'form' %>
+
+<p>Note: The Web application service needs to be restarted before new OAI-PMH settings appear
+in the Identify operation results, but the RIF-CS settings take effect immediately after saving.</p>
+<!-- This is because ruby-oai obtains the values when the RecordProvider class is created
+     not when the OAI-PMH Identify operation is requested. This needs to be fixed.
+     See "lib/thales/output/oaipmh/record_provider.rb".</p>
+
