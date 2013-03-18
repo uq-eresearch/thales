@@ -218,7 +218,7 @@ The application can be accessed by visiting <http://localhost:3000/>
 (replacing "localhost" with the correct hostname, if necessary.)  The
 initial account has the user name of "root" and no password.
 
-The OAI-PMH feed will be available at <http://localhost:3000/oai>
+The OAI-PMH feed will be available at <http://localhost:3000/oaipmh>
 (replacing "localhost" with the correct hostname.)
 
 

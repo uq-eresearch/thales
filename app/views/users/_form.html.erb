@@ -14,6 +14,18 @@
 
   <%= form_for(@user) do |f| %>
 
+    <h3>Login</h3>
+
+    <div class="item">
+      <dl>
+	<dt><%= f.label :auth_name, 'Username' %></dt>
+	<dd class="first"><%= f.text_field :auth_name %>
+	</dd>
+      </dl>
+    </div>
+
+    <h3>User details</h3>
+
     <div class="item">
       <dl>
 	<dt><%= f.label :givenname %></dt>
@@ -28,27 +40,25 @@
       </dl>
     </div>
 
+<%#
+Not useful yet.
+
     <div class="item">
       <dl>
 	<dt>Roles</dt>
 	<dd class="first">
-    <% Role.order('name').each do |role| %>
+    <% Role.order('name').each do |role| %--->
       <%= check_box_tag("role[]", role.id, @user.roles.include?(role),
-	                id: "role_#{role.id}", class: 'checkbox') %>
+	                id: "role_#{role.id}", class: 'checkbox') %--->
       <%= label_tag("role_#{role.id}",
-                    role.name.blank? ? '(unamed role)' : role.name ) %><br/>
-    <% end %>
+                    role.name.blank? ? '(unamed role)' : role.name ) %---><br/>
+    <% end %--->
 	</dd>
       </dl>
     </div>
+%>
 
-    <div class="item">
-      <dl>
-	<dt><%= f.label :auth_name, 'Username' %></dt>
-	<dd class="first"><%= f.text_field :auth_name %>
-	</dd>
-      </dl>
-    </div>
+    <h3>Authentication</h3>
 
     <div class="item">
       <dl>

@@ -48,18 +48,22 @@
   </dl>
 </div>
 
+<%#
+Not useful yet.
+
 <h3>Authorization</h3>
 
 <div class="item">
   <dl>
     <dt>Roles:</dt>
     <dd class="first">
-      <% @user.roles.map { |r| r.shortname }.sort.each do |role_name| %>
-      <span><%= role_name %></span>
-      <% end %>
+      <---% @user.roles.map { |r| r.shortname }.sort.each do |role_name| %--->
+      <span><%---= role_name %---></span>
+      <---% end %--->
     </dd>
   </dl>
 </div>
+%>
 
 <div id="actions">
   <div class="main">

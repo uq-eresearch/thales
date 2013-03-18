@@ -75,7 +75,7 @@ module ApplicationHelper
          content_tag(:ul, class: 'section') do
            [
             content_tag(:li) { link_to('Users', users_path) },
-            content_tag(:li) { link_to('Roles', roles_path) },
+            # Not useful yet: content_tag(:li) { link_to('Roles', roles_path) },
             content_tag(:li) { link_to('Settings', settings_path) },
            ].reduce :+
          end # </ul>
