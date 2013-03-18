@@ -4,7 +4,44 @@ Thales Development Guide
 Introduction
 ------------
 
-This document is for developers working with Thales.
+Thales is a metadata record management Web application focusing on
+research data collections. It allows metadata records to be created
+and edited. The metadata records are published on an [OAI-PMH]
+machine-readable feed in the [RIF-CS] format for other systems to
+harvest.
+
+Thales was developed for an Australian National Data Service ([ANDS])
+funded metadata stores project. Currently, it is designed to be
+deployed as an internal system where people using the Web interface
+must have a login account. The only publically accessible feature is
+the machine-readable feed. It was originally developed as a _local_
+[metadata store] for manually edited metadata records; the
+_institutional_ metadata store that harvests these metadata records
+provided the publically accessible view of the metadata records.
+
+[ANDS]: <http://www.ands.org.au> "Australian National Data Service"
+[metadata store]: <http://www.ands.org.au/guides/metadata-stores-solutions.html#Types%20of%20metadata%20stores> "ANDS types of metadata stores"
+[OAI-PMH]: <http://www.openarchives.org/pmh/> "Open Archives Initiative Protocol for Metadata Harvesting"
+[RIF-CS]: <http://www.ands.org.au/resource/rif-cs.html> "Registry Interchange Format - Collections and Services"
+
+### Purpose
+
+This guide describes the import/export data format.
+
+It is intended for people who develop software that interact with
+Thales, and for developers working with the Thales source code.
+
+### Related documents
+
+The [Thales User Guide](thales-user-guide.md) describes how to use it
+to create and modify metadata records.
+
+The [Thales Administration Guide](thales-admin-guide.md) describes how
+to setup and manage Thales.
+
+The [Thales Installation Guide](thales-install-guide.md) describes how
+to install Thales.
+
 
 Thales metadata dump format
 ---------------------------

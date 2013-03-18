@@ -4,15 +4,45 @@ Thales Installation Guide
 Introduction
 ------------
 
-These instructions describe how to install Thales for either
-development or production environments.
+Thales is a metadata record management Web application focusing on
+research data collections. It allows metadata records to be created
+and edited. The metadata records are published on an [OAI-PMH]
+machine-readable feed in the [RIF-CS] format for other systems to
+harvest.
 
-Setup the required software and then start with the installation steps
-that are [Common to both development and production installations].
+Thales was developed for an Australian National Data Service ([ANDS])
+funded metadata stores project. Currently, it is designed to be
+deployed as an internal system where people using the Web interface
+must have a login account. The only publically accessible feature is
+the machine-readable feed. It was originally developed as a _local_
+[metadata store] for manually edited metadata records; the
+_institutional_ metadata store that harvests these metadata records
+provided the publically accessible view of the metadata records.
 
-After installing Thales, it needs to be set up for use. For
-information about setting up Thales, see the
-[Thales Administration Guide](thales-admin-guide.md).
+[ANDS]: <http://www.ands.org.au> "Australian National Data Service"
+[metadata store]: <http://www.ands.org.au/guides/metadata-stores-solutions.html#Types%20of%20metadata%20stores> "ANDS types of metadata stores"
+[OAI-PMH]: <http://www.openarchives.org/pmh/> "Open Archives Initiative Protocol for Metadata Harvesting"
+[RIF-CS]: <http://www.ands.org.au/resource/rif-cs.html> "Registry Interchange Format - Collections and Services"
+
+### Purpose
+
+This guide describes how to install Thales: either for development or
+production. It also provides example instructions on setting up the
+software Thales depends upon.
+
+It is intended for people who install the application.
+
+### Related documents
+
+The [Thales User Guide](thales-user-guide.md) describes how to use it
+to create and modify metadata records.
+
+The [Thales Admin Guide](thales-admin-guide.md) describes how to setup
+and manage Thales.
+
+The [Thales Development Guide](thales-devel-guide.md) describes the
+import/export file format.
+
 
 Requirements
 ------------
@@ -768,17 +798,8 @@ for a user is only readable by that user.
 
 The precompiled assets are not being served. See **403 Forbidden** above.
 
-Contact
--------
+Further information
+-------------------
 
-For more information, please contact [Hoylen Sue](mailto:hoylen@hoylen.com)
-or [The University of Queensland eResearch Lab](http://itee.uq.edu.au/~eresearch/).
-
-Acknowledgements
-----------------
-
-This project is supported by the Australian National Data Service
-([ANDS](http://www.ands.org.au/)). ANDS is supported by the Australian
-Government through the National Collaborative Research Infrastructure
-Strategy Program and the Education Investment Fund (EIF) Super Science
-Initiative.
+For further information on Thales, see the
+[Thales project on GitHub](http://github.com/uq-eresearch/thales).

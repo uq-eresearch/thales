@@ -4,6 +4,8 @@ Thales User Guide
 Introduction
 ------------
 
+### Background
+
 Thales is a metadata record management Web application focusing on
 research data collections. It allows metadata records to be created
 and edited. The metadata records are published on an [OAI-PMH]
@@ -19,16 +21,22 @@ the machine-readable feed. It was originally developed as a _local_
 _institutional_ metadata store that harvests these metadata records
 provided the publically accessible view of the metadata records.
 
-This user guide describes how to create, edit, publish, view and
-delete metadata records.  It also documents the data properties that
-make up the metadata records.
-
 [ANDS]: <http://www.ands.org.au> "Australian National Data Service"
 [metadata store]: <http://www.ands.org.au/guides/metadata-stores-solutions.html#Types%20of%20metadata%20stores> "ANDS types of metadata stores"
 [OAI-PMH]: <http://www.openarchives.org/pmh/> "Open Archives Initiative Protocol for Metadata Harvesting"
 [RIF-CS]: <http://www.ands.org.au/resource/rif-cs.html> "Registry Interchange Format - Collections and Services"
 
-### Metadata model
+### Purpose
+
+This guide describes how to create, edit, publish, view and delete
+metadata records.  It also documents the data properties that make up
+the metadata records.
+
+It is intended for people who use the application to create and modify
+metadata records.
+
+Metadata model
+--------------
 
 Thales supports metadata records based on [ISO 2146] and
 [RIF-CS]. There are four types of metadata records:
@@ -323,10 +331,9 @@ Related records:
 - Participates in activity: identifier of an activity record
 - Author in publication: URI
 
-Note: the title property is present in party records, but is currently
-not used in the RIF-CS output. If present, it is used for display
-purposes. If it is not present, the given name and surname are
-displayed.
+Note: the _title_ and _alternative title_ properties in party records
+are not used. The values are ignored and do not appear in the RIF-CS
+output. It is recommended that they be left blank.
 
 ### Activity records
 

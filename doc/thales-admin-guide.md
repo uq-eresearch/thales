@@ -4,13 +4,44 @@ Thales Administration Guide
 Introduction
 ------------
 
-These instructions describe how to setup and manage Thales.
+Thales is a metadata record management Web application focusing on
+research data collections. It allows metadata records to be created
+and edited. The metadata records are published on an [OAI-PMH]
+machine-readable feed in the [RIF-CS] format for other systems to
+harvest.
 
-It assumes Thales has been installed. For information about installing
-Thales, see the [Thales Installation Guide](thales-install-guide.md).
+Thales was developed for an Australian National Data Service ([ANDS])
+funded metadata stores project. Currently, it is designed to be
+deployed as an internal system where people using the Web interface
+must have a login account. The only publically accessible feature is
+the machine-readable feed. It was originally developed as a _local_
+[metadata store] for manually edited metadata records; the
+_institutional_ metadata store that harvests these metadata records
+provided the publically accessible view of the metadata records.
 
-After setting up Thales, it can be used. For information about using
-Thales, see the [Thales User Guide](thales-user-guide.md).
+[ANDS]: <http://www.ands.org.au> "Australian National Data Service"
+[metadata store]: <http://www.ands.org.au/guides/metadata-stores-solutions.html#Types%20of%20metadata%20stores> "ANDS types of metadata stores"
+[OAI-PMH]: <http://www.openarchives.org/pmh/> "Open Archives Initiative Protocol for Metadata Harvesting"
+[RIF-CS]: <http://www.ands.org.au/resource/rif-cs.html> "Registry Interchange Format - Collections and Services"
+
+### Purpose
+
+This guide describes how to setup Thales and manage users using the
+Web interface; import and export metadata records using the command
+line program; and access the machine readable OAI-PMH feed.
+
+It is intended for people who manage the application.
+
+### Related documents
+
+The [Thales User Guide](thales-user-guide.md) describes how to use it
+to create and modify metadata records.
+
+The [Thales Installation Guide](thales-install-guide.md) describes how
+to install Thales.
+
+The [Thales Development Guide](thales-devel-guide.md) describes the
+import/export file format.
 
 Initial setup
 -------------
@@ -43,9 +74,6 @@ first step should be to set a password on the root account:
 Thales publisheds the metadata records as a feed of [RIF-CS] formatted
 records over [OAI-PMH]. The parameters of this feed needs to be
 configured.
-
-[RIF-CS]: <http://www.ands.org.au/resource/rif-cs.html> "Registry Interchange Format - Collections and Services"
-[OAI-PMH]: <http://www.openarchives.org/pmh/> "Open Archives Initiative Protocol for Metadata Harvesting"
 
 1. Click on "Administration".
 2. Click on "Settings" (in the right side-navigation).
@@ -119,10 +147,6 @@ User management
 
 To abort the process and not create a new user, click the "Cancel"
 button.
-
-Note: the roles are recorded, but are not used. The intention is use
-roles to manage access control, but this feature has not yet been
-implemented.
 
 ### Viewing a user's details
 
