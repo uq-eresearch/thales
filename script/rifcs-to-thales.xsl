@@ -2,6 +2,9 @@
 <!--
     Converts RIF-CS to Thales dump format.
 
+    This XSLT script is only an example, and will need to be customized
+    to suit local flavours of RIF-CS.
+
     Copyright (C) 2013, The University of Queensland (eResearch Lab).
   -->
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# chkconfig: 345 99 1
+# chkconfig: 345 90 1
 # Description: Bluepill loader for Thales
 # Provides: thales
 # Default-Start: 3 4 5

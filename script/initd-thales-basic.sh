@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# chkconfig: 345 99 1
+# chkconfig: 345 90 1
 # Description: Thales
 # Provides: thales
 # Default-Start: 3 4 5

@@ -308,7 +308,7 @@ HTTP server.
 
     a. Copy the init.d script (basic) to the /etc/init.d directory.
    
-        sudo cp script/thales-basic.init /etc/init.d/thales
+        sudo cp script/initd-thales-basic.sh /etc/init.d/thales
 
     b. Edit it to set:
 	
@@ -354,7 +354,7 @@ process monitor to manage the Unicorn HTTP server.
    
         gem install bluepill
 
-    b. Configure logging according to the
+    b. If needed, configure logging according to the
     [Bluepill installation instructions](https://github.com/arya/bluepill#readme).
 
 2. Create a wrapper script so that Bluepill can be run in the correct
@@ -378,7 +378,7 @@ process monitor to manage the Unicorn HTTP server.
 
     a. Copy the init.d script (Bluepill) to the /etc/init.d directory.
    
-        sudo cp script/thales-bluepill.init /etc/init.d/thales
+        sudo cp script/initd-thales-bluepill.sh /etc/init.d/thales
 
     b. Edit it to set:
 	
@@ -521,7 +521,24 @@ used to provide TLS/SSL security.
      
          sudo /usr/local/nginx/sbin/nginx -s quit
 
-4. Setup _nginx_ to start automatically when the OS starts.
+5. Setup _nginx_ to start automatically when the OS starts.
+
+    a. Copy the nginx init.d script to the /etc/init.d directory.
+   
+        sudo cp script/initd-nginx.sh /etc/init.d/nginx
+
+    b. Edit it to set:
+	
+       - NGINX_BIN to the nginx executable.
+
+            sudoedit /etc/init.d/nginx
+		
+    c. Register it.
+   
+        sudo chkconfig nginx on
+
+Note: a production installation should manage the log files using
+_logrotate_, but its setup is beyond the scope of this documentation.
 
 #### TLS/SSL in the production deployments
 
@@ -743,6 +760,27 @@ testing purposes:
 			
 Trouble shooting
 ----------------
+
+### Common trouble shooting steps
+
+Check that firewalls are not blocking access. This can be done by
+accessing the service from the host machine.
+
+    curl -s 'http://localhost'
+	curl -s 'http://localhost/oaipmh?verb=Identify'
+	curl -s 'http://localhost:30123'
+	curl -s 'http://localhost:30123/oaipmh?verb=Identify'
+
+Check if the necessary services are running:
+
+    sudo service postgresql status
+    sudo service thales status
+    sudo service nginx status
+	
+Check the log files. These will be under the _log_ subdirectory,
+unless their locations were changed during installation.
+
+### Common errors
 
 **ERROR: Gem bundler is not installed, run 'gem install bundler' first**
 

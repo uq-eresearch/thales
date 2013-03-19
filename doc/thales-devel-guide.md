@@ -257,6 +257,16 @@ For service records, only the following subtype value is allowed:
 
 - http://ns.research.data.uq.edu.au/2012/eResearch/subtype/service/report
 
+### Converting RIF-CS into the Thales dump format
+
+An example XSLT transformation script is provided in
+`script/rifcs-to-thales.xsl` to transform RIF-CS formatted records
+into the Thales dump format.
+
+It does not handle everything in RIF-CS and should be modified to suit
+the data in the RIF-CS records being transformed.
+
+
 Further information
 -------------------
 
