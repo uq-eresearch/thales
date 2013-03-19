@@ -15,8 +15,7 @@ UNICORN = "/home/thales/.rvm/bin/thales_unicorn" # RVM wrapper script
 
 PORT = 30123
 
-Bluepill.application('thales',
-                     :log_file => File.join(RAILS_ROOT, 'log', 'bluepill.log')) do |app|
+Bluepill.application('thales') do |app|
   app.process('unicorn') do |process|
 
     process.working_dir = RAILS_ROOT
@@ -50,7 +49,7 @@ Bluepill.application('thales',
     process.monitor_children do |child_process|
       child_process.stop_command = "kill -QUIT {{PID}}"
     
-      child_process.checks :mem_usage, :every => 10.seconds, :below => 150.megabytes, :times => [3,4], :fires => :stop
+      child_process.checks :mem_usage, :every => 60.seconds, :below => 150.megabytes, :times => [3,5], :fires => :stop
     end
   end
 end
