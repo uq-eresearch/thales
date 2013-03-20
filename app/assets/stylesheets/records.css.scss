@@ -164,7 +164,6 @@ div#propertiesShow {
         border: 0;
         padding: $labelPaddingTop 0 0 0;
         text-align: right;
-        vertical-align: top;
         font-size: small;
         font-weight: normal;
         color: #666;
@@ -175,7 +174,6 @@ div#propertiesShow {
         display: inline-block;
         width: $inputWidth;
         border: 0; padding: 0;
-        vertical-align: top;
       }
 
       dd.first {
