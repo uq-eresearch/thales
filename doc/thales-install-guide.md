@@ -85,7 +85,7 @@ Installation
     as a differnt user to the owner of the files. For a production
     deployment consider installing it under somewhere like `/opt`
     where the permissions can allow all users read access.
-	
+
 2. Change into the project directory:
 
         cd thales
@@ -99,10 +99,10 @@ Installation
         bundle install
 
     This will install Ruby on Rails, as well as the other required
-	gems. If this is for a production-only installation, unnecessary
-	gems can be excluded by using `bundle install
-	--without="development test"`.
-	
+    gems. If this is for a production-only installation, unnecessary
+    gems can be excluded by using `bundle install
+    --without="development test"`.
+
 5. Configure the connection between the application and PostgreSQL
 
     There are different ways of doing this. These instructions will
@@ -112,17 +112,17 @@ Installation
     username is the same as the operating system login username. See the
     [PostgreSQL documentation on client authentication](http://www.postgresql.org/docs/9.2/interactive/client-authentication.html)
     for more details.
-	
-   
+
+
     a. Choose a database user name. These instructions uses "thales" as
        the database user name, but any database user name can be used.
-	   
- 	   If the database user name is the same as the login user name
-	   nothing more needs to be done, since by default PostgreSQL is
-	   setup to accept Unix socket connections from local users.
-	   
-	   If the database user name is different from the login user name,
-	   continue with the next step.
+
+       If the database user name is the same as the login user name
+       nothing more needs to be done, since by default PostgreSQL is
+       setup to accept Unix socket connections from local users.
+
+       If the database user name is different from the login user name,
+       continue with the next step.
 
     b. Edit the PostgreSQL client authentication configuration
        file. The default allows local access (i.e. via Unix-domain
@@ -131,19 +131,19 @@ Installation
        user name), but it will be edited to add password authentication.
 
         sudoedit /var/lib/pgsql/data/pg_hba.conf
-		
-	   Add the following line _before_ the other "local" entries.  It
-	   allows local access (i.e. via Unix-domain sockets) to all
-	   databases for the user "thales" if they can be authenticated
-	   using the md5 method (i.e. can present a md5 digest of the
-	   correct password).
-	   
-	        local  all   thales  md5
+
+       Add the following line _before_ the other "local" entries.  It
+       allows local access (i.e. via Unix-domain sockets) to all
+       databases for the user "thales" if they can be authenticated
+       using the md5 method (i.e. can present a md5 digest of the
+       correct password).
+
+            local  all   thales  md5
 
 6. Start or restart PostgreSQL.
 
      If PostgreSQL is already running, restart it (so that it loads the
-	 client authentication configuration file.)
+     client authentication configuration file.)
 
         sudo service postgresql start
 
@@ -163,32 +163,32 @@ These steps continue on from the [Common to both development and production inst
 
        If using PostgreSQL _trust authentication_, the password can be omitted.
 
-	   Note: The CREATEDB role allows the user to drop any database
-	   (not just the ones it owns). This can be a security risk, so
-	   please consider if it is suitable for your setup before using
-	   it.  The CREATEDB role is needed if you want to run the RSpec
-	   tests and the db:create Rake task.
+       Note: The CREATEDB role allows the user to drop any database
+       (not just the ones it owns). This can be a security risk, so
+       please consider if it is suitable for your setup before using
+       it.  The CREATEDB role is needed if you want to run the RSpec
+       tests and the db:create Rake task.
 
 2. Edit configuration
 
     Edit _config/database.yml_ to set the username and password to the
-	new PostgreSQL username and password.
-	
-	    vi config/database.yml
+    new PostgreSQL username and password.
+
+        vi config/database.yml
 
     Do this for the development and test environments.
-	
-	    development:
+
+        development:
           ...
-		  username: thales
-		  password: p@ssw0rd
-		  ...
-	    test:
+          username: thales
+          password: p@ssw0rd
           ...
-		  username: thales
-		  password: p@ssw0rd
-		  ...
-		
+        test:
+          ...
+          username: thales
+          password: p@ssw0rd
+          ...
+
 3. Create, define and populate the development database.
 
         rake db:create
@@ -208,7 +208,7 @@ These steps continue on from the [Common to both development and production inst
    will fail if the directory not exist.
 
         mkdir -p tmp/pids
-		
+
     If using the WEBrick Web server, this is not necssary because it will
     automatically create the temporary directories it needs.
 
@@ -242,26 +242,26 @@ These steps assume the production Web application is run using the
         postgres=# \l
         postgres=# \q
 
-	If using PostgreSQL _trust authentication_, the password can be omitted.
-   
+    If using PostgreSQL _trust authentication_, the password can be omitted.
+
     Note: unlike in development, this database user does not have the
     CREATEDB role to improve security.
-	
+
 2. Edit configuration
 
     Edit _config/database.yml_ to set the username and password to the
     new PostgreSQL username and password.
-	
-	    vi config/database.yml
+
+        vi config/database.yml
 
     Do this for the production environment.
-	
-	    production:
+
+        production:
           ...
-		  username: thales
-		  password: rte0vurt3spes6ryqu5mo9hy9pybi2ra
-		  ...
-  
+          username: thales
+          password: rte0vurt3spes6ryqu5mo9hy9pybi2ra
+          ...
+
 3. Define and populate the database.
 
         RAILS_ENV=production rake db:migrate
@@ -281,21 +281,21 @@ These steps assume the production Web application is run using the
 6. Edit the Unicorn configuration file. Set the following:
 
     - THALES_PROJ_DIR to where the sources have been installed;
-	- _pid_ to the location of the PID file (e.g. /var/run/thales/unicorn.pid);
-	- _user_ to the user that owns the worker processes.
+    - _pid_ to the location of the PID file (e.g. /var/run/thales/unicorn.pid);
+    - _user_ to the user that owns the worker processes.
 
             vi config/unicorn.rb
 
-     Take note of the location of the PID file and user defined in
-     this configuration file for the next step.
-	 
+    Take note of the location of the PID file and user defined in
+    this configuration file for the next step.
+
 7. Create the directory to hold the PID file and make sure it is
    writable by the Unicorn process worker (both are specified in the
    Unicorn config file). This is important because Unicorn will fail
    if the directory does not exist.
 
         mkdir -p tmp/pids
-	
+
 Continue with either the [Basic startup] or
 [Startup using Bluepill process monitor] steps.
 
@@ -307,42 +307,42 @@ HTTP server.
 1. Configure the application to automatically start when the OS starts.
 
     a. Copy the init.d script (basic) to the /etc/init.d directory.
-   
+
         sudo cp script/initd-thales-basic.sh /etc/init.d/thales
 
     b. Edit it to set:
-	
+
        - PROJ_DIR to the directory where Thales has been installed;
-	   - UNICORN to the wrapper script created in step 5; and
-	   - PID_FILE to the path to the PID file in _config/unicorn.rb_
-	  
+       - UNICORN to the wrapper script created in step 5; and
+       - PID_FILE to the path to the PID file in _config/unicorn.rb_
+
             sudoedit /etc/init.d/thales
-		
+
     c. Register it.
-   
+
         sudo chkconfig thales on
 
 2. Start the application.
-   
+
         sudo service thales start
 
     The application will be running on port 30123 (unless you change
     it in the init.d script).
-	
+
     Attempting to access http://localhost:30123 from the host (since
-	the firewall should be blocking external access to this port)
-	should return a HTTP redirection to the (currently non-existent)
-	HTTPS secured login page.
+    the firewall should be blocking external access to this port)
+    should return a HTTP redirection to the (currently non-existent)
+    HTTPS secured login page.
 
     Other available commands are:
 
         sudo service thales status
         sudo service thales restart
         sudo service thales stop
-	
-	
+
+
 Continue with the [Reverse proxy server setup] steps.
-   
+
 #### Startup using Bluepill process monitor
 
 This option uses the [Bluepill](https://github.com/arya/bluepill)
@@ -351,7 +351,7 @@ process monitor to manage the Unicorn HTTP server.
 1. Install Bluepill.
 
     a. Install the Bluepill gem.
-   
+
         gem install bluepill
 
     b. If needed, configure logging according to the
@@ -372,23 +372,23 @@ process monitor to manage the Unicorn HTTP server.
     - UNICORN to the location of the Unicorn wrapper script.
 
             vi config/bluepill.pill
-		
-	
+
+
 4. Configure the application to automatically start when the OS starts.
 
     a. Copy the init.d script (Bluepill) to the /etc/init.d directory.
-   
+
         sudo cp script/initd-thales-bluepill.sh /etc/init.d/thales
 
     b. Edit it to set:
-	
+
        - BLUEPILL_BIN to the wrapper script for Bluepill created above.
-	   - BLUEPILL_CONFIG to the location of the above Bluepill config file.
+       - BLUEPILL_CONFIG to the location of the above Bluepill config file.
 
             sudoedit /etc/init.d/thales
-		
+
     c. Register it.
-   
+
         sudo chkconfig thales on
 
 5. Start the application.
@@ -397,11 +397,11 @@ process monitor to manage the Unicorn HTTP server.
 
     The application will be running on port 30123 (unless it was changed
     in the _init.d_ script).
-	
+
     Attempting to access http://localhost:30123 from the host (since
-	the firewall should be blocking external access to this port)
-	should return a HTTP redirection to the (currently non-existent)
-	HTTPS secured login page.
+    the firewall should be blocking external access to this port)
+    should return a HTTP redirection to the (currently non-existent)
+    HTTPS secured login page.
 
     Other available commands are:
 
@@ -425,28 +425,28 @@ used to provide TLS/SSL security.
 
     In these steps, we will download and compile nginx, instead
     of using the distribution's release.
-   
+
     a. Download the sources from <http://nginx.org>
 
-		pushd ~
-		curl -O http://nginx.org/download/nginx-1.2.7.tar.gz
+        pushd ~
+        curl -O http://nginx.org/download/nginx-1.2.7.tar.gz
 
     b. Unpack the sources.
-   
+
         tar xfz nginx-1.2.7.tar.gz
-		cd nginx-1.2.7
-	
+        cd nginx-1.2.7
+
     c. Ensure dependencies are installed.
-	
+
        Either:
 
        i. If the distribution uses yum (e.g. Fedora and RHEL):
-	   
+
         sudo yum install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel
-		
-	   ii. If the  distribution uses apt-get (e.g. Ubuntu):
-        
-		sudo apt-get install build-essential libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev
+
+       ii. If the  distribution uses apt-get (e.g. Ubuntu):
+
+        sudo apt-get install build-essential libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev
 
     d. Compile and install. There are many options, but the essential
        one is the SSL module.
@@ -457,11 +457,11 @@ used to provide TLS/SSL security.
         sudo make install
 
 2. Create a user account to run _nginx_.
-	
-	    sudo useradd --shell /sbin/nologin --home-dir /usr/local/nginx -c "Nginx server" nginx
+
+        sudo useradd --shell /sbin/nologin --home-dir /usr/local/nginx -c "Nginx server" nginx
 
     The warning about the home directory already existing can be ignored.
-   
+
 3. Change file and directory permissions to allow the nginx user
    to read the precompiled asset files. How this is done will depend
    on where the application was installed. For example, if they were
@@ -474,67 +474,67 @@ used to provide TLS/SSL security.
    running on port 30123, and to serve both HTTP and HTTPS requests.
 
     a. Obtain a TLS/SSL certificate for the site.
-	
-	   For testing, you could use a self-signed test certificate. See
-	   [Creating a self-signed test certificate] for one way of creating
-	   a test certificate.
-	
+
+       For testing, you could use a self-signed test certificate. See
+       [Creating a self-signed test certificate] for one way of creating
+       a test certificate.
+
     b. Install the certificate and its (unencrypted) private key.
 
         pushd ~/pki-credentials-for-my-domain
-	    sudo cp tls.crt /usr/local/nginx/conf/tls.crt
-		sudo cp tls.key /usr/local/nginx/conf/tls.key
-		sudo chmod 444 /usr/local/nginx/conf/tls.crt
+        sudo cp tls.crt /usr/local/nginx/conf/tls.crt
+        sudo cp tls.key /usr/local/nginx/conf/tls.key
+        sudo chmod 444 /usr/local/nginx/conf/tls.crt
         sudo chmod 400 /usr/local/nginx/conf/tls.key # keep private key secure!
-		popd
-		
+        popd
+
     c. Configure nginx. You can use the supplied example configuration
-	   file as a starting point, but remember to optimize it for your
-	   setup.
-	
-	    popd  # to return to thales source directory
-	    sudo cp config/nginx.conf /usr/local/nginx/conf/nginx.conf
+       file as a starting point, but remember to optimize it for your
+       setup.
+
+        popd  # to return to thales source directory
+        sudo cp config/nginx.conf /usr/local/nginx/conf/nginx.conf
 
     d. Start nginx
-	
+
         sudo /usr/local/nginx/sbin/nginx
-	
-	e. Test the server by visiting <http://localhost> and <https://localhost>.
+
+    e. Test the server by visiting <http://localhost> and <https://localhost>.
 
        Please see the
        [Thales Administration guide](thales-admin-guide.md) for
        information on how to login and set it up for use.
-		
+
       Note: a common problem is the HTML page appears, but without the
-	  CSS styling. This is usually a permissions problem: the _nginx_
-	  user does not have permissions to read the static asset
-	  files. Usually one of the parent directories does not have read
-	  and execute permissions for other users.
-	
-	f. If necessary, modify the configuration and retest.
-	
+      CSS styling. This is usually a permissions problem: the _nginx_
+      user does not have permissions to read the static asset
+      files. Usually one of the parent directories does not have read
+      and execute permissions for other users.
+
+    f. If necessary, modify the configuration and retest.
+
          sudoedit /usr/local/nginx/conf/nginx.conf
          sudo /usr/local/nginx/sbin/nginx -t
          sudo /usr/local/nginx/sbin/nginx -s reload
 
     g. When finished, manually stop the nginx server.
-     
+
          sudo /usr/local/nginx/sbin/nginx -s quit
 
 5. Setup _nginx_ to start automatically when the OS starts.
 
     a. Copy the nginx init.d script to the /etc/init.d directory.
-   
+
         sudo cp script/initd-nginx.sh /etc/init.d/nginx
 
     b. Edit it to set:
-	
+
        - NGINX_BIN to the nginx executable.
 
             sudoedit /etc/init.d/nginx
-		
+
     c. Register it.
-   
+
         sudo chkconfig nginx on
 
 Note: a production installation should manage the log files using
@@ -556,7 +556,7 @@ Operating the development server
 
 ### Managing the Rails server
 
-These instructions describe how to use WEBrick or Unicorn 
+These instructions describe how to use WEBrick or Unicorn
 as the development HTTP server.
 
 WEBrick comes with Ruby 1.9.3 and is the standard Rails development
@@ -647,9 +647,9 @@ default, the configuration files and scripts assume the user name is
 1. Install packages needed by RVM
 
     Either:
-   
+
     a. If the distribution uses yum (e.g. Fedora and RHEL):
-	
+
         sudo yum install  postgresql-server \
           git \
           tar bzip2 make gcc gcc-c++ \
@@ -664,12 +664,12 @@ default, the configuration files and scripts assume the user name is
     application needs.
 
     b. If the distribution uses apt-get (e.g. Ubuntu):
-	
-	     sudo apt-get install \
+
+         sudo apt-get install \
            build-essential openssl libreadline6 libreadline6-dev curl git-core \
-		   zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev \
-		   autoconf libc6-dev libgdbm-dev ncurses-dev automake \
-		   libtool bison subversion pkg-config libffi-dev \
+           zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev \
+           autoconf libc6-dev libgdbm-dev ncurses-dev automake \
+           libtool bison subversion pkg-config libffi-dev \
            libpg-dev
 
 2. Install [Ruby Version Manager](https://rvm.io/) and Ruby.
@@ -678,21 +678,21 @@ default, the configuration files and scripts assume the user name is
         . ~/.rvm/scripts/rvm
 
     Thales has been tested with Ruby 1.9.3-p374.
-	
-	As of 14 March 2013, it does not work with Ruby 2.0, because one
-	of the Gems it uses (ruby-oai 0.0.9) does not work with Ruby
-	2.0.0.
-	
+
+    As of 14 March 2013, it does not work with Ruby 2.0, because one
+    of the Gems it uses (ruby-oai 0.0.9) does not work with Ruby
+    2.0.0.
+
 3. Initialize PostgreSQL.
 
     a. For PostgreSQL 9.x:
-	
+
         sudo postgresql-setup initdb
 
     b. For PostgreSQL 8.x:
-	
+
         sudo service postgresql initdb
-   
+
 4. Setup PostgreSQL to start automatically when the OS starts.
 
         sudo chkconfig postgresql on
@@ -700,49 +700,49 @@ default, the configuration files and scripts assume the user name is
 5. Configure firewalls
 
     Choose which TCP/IP port for the Web application and configure the
-	firewall to allow access to that port.  For development and
-	testing the default is port 3000. For production, you will
-	want to use port 80 or 443.
+    firewall to allow access to that port.  For development and
+    testing the default is port 3000. For production, you will
+    want to use port 80 or 443.
 
     a. FirewallD
-	
+
     For systems running [FirewallD] (e.g. Fedora 18).
 
     Show the active zones and current settings for the public zone:
-	
+
         sudo firewall-cmd --get-active-zones
         sudo firewall-cmd --list-all --zone=public
-		
+
     For development, allow use of port 3000:
-	
+
         sudo firewall-cmd --add-port=3000/tcp     # Note: not permanent
         sudo firewall-cmd --permanent --zone=public --add-port=3000/tcp
-	
-	For production, allow use of the standard ports of 80 and 443:
-	
+
+    For production, allow use of the standard ports of 80 and 443:
+
         sudo firewall-cmd --add-service=http     # Note: not permanent
         sudo firewall-cmd --permanent --zone=public --add-service=http
         sudo firewall-cmd --add-service=https     # Note: not permanent
         sudo firewall-cmd --permanent --zone=public --add-service=https
 
     b. iptables
-	
+
     For systems running _iptables_.
-	
-	Edit the iptables configuration file:
-	
-	    sudoedit /etc/sysconfig/iptables
-		
-	Add the following lines:
-	
+
+    Edit the iptables configuration file:
+
+        sudoedit /etc/sysconfig/iptables
+
+    Add the following lines:
+
         -A INPUT -m state --state NEW -m tcp -p tcp --dport 3000 -j ACCEPT
         -A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
         -A INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
-		
-	Restart _iptables_ so the new settings are used:
-	
-	    sudo service iptables restart
-	
+
+    Restart _iptables_ so the new settings are used:
+
+        sudo service iptables restart
+
 [Firewalld]: https://fedoraproject.org/wiki/FirewallD
 
 Creating a self-signed test certificate
@@ -752,12 +752,12 @@ These commands can be used to create a self-signed certificate for
 testing purposes:
 
     openssl req -newkey rsa:2048 -nodes -keyout tls.key -out tls.csr
-    # Above command will prompt for extra information	
-	openssl x509 -req -in tls.csr -signkey tls.key -days 90 -out tls.crt
+    # Above command will prompt for extra information
+    openssl x509 -req -in tls.csr -signkey tls.key -days 90 -out tls.crt
     rm tls.csr
-	chmod 444 tls.crt
-	chmod 400 tls.key
-			
+    chmod 444 tls.crt
+    chmod 400 tls.key
+
 Trouble shooting
 ----------------
 
@@ -767,16 +767,16 @@ Check that firewalls are not blocking access. This can be done by
 accessing the service from the host machine.
 
     curl -s 'http://localhost'
-	curl -s 'http://localhost/oaipmh?verb=Identify'
-	curl -s 'http://localhost:30123'
-	curl -s 'http://localhost:30123/oaipmh?verb=Identify'
+    curl -s 'http://localhost/oaipmh?verb=Identify'
+    curl -s 'http://localhost:30123'
+    curl -s 'http://localhost:30123/oaipmh?verb=Identify'
 
 Check if the necessary services are running:
 
     sudo service postgresql status
     sudo service thales status
     sudo service nginx status
-	
+
 Check the log files. These will be under the _log_ subdirectory,
 unless their locations were changed during installation.
 

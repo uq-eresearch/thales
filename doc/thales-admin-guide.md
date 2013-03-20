@@ -104,7 +104,7 @@ header of every RIF-CS record.
 
 The RIF-CS XML Schema says the group is "a string available for
 grouping of repository objects, typically by organisation."
-					
+
 The RIF-CS XML Schema says the originating source is "a string or URI
 identifying the entity holding the managed version of the registry
 object metadata. For example in a federated aggregation context this
@@ -281,7 +281,7 @@ metadata records.
 To remove all records from the database use the `--delete` option:
 
     ./script/thales-admin.rb --adapter production --delete
-	
+
 The delete command can be combined with the import command. To delete
 all records from the database and then import records from a file
 (i.e. after running, the only records in the database will be the

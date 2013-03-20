@@ -86,14 +86,14 @@ the element's contents, if there is a description.
         <type>http://ns.research.data.uq.edu.au/2012/eResearch/type/collection</type>
         <data xmlns="http://ns.research.data.uq.edu.au/2012/cornerstone">
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/subtype"
-		        >http://ns.research.data.uq.edu.au/2012/eResearch/subtype/collection/dataset</prop>
+          >http://ns.research.data.uq.edu.au/2012/eResearch/subtype/collection/dataset</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/title">Test Data</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/web_page">http://www.example.com</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/contact_email">admin@example.com</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/description">Test data collection.</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/identifier">1234</prop>
           <link type="http://ns.research.data.uq.edu.au/2012/eResearch/property/tag_FoR"
-		        uri="http://purl.org/asc/1297.0/2008/for/010101">Algebra and Number Theory</link>
+                uri="http://purl.org/asc/1297.0/2008/for/010101">Algebra and Number Theory</link>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/spatial_text">Queensland</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/tag_keyword">test</prop>
           <prop type="http://ns.research.data.uq.edu.au/2012/eResearch/property/temporal">2012/2013</prop>
